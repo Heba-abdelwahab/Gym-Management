@@ -33,6 +33,7 @@ namespace Services
             {
                 FirstName = registerDto.FirstName,
                 LastName = registerDto.LastName,
+                UserName = registerDto.Email.Split('@')[0], // Use email prefix as username
                 Email = registerDto.Email,
                 PhoneNumber = registerDto.PhoneNumber,
 

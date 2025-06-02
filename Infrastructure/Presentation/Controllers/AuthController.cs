@@ -17,10 +17,10 @@ namespace Presentation.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register(RegisterDto registerDto, string? Role)
+        public async Task<IActionResult> Register([FromBody] RegisterDto registerDto, string? Role)
         {
             if (_authService.CheckIfUserExist(registerDto.Email).Result.Value)
-                return BadRequest("User already exists");
+                return BadRequest(new {Message = "User already exists"});
 
             if (string.IsNullOrEmpty(Role))
                 Role = "Trainee";
