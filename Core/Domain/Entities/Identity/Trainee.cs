@@ -1,14 +1,12 @@
 ﻿using Domain.Common;
 using Domain.ValueObjects;
-namespace Domain.Entities
+namespace Domain.Entities.Identity
 {
-    public class Trainee:EntityBase<Trainee>
+    public class Trainee : AppUser
     {
-        public required Address Address { get; set; }
-        public required string Image { get; set; }
-
+        //public AppUser AppUser { get; set; }
+        public Address? Address { get; set; }
         public DateTime MembershipStartDate { get; set; }
         public DateTime MembershipEndDate { get; set; }
-
     }
 }
