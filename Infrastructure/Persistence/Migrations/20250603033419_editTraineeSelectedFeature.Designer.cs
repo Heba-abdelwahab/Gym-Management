@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Persistence;
 
@@ -11,9 +12,11 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(GymDbContext))]
-    partial class GymDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250603033419_editTraineeSelectedFeature")]
+    partial class editTraineeSelectedFeature
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -508,7 +511,10 @@ namespace Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("GymFeatureId")
+                    b.Property<int>("FeatureId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("GymFeatureId")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
@@ -524,6 +530,8 @@ namespace Persistence.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("FeatureId");
 
                     b.HasIndex("GymFeatureId");
 
@@ -1206,11 +1214,15 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Domain.Entities.TraineeSelectedFeature", b =>
                 {
-                    b.HasOne("Domain.Entities.GymFeature", "GymFeature")
-                        .WithMany("TraineeSelectedFeatures")
-                        .HasForeignKey("GymFeatureId")
+                    b.HasOne("Domain.Entities.Feature", "Feature")
+                        .WithMany()
+                        .HasForeignKey("FeatureId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Domain.Entities.GymFeature", null)
+                        .WithMany("TraineeSelectedFeatures")
+                        .HasForeignKey("GymFeatureId");
 
                     b.HasOne("Domain.Entities.Trainee", "Trainee")
                         .WithMany("TraineeSelectedFeatures")
@@ -1218,7 +1230,7 @@ namespace Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("GymFeature");
+                    b.Navigation("Feature");
 
                     b.Navigation("Trainee");
                 });

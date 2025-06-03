@@ -1,4 +1,6 @@
 using Domain.Contracts;
+using Domain.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 using Persistence.Repositories;
@@ -18,7 +20,7 @@ namespace Gymawy
                 .AddApplicationPart(typeof(Presentation.AssemblyReference).Assembly);           
             builder.Services.AddOpenApi();
             builder.Services.AddDbContext<GymDbContext>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
+            builder.Services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<GymDbContext>();
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Persistence;
 
@@ -11,9 +12,11 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(GymDbContext))]
-    partial class GymDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250603031121_addEntities")]
+    partial class addEntities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -508,7 +511,10 @@ namespace Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("GymFeatureId")
+                    b.Property<int>("FeatureId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("GymFeatureId")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
@@ -520,10 +526,15 @@ namespace Persistence.Migrations
                     b.Property<double>("TotalCost")
                         .HasColumnType("float");
 
+                    b.Property<int>("TraineId")
+                        .HasColumnType("int");
+
                     b.Property<int>("TraineeId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("FeatureId");
 
                     b.HasIndex("GymFeatureId");
 
@@ -571,6 +582,9 @@ namespace Persistence.Migrations
                     b.Property<int>("GymCoachId")
                         .HasColumnType("int");
 
+                    b.Property<int>("GymId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -580,6 +594,8 @@ namespace Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("GymCoachId");
+
+                    b.HasIndex("GymId");
 
                     b.ToTable("WorkDays");
                 });
@@ -1206,11 +1222,15 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Domain.Entities.TraineeSelectedFeature", b =>
                 {
-                    b.HasOne("Domain.Entities.GymFeature", "GymFeature")
-                        .WithMany("TraineeSelectedFeatures")
-                        .HasForeignKey("GymFeatureId")
+                    b.HasOne("Domain.Entities.Feature", "Feature")
+                        .WithMany()
+                        .HasForeignKey("FeatureId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Domain.Entities.GymFeature", null)
+                        .WithMany("TraineeSelectedFeatures")
+                        .HasForeignKey("GymFeatureId");
 
                     b.HasOne("Domain.Entities.Trainee", "Trainee")
                         .WithMany("TraineeSelectedFeatures")
@@ -1218,20 +1238,26 @@ namespace Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("GymFeature");
+                    b.Navigation("Feature");
 
                     b.Navigation("Trainee");
                 });
 
             modelBuilder.Entity("Domain.Entities.WorkDay", b =>
                 {
-                    b.HasOne("Domain.Entities.GymCoach", "GymCoach")
+                    b.HasOne("Domain.Entities.GymCoach", null)
                         .WithMany("WorkDays")
                         .HasForeignKey("GymCoachId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("GymCoach");
+                    b.HasOne("Domain.Entities.Gym", "Gym")
+                        .WithMany()
+                        .HasForeignKey("GymId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Gym");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
