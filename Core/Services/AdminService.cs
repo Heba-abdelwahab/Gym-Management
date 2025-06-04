@@ -1,75 +1,120 @@
 ﻿using Domain.Constants;
 using Domain.Contracts;
 using Domain.Entities;
-using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Services.Abstractions;
+using Shared;
 
-namespace Services
+namespace Services;
+
+//public record AmindRegisterDto(string UserName, string Password, string Role);
+//record UserRegisterDto(string UserName, string Password, string Role);
+
+//public class AdminService
+//{
+//    private readonly AuthenticationService authenticationService;
+
+//    public AdminService(IUnitOfWork unitOfWork, AuthenticationService authenticationService)
+//    {
+//        UnitOfWork = unitOfWork;
+//        this.authenticationService = authenticationService;
+//    }
+
+//    private IUnitOfWork UnitOfWork { get; }
+
+//    public async void CreateAdmin(AmindRegisterDto dto)
+//    {
+//        //validation by usermanager like unique username
+//        AppUser appUser = new AppUser()
+//        {
+//            UserName = dto.UserName,
+
+//        };
+//        bool isSuccess = await authenticationService.Register(appUser, dto.Password, Roles.Admin);
+//        if (isSuccess)
+//        {
+//            Admin admin = new Admin()
+//            {
+//                AppUser = appUser,
+//                Hamada = "Ddd",
+//                AppUserId = appUser.Id
+//            };
+//            UnitOfWork.GetRepositories<Admin, int>().Insert(admin);
+//        }
+
+//    }
+//}
+
+//public class AuthenticationService
+//{
+//    private readonly UserManager<AppUser> userManager;
+
+//    public AuthenticationService(UserManager<AppUser> userManager)
+//    {
+//        this.userManager = userManager;
+//    }
+
+//    public async Task<bool> Register(AppUser appUser , string password,string role)
+//    {
+//        var res= await userManager.CreateAsync(appUser , password);
+//        if (res.Succeeded)
+//        {
+//            await userManager.AddToRoleAsync(appUser, role);
+//            return true;
+//        }
+//        else
+//        {
+//            string errors = string.Join(", ",res.Errors.Select(e=>e.Description));
+//            return false;
+//        }
+//    }
+
+//}
+
+
+public class AdminService : IAdminService
 {
-    public record AmindRegisterDto(string UserName , string Password , string Role);
-    record UserRegisterDto(string UserName, string Password, string Role);
+    private readonly IAuthenticationService _authenticationService;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public class AdminService
+    public AdminService(IAuthenticationService authenticationService,
+        IUnitOfWork unitOfWork
+        )
     {
-        private readonly AuthenticationService authenticationService;
-
-        public AdminService(IUnitOfWork unitOfWork,AuthenticationService authenticationService )
-        {
-            UnitOfWork = unitOfWork;
-            this.authenticationService = authenticationService;
-        }
-
-        private IUnitOfWork UnitOfWork { get; }
-
-        public async void CreateAdmin(AmindRegisterDto dto)
-        {
-            //validation by usermanager like unique username
-            AppUser appUser = new AppUser()
-            {
-                UserName = dto.UserName,
-
-            };
-            bool isSuccess = await authenticationService.Register(appUser,dto.Password,Roles.Admin);
-            if (isSuccess) {
-                Admin admin = new Admin()
-                {
-                    AppUser = appUser,
-                    Hamada = "Ddd",
-                    AppUserId = appUser.Id  
-                };
-                UnitOfWork.GetRepositories<Admin, int>().Insert(admin);
-            }
-
-        }
+        _authenticationService = authenticationService;
+        _unitOfWork = unitOfWork;
     }
 
-    public class AuthenticationService
+
+
+
+    public async Task<AdminResultDto> CreateAdminAsync(RegisterUserDto request)
     {
-        private readonly UserManager<AppUser> userManager;
 
-        public AuthenticationService(UserManager<AppUser> userManager)
-        {
-            this.userManager = userManager;
-        }
+        var existingEmail = await _authenticationService.CheckEmailExist(request.Email);
 
-        public async Task<bool> Register(AppUser appUser , string password,string role)
+        if (existingEmail) // i will change it later 
+            return null!;
+
+        var registerUser = new RegisterUserDto
+            (request.UserName, request.Email, request.Password, Roles.Admin);
+
+        var authResult = await _authenticationService.RegisterUserAsync(registerUser);
+
+        var admin = new Admin
         {
-            var res= await userManager.CreateAsync(appUser , password);
-            if (res.Succeeded)
-            {
-                await userManager.AddToRoleAsync(appUser, role);
-                return true;
-            }
-            else
-            {
-                string errors = string.Join(", ",res.Errors.Select(e=>e.Description));
-                return false;
-            }
-        }
+            AppUserId = authResult.Id,
+            Hamada = "test ya hamada"
+        };
+
+        _unitOfWork.GetRepositories<Admin, int>().Insert(admin);
+
+
+        if (await _unitOfWork.CompleteSaveAsync())
+            return new AdminResultDto(authResult.UserName, authResult.Token);
+
+
+        return null!;
+
 
     }
 }

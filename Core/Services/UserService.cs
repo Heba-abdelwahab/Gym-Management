@@ -1,34 +1,49 @@
-﻿using Shared;
+﻿using Domain.Contracts;
 using Domain.Entities;
-using Domain.Contracts;
+using Microsoft.AspNetCore.Http;
 using Services.Abstractions;
-using Services.Specifications; 
-namespace Services
+using Services.Specifications;
+using Shared;
+using System.Security.Claims;
+namespace Services;
+
+internal sealed class UserService : IUserService
 {
-    public class UserService:IUserService
+    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IUnitOfWork _unitOfWork;
+
+    public UserService(IHttpContextAccessor httpContextAccessor, IUnitOfWork unitOfWork)
     {
-        private readonly IUnitOfWork unitOfWork;
-
-        public UserService(IUnitOfWork unitOfWork)
-        {
-            this.unitOfWork = unitOfWork;
-        }
-
-        public async Task< IEnumerable< UserDto> >GetCairoUser()
-        {
-           IRepository<User,int> repo=  unitOfWork.GetRepositories<User, int>();
-            var users= await repo.GetAllWithSpecAsync(new GetCairoUsersSpec());
-            List<UserDto> userDtos = new List<UserDto>();
-            foreach (var user in users) {
-                UserDto userDto = new UserDto()
-                {
-                    Address = user.address,
-                    Id = user.Id,
-                    Name = user.name
-                };
-                userDtos.Add(userDto);
-            }
-            return userDtos;
-        }
+        _httpContextAccessor = httpContextAccessor;
+        _unitOfWork = unitOfWork;
     }
+
+
+    public string? Id => _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
+
+    public string? UserEmail => _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.Email);
+
+
+    public async Task<IEnumerable<UserDto>> GetCairoUser()
+    {
+        IRepository<User, int> repo = _unitOfWork.GetRepositories<User, int>();
+        var users = await repo.GetAllWithSpecAsync(new GetCairoUsersSpec());
+        List<UserDto> userDtos = new List<UserDto>();
+        foreach (var user in users)
+        {
+            UserDto userDto = new UserDto()
+            {
+                Address = user.address,
+                Id = user.Id,
+                Name = user.name
+            };
+            userDtos.Add(userDto);
+        }
+        return userDtos;
+    }
+
+
+
+
+
 }
