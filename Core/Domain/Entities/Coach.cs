@@ -1,4 +1,5 @@
 ﻿using Domain.Common;
+using Domain.Enums;
 using Domain.ValueObjects;
 using System;
 using System.Collections.Generic;
@@ -10,17 +11,29 @@ namespace Domain.Entities
 {
     public class Coach:EntityBase<int>
     {
-        public string CV { get; set; }       // file pdf Path
-        public string About { get; set; }              
-        public string ProfileImage { get; set; }       // Image path
+        //public string CV { get; set; }       // file pdf Path
+        public CoachSpecialization Specializations { get; set; }
+        public string About { get; set; }
+
         public Address Address { get; set; }
 
 
-        public ICollection<GymCoach> GymCoaches { get; set; } = new List<GymCoach>();
-        public ICollection<Trainee> Trainees { get; set; } = new List<Trainee>();
-        public ICollection<Class> Classes { get; set; } = new List<Class>();
-        public ICollection<ExercisesSchedule> ExercisesSchedules { get; set; } = new List<ExercisesSchedule>();
-        public ICollection<MealSchedule> MealSchedules { get; set; } = new List<MealSchedule>();
+        public string AppUserId { get; set; }
+        public AppUser? AppUser { get; set; }
 
+        public ICollection<Media>? Certificates { get; set; } = new HashSet<Media>();
+
+
+        #region Navigation Property
+        public ICollection<GymCoach> GymCoaches { get; set; } = new HashSet<GymCoach>();
+        public ICollection<ExercisesSchedule> ExercisesSchedules { get; set; } = new HashSet<ExercisesSchedule>();
+        public ICollection<MealSchedule> MealSchedules { get; set; } = new HashSet<MealSchedule>();
+
+
+        public ICollection<Trainee> Trainees { get; set; } = new HashSet<Trainee>();
+        public ICollection<Class> Classes { get; set; } = new HashSet<Class>();
+        #endregion
     }
+
+
 }

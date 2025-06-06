@@ -5,10 +5,10 @@ namespace Domain.Entities
 {
     public class Media:EntityBase<int>
     {
-        //public int Id { get; set; }
         public MediaType Type { get; set; }
         public string Url { get; set; }
         public int PublicId { get; set; }
+        public bool IsMain { get; set; } = false;
 
     }
 }
