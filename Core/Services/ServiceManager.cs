@@ -1,4 +1,5 @@
-﻿using Domain.Contracts;
+﻿using AutoMapper;
+using Domain.Contracts;
 using Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -17,6 +18,7 @@ public class ServiceManager : IServiceManager
     private readonly Lazy<ITokenService> _lazyTokenService;
     private readonly Lazy<IAuthenticationService> _lazyAuthenticationService;
     private readonly Lazy<IAdminService> _lazyAdminService;
+    private readonly Lazy<ICoachService> _lazyCoachService;
 
 
     public ServiceManager(
@@ -24,16 +26,16 @@ public class ServiceManager : IServiceManager
         IOptionsMonitor<JwtOptions> jwtOptions,
         IUnitOfWork unitOfWork,
         IHttpContextAccessor httpContextAccessor,
-        UserManager<AppUser> userManager)
+        UserManager<AppUser> userManager,
+        IMapper mapper)
     {
 
         _lazyPhotoService = new(() => new PhotoService(config));
-
         _lazyUserService = new(() => new UserService(httpContextAccessor, unitOfWork));
         _lazyTokenService = new(() => new TokenService(jwtOptions));
         _lazyAuthenticationService = new(() => new AuthenticationService(userManager, TokenService));
         _lazyAdminService = new(() => new AdminService(AuthenticationService, unitOfWork));
-
+        _lazyCoachService = new(() => new CoachService(AuthenticationService, unitOfWork, UserServices, mapper));
 
     }
 
@@ -47,7 +49,7 @@ public class ServiceManager : IServiceManager
 
     public IAdminService AdminService => _lazyAdminService.Value;
 
-    public ICoachService CoachService => throw new NotImplementedException();
+    public ICoachService CoachService => _lazyCoachService.Value;
 
     public ITraineeService TraineeService => throw new NotImplementedException();
 }
