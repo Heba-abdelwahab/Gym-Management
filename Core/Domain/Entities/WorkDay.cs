@@ -16,6 +16,6 @@ namespace Domain.Entities
 
 
         public int GymCoachId { get; set; }
-        public GymCoach GymCoach { get; set; }
+        public GymCoach? GymCoach { get; set; }
     }
 }

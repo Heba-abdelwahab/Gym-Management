@@ -57,5 +57,6 @@ namespace Persistence.Repositories
         {
              return SpecificationEvaluator.GetQuery(_dbSet, specification);
         }
+
     }
 }

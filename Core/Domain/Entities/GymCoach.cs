@@ -18,7 +18,7 @@ namespace Domain.Entities
 
         public int GymId { get; set; }
         public Gym? Gym { get; set; }
-        public int CoachId { get; set; }
+        public required string CoachId { get; set; }
         public Coach? Coach { get; set; }
 
         #endregion
