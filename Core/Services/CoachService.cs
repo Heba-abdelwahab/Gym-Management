@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Domain.Contracts;
 using Domain.Entities;
+using Domain.Exceptions;
 using Services.Abstractions;
 using Shared;
 
@@ -24,6 +25,7 @@ namespace Services
             _userServices = userServices;
             _mapper = mapper;
         }
+
         public async Task<bool> RequestToBecomeCoachAsync(int gymId, HashSet<WorkDayDto> workDaysDto)
         {
             var coachId = _userServices.Id;
@@ -44,5 +46,25 @@ namespace Services
             return result;
 
         }
+
+        public async Task<bool> CreateDietAsync(int traineeId, MealScheduleDto dietDto)
+        {
+
+            var trainee = await _unitOfWork.GetRepositories<Trainee, int>().GetByIdAsync(traineeId);
+            if (trainee == null)
+            {
+                //throw new NotFoundException($"Trainee with ID {traineeId} not found.");
+                return false;
+            }
+
+            var mealSchedule = _mapper.Map<MealSchedule>(dietDto);
+            mealSchedule.CoachId = _userServices.Id;
+            mealSchedule.TraineeId = traineeId;
+
+            _unitOfWork.GetRepositories<MealSchedule, int>().Insert(mealSchedule);
+
+            return await _unitOfWork.CompleteSaveAsync();
+        }
+
     }
 }
