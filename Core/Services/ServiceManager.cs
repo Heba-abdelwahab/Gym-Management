@@ -1,4 +1,5 @@
-﻿using Domain.Contracts;
+﻿using AutoMapper;
+using Domain.Contracts;
 using Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -17,12 +18,14 @@ public class ServiceManager : IServiceManager
     private readonly Lazy<ITokenService> _lazyTokenService;
     private readonly Lazy<IAuthenticationService> _lazyAuthenticationService;
     private readonly Lazy<IAdminService> _lazyAdminService;
+    private readonly Lazy<IClassService> _lazyClassService;
 
 
     public ServiceManager(
         IOptionsMonitor<CloudinarySettings> config,
         IOptionsMonitor<JwtOptions> jwtOptions,
         IUnitOfWork unitOfWork,
+        IMapper mapper,
         IHttpContextAccessor httpContextAccessor,
         UserManager<AppUser> userManager)
     {
@@ -33,7 +36,7 @@ public class ServiceManager : IServiceManager
         _lazyTokenService = new(() => new TokenService(jwtOptions));
         _lazyAuthenticationService = new(() => new AuthenticationService(userManager, TokenService));
         _lazyAdminService = new(() => new AdminService(AuthenticationService, unitOfWork));
-
+        _lazyClassService = new(() => new ClassService(unitOfWork, mapper));
 
     }
 
@@ -50,4 +53,5 @@ public class ServiceManager : IServiceManager
     public ICoachService CoachService => throw new NotImplementedException();
 
     public ITraineeService TraineeService => throw new NotImplementedException();
+    public IClassService ClassService => _lazyClassService.Value;
 }

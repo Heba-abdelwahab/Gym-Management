@@ -10,6 +10,7 @@ namespace Domain.Entities
 {
     public class Coach:EntityBase<int>
     {
+        public string Name { get; set; }
         public string CV { get; set; }       // file pdf Path
         public string About { get; set; }              
         public string ProfileImage { get; set; }       // Image path
