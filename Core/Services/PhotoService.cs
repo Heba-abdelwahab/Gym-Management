@@ -27,7 +27,7 @@ internal sealed class PhotoService : IPhotoService
         _config = config;
     }
 
-    public async Task<PhotoUploadedResult> AddPhotoAsync(IFormFile file, string folderName = "HumHum")
+    public async Task<PhotoUploadedResult> AddPhotoAsync(IFormFile file, string folderName = "GymGym")
     {
         var uploadResult = new ImageUploadResult();
 

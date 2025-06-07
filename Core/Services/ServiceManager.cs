@@ -19,24 +19,25 @@ public class ServiceManager : IServiceManager
     private readonly Lazy<IAuthenticationService> _lazyAuthenticationService;
     private readonly Lazy<IAdminService> _lazyAdminService;
     private readonly Lazy<IClassService> _lazyClassService;
+    private readonly Lazy<ICoachService> _lazyCoachService;
 
 
     public ServiceManager(
         IOptionsMonitor<CloudinarySettings> config,
         IOptionsMonitor<JwtOptions> jwtOptions,
         IUnitOfWork unitOfWork,
-        IMapper mapper,
         IHttpContextAccessor httpContextAccessor,
-        UserManager<AppUser> userManager)
+        UserManager<AppUser> userManager,
+        IMapper mapper)
     {
 
         _lazyPhotoService = new(() => new PhotoService(config));
-
         _lazyUserService = new(() => new UserService(httpContextAccessor, unitOfWork));
         _lazyTokenService = new(() => new TokenService(jwtOptions));
         _lazyAuthenticationService = new(() => new AuthenticationService(userManager, TokenService));
         _lazyAdminService = new(() => new AdminService(AuthenticationService, unitOfWork));
         _lazyClassService = new(() => new ClassService(unitOfWork, mapper));
+        _lazyCoachService = new(() => new CoachService(AuthenticationService, unitOfWork, UserServices, mapper));
 
     }
 
@@ -50,7 +51,7 @@ public class ServiceManager : IServiceManager
 
     public IAdminService AdminService => _lazyAdminService.Value;
 
-    public ICoachService CoachService => throw new NotImplementedException();
+    public ICoachService CoachService => _lazyCoachService.Value;
 
     public ITraineeService TraineeService => throw new NotImplementedException();
     public IClassService ClassService => _lazyClassService.Value;
