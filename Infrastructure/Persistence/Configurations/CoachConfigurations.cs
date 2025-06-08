@@ -20,7 +20,9 @@ namespace Persistence.Configurations
                     location.Property(location => location.Y).HasColumnType("float");
                 });
             });
-
+            //builder.HasOne(c => c.AppUser)
+            //    .WithOne()
+            //    .HasForeignKey<Coach>(c => c.Id);
             builder.HasMany(c => c.GymCoaches)
                 .WithOne(gc => gc.Coach)
                 .OnDelete(DeleteBehavior.NoAction);

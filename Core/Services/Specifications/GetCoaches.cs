@@ -13,7 +13,7 @@ namespace Services.Specifications
 
         public GetCoaches(int id) : base(c=>c.GymCoaches.Any(g=>g.GymId==id))
         {
-            //AddIclude(c => c.AppUser);
+            AddIncludes(c => c.AppUser);
         }
 
     }

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitialCreating : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -52,19 +52,6 @@ namespace Persistence.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "GymOwners",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_GymOwners", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -253,6 +240,49 @@ namespace Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "GymOwners",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    AppUserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GymOwners", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_GymOwners_AspNetUsers_AppUserId",
+                        column: x => x.AppUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Media",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    Url = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PublicId = table.Column<int>(type: "int", nullable: false),
+                    IsMain = table.Column<bool>(type: "bit", nullable: false),
+                    CoachId = table.Column<int>(type: "int", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Media", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Media_Coaches_CoachId",
+                        column: x => x.CoachId,
+                        principalTable: "Coaches",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Gyms",
                 columns: table => new
                 {
@@ -278,29 +308,6 @@ namespace Persistence.Migrations
                         name: "FK_Gyms_GymOwners_GymOwnerId",
                         column: x => x.GymOwnerId,
                         principalTable: "GymOwners",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Media",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Type = table.Column<int>(type: "int", nullable: false),
-                    Url = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PublicId = table.Column<int>(type: "int", nullable: false),
-                    IsMain = table.Column<bool>(type: "bit", nullable: false),
-                    CoachId = table.Column<int>(type: "int", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Media", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Media_Coaches_CoachId",
-                        column: x => x.CoachId,
-                        principalTable: "Coaches",
                         principalColumn: "Id");
                 });
 
@@ -464,8 +471,7 @@ namespace Persistence.Migrations
                         name: "FK_Trainees_Coaches_CoachId",
                         column: x => x.CoachId,
                         principalTable: "Coaches",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Trainees_Gyms_GymId",
                         column: x => x.GymId,
@@ -769,6 +775,11 @@ namespace Persistence.Migrations
                 column: "GymId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_GymOwners_AppUserId",
+                table: "GymOwners",
+                column: "AppUserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Gyms_GymOwnerId",
                 table: "Gyms",
                 column: "GymOwnerId");
@@ -920,13 +931,13 @@ namespace Persistence.Migrations
                 name: "Memberships");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
                 name: "Gyms");
 
             migrationBuilder.DropTable(
                 name: "GymOwners");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
         }
     }
 }

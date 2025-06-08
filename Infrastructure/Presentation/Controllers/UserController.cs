@@ -13,6 +13,7 @@ public class UserController : ApiControllerBase
         _serviceManager = serviceManager;
     }
 
+    [HttpGet]
     public async Task<IActionResult> GetUser()
     {
         var users = await _serviceManager.UserServices.GetCairoUser();

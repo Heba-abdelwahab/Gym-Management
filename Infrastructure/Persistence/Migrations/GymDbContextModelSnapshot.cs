@@ -316,10 +316,16 @@ namespace Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("AppUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
 
                     b.ToTable("GymOwners");
                 });
@@ -1123,6 +1129,17 @@ namespace Persistence.Migrations
                     b.Navigation("Gym");
                 });
 
+            modelBuilder.Entity("Domain.Entities.GymOwner", b =>
+                {
+                    b.HasOne("Domain.Entities.AppUser", "AppUser")
+                        .WithMany()
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
+                });
+
             modelBuilder.Entity("Domain.Entities.Meal", b =>
                 {
                     b.HasOne("Domain.Entities.MealSchedule", "MealSchedule")
@@ -1221,7 +1238,7 @@ namespace Persistence.Migrations
                     b.HasOne("Domain.Entities.Coach", "Coach")
                         .WithMany("Trainees")
                         .HasForeignKey("CoachId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("Domain.Entities.Gym", "Gym")
                         .WithMany("Trainees")
@@ -1230,7 +1247,8 @@ namespace Persistence.Migrations
 
                     b.HasOne("Domain.Entities.Membership", "Membership")
                         .WithMany("Trainees")
-                        .HasForeignKey("MembershipId");
+                        .HasForeignKey("MembershipId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.OwnsOne("Domain.ValueObjects.Address", "Address", b1 =>
                         {

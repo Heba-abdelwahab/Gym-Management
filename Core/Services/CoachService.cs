@@ -6,7 +6,8 @@ using Domain.ValueObjects;
 using Services.Abstractions;
 using Services.Specifications;
 using Shared;
-
+using Domain.Exceptions;
+using Services.MappingProfiles;
 namespace Services
 {
     public class CoachService : ICoachService
@@ -35,7 +36,7 @@ namespace Services
 
         public async Task<bool> RequestToBecomeCoachAsync(int gymId, HashSet<WorkDayDto> workDaysDto)
         {
-            var coachId = _userServices.Id!;
+            var coachId = _userServices.Id;
             var gymRepo = await _unitOfWork.GetRepositories<Gym, int>().GetByIdAsync(gymId);
             if (gymRepo == null)
                 return false;
@@ -44,7 +45,7 @@ namespace Services
             var request = new GymCoach
             {
                 GymId = gymId,
-                CoachId = coachId.Value,
+                CoachId = coachId.Value!,
                 WorkDays = _mapper.Map<ICollection<WorkDay>>(workDaysDto),
             };
 
@@ -117,6 +118,29 @@ namespace Services
             }
 
             return null!;
+
+        }
+        public async Task<IEnumerable<CoachPendingDto>> GetGymPendingCoachs(int gymId)
+        {
+            Gym? gym = await _unitOfWork.GetRepositories<Gym, int>().GetByIdAsync(gymId);
+            if (gym == null)
+                throw new GymNotFoundException(gymId);
+
+            IRepository<Coach,int> coachRepo= _unitOfWork.GetRepositories<Coach, int>();
+            IEnumerable<Coach> coachs = await coachRepo.GetAllWithSpecAsync(new GetGymPendingCoachsSpec(gymId));
+
+            IEnumerable<CoachPendingDto> coachPendingDtos= _mapper.Map<IEnumerable<CoachPendingDto>>(coachs);
+
+            return coachPendingDtos;
+        }
+
+        public async Task HandleCoachJobRequest(int gymId, HandleJobRequestDto jobRequestDto)
+        {
+            //Gym? gym = await _unitOfWork.GetRepositories<Gym, int>().GetByIdAsync(gymId);
+            //if (gym == null)
+            //    throw new GymNotFoundException(gymId);
+
+            await _unitOfWork.GetRepositories<GymCoach, int>().GetByIdAsync(gymId);
 
         }
     }

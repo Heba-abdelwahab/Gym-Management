@@ -16,4 +16,6 @@ public interface ICoachService
 
 
 
+    Task<IEnumerable<CoachPendingDto>> GetGymPendingCoachs(int gymId);
+    Task HandleCoachJobRequest(int gymId, HandleJobRequestDto jobRequestDto);
 }

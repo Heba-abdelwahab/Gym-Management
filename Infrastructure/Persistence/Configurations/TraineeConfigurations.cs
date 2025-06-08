@@ -23,6 +23,12 @@ namespace Persistence.Configurations
                     location.Property(location => location.Y).HasColumnType("float");
                 });
             });
+            builder.HasOne(t => t.Coach)
+                .WithMany(c => c.Trainees)
+                .OnDelete(DeleteBehavior.NoAction);
+            builder.HasOne(t => t.Membership)
+                .WithMany(m => m.Trainees)
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

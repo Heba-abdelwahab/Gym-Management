@@ -28,6 +28,7 @@ namespace Gymawy
             builder.Services.AddControllers()
               .AddApplicationPart(typeof(Presentation.AssemblyReference).Assembly);
             builder.Services.AddOpenApi();
+            builder.Services.AddSwaggerGen();
             builder.Services.AddDbContext<GymDbContext>
                 (option => option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
             builder.Services.AddIdentity<AppUser, IdentityRole>()
@@ -83,8 +84,6 @@ namespace Gymawy
 
               });
 
-
-
             #endregion
 
             var app = builder.Build();
@@ -99,14 +98,15 @@ namespace Gymawy
             }
 
 
-
             #region PipeLines
 
-            app.UseCustomExceptionMiddleware();
+            //app.UseCustomExceptionMiddleware();
 
             if (app.Environment.IsDevelopment())
             {
                 app.MapOpenApi();
+                app.UseSwagger();
+                app.UseSwaggerUI();
             }
 
             app.UseHttpsRedirection();
