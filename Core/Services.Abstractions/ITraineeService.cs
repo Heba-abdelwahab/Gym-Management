@@ -4,6 +4,6 @@ namespace Services.Abstractions;
 
 public interface ITraineeService
 {
-    List<TraineeToReturnDto> GetTraineebyGym(int gymId);
+    Task<AuthTraineeResultDto> CreateTraineeAsync(RegisterTraineeDto request);
 
 }
