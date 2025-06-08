@@ -16,7 +16,7 @@ namespace Services.Specifications
                    Any(gc=>gc.GymId== gymId && gc.Status == RequestStatus.Pending)
         )
         {
-            AddIclude(c => c.AppUser);
+            AddIncludes(c => c.AppUser);
         }
     }
 }

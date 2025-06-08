@@ -45,7 +45,7 @@ namespace Services
             var request = new GymCoach
             {
                 GymId = gymId,
-                CoachId = coachId!,
+                CoachId = coachId.Value!,
                 WorkDays = _mapper.Map<ICollection<WorkDay>>(workDaysDto),
             };
 
