@@ -12,14 +12,15 @@ internal sealed class UserService : IUserService
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IUnitOfWork _unitOfWork;
 
-    public UserService(IHttpContextAccessor httpContextAccessor, IUnitOfWork unitOfWork)
+    public UserService(IHttpContextAccessor httpContextAccessor,
+        IUnitOfWork unitOfWork)
     {
         _httpContextAccessor = httpContextAccessor;
         _unitOfWork = unitOfWork;
     }
 
 
-    public string? Id => _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
+    public int? Id => int.Parse(_httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
     public string? UserEmail => _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.Email);
 

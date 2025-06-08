@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Services.Abstractions;
-using Shared;
 using Shared.Cloudinary;
+using Shared.Jwt;
 
 namespace Services;
 
@@ -19,6 +19,7 @@ public class ServiceManager : IServiceManager
     private readonly Lazy<IAuthenticationService> _lazyAuthenticationService;
     private readonly Lazy<IAdminService> _lazyAdminService;
     private readonly Lazy<ICoachService> _lazyCoachService;
+    private readonly Lazy<ITraineeService> _lazyTraineeService;
 
 
     public ServiceManager(
@@ -34,8 +35,9 @@ public class ServiceManager : IServiceManager
         _lazyUserService = new(() => new UserService(httpContextAccessor, unitOfWork));
         _lazyTokenService = new(() => new TokenService(jwtOptions));
         _lazyAuthenticationService = new(() => new AuthenticationService(userManager, TokenService));
-        _lazyAdminService = new(() => new AdminService(AuthenticationService, unitOfWork));
-        _lazyCoachService = new(() => new CoachService(AuthenticationService, unitOfWork, UserServices, mapper));
+        _lazyAdminService = new(() => new AdminService(AuthenticationService, unitOfWork, TokenService));
+        _lazyCoachService = new(() => new CoachService(AuthenticationService, unitOfWork, UserServices, mapper, TokenService));
+        _lazyTraineeService = new(() => new TraineeService(AuthenticationService, unitOfWork, UserServices, mapper, TokenService));
 
     }
 
@@ -51,5 +53,5 @@ public class ServiceManager : IServiceManager
 
     public ICoachService CoachService => _lazyCoachService.Value;
 
-    public ITraineeService TraineeService => throw new NotImplementedException();
+    public ITraineeService TraineeService => _lazyTraineeService.Value;
 }

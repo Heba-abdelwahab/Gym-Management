@@ -75,34 +75,34 @@ public class AdminService : IAdminService
 {
     private readonly IAuthenticationService _authenticationService;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ITokenService _tokenService;
 
     public AdminService(IAuthenticationService authenticationService,
-        IUnitOfWork unitOfWork
+        IUnitOfWork unitOfWork,
+        ITokenService tokenService
         )
     {
         _authenticationService = authenticationService;
         _unitOfWork = unitOfWork;
+        _tokenService = tokenService;
+
     }
 
 
 
 
-    public async Task<AdminResultDto> CreateAdminAsync(RegisterUserDto request)
+    public async Task<AuthAdminResultDto> CreateAdminAsync(RegisterUserDto request)
     {
 
-        var existingEmail = await _authenticationService.CheckEmailExist(request.Email);
-
-        if (existingEmail) // i will change it later 
-            return null!;
-
-        var registerUser = new RegisterUserDto
-            (request.UserName, request.Email, request.Password, Roles.Admin);
+        var registerUser = new RegisterUserDto // need to change later
+            (request.FirstName, request.LastName, request.UserName, request.Email, request.Password, Roles.Admin);
 
         var authResult = await _authenticationService.RegisterUserAsync(registerUser);
 
+
         var admin = new Admin
         {
-            AppUserId = authResult.Id,
+            AppUserId = authResult.AppUserId,
             Hamada = "test ya hamada"
         };
 
@@ -110,8 +110,17 @@ public class AdminService : IAdminService
 
 
         if (await _unitOfWork.CompleteSaveAsync())
-            return new AdminResultDto(authResult.UserName, authResult.Token);
+        {
 
+            var adminClaims = _tokenService.GenerateAuthClaims(
+                    admin.Id, registerUser.UserName,
+                     registerUser.Email, registerUser.Role);
+
+            return new AuthAdminResultDto(
+                authResult.UserName,
+                _tokenService.GenerateAccessToken(adminClaims));
+
+        }
 
         return null!;
 

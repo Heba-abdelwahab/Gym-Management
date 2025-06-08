@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Services.Abstractions;
-using Shared;
+using Shared.Jwt;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -50,5 +50,21 @@ internal sealed class TokenService : ITokenService
         return userToken;
 
 
+    }
+
+    public List<Claim> GenerateAuthClaims<TKey>(TKey Id, string UserName, string Email, string Role)
+    {
+        var authClaims = new List<Claim>
+        {
+            new(ClaimTypes.NameIdentifier, Id?.ToString()!),
+            new(ClaimTypes.Name, UserName),
+            new(ClaimTypes.Email,Email),
+            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(),
+                ClaimValueTypes.Integer64),
+            new Claim(ClaimTypes.Role,Role)
+        };
+
+        return authClaims;
     }
 }

@@ -11,4 +11,8 @@ public interface ICoachService
     Task<bool> CreateDietAsync(int traineeId, MealScheduleDto dietDto);
 
 
+    Task<AuthCoachResultDto> CreateCoachAsync(RegisterCoachDto request);
+
+
+
 }
