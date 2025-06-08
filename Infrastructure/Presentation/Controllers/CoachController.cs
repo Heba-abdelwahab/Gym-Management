@@ -13,11 +13,11 @@ namespace Presentation.Controllers
 {
     public class CoachController : ApiControllerBase
     {
-        private readonly ICoachService _coachService;
         private readonly IServiceManager _serviceManager;
 
         public CoachController(IServiceManager serviceManager)
         {
+        
             _serviceManager = serviceManager;
         }
 
@@ -47,5 +47,20 @@ namespace Presentation.Controllers
 
             return BadRequest("Failed to create diet.");
         }
+
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> GetCoachesBygem(int id)
+        {
+
+            var Coaches=await _serviceManager.CoachService.GetCoachesbyGym(id);
+            if (Coaches.Any())
+                return Ok(Coaches);
+
+            else
+                return StatusCode(500, "An error occurred, Please try again.");
+
+        }
+
+
+        }
     }
-}
