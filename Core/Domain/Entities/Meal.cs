@@ -9,7 +9,7 @@ namespace Domain.Entities
         public DateTime Day { get; set; }
         public int MealScheduleId { get; set; }
         public MealType MealType { get; set; }
-        public MealSchedule MealSchedule { get; set; }
+        public MealSchedule? MealSchedule { get; set; }
 
     }
 }

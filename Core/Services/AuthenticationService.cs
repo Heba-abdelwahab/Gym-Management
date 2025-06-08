@@ -3,7 +3,6 @@ using Domain.Exceptions;
 using Microsoft.AspNetCore.Identity;
 using Services.Abstractions;
 using Shared;
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 namespace Services;
@@ -19,12 +18,18 @@ internal sealed class AuthenticationService : IAuthenticationService
         _userManager = userManager;
         _tokenService = tokenService;
     }
-    public async Task<UserResultDto> RegisterUserAsync(RegisterUserDto registerModel)
+    public async Task<AuthUserResultDto> RegisterUserAsync(RegisterUserDto registerModel)
     {
+        var existingEmail = await CheckEmailExist(registerModel.Email);
 
+        if (existingEmail) // i will change it later ** , 
+            throw new ValidationException
+                ([$"this email {registerModel.Email} is already taken"], "Registration failed.");
 
         var user = new AppUser
         {
+            FirstName = registerModel.FirstName,
+            LastName = registerModel.LastName,
             UserName = registerModel.UserName,
             Email = registerModel.Email,
         };
@@ -43,31 +48,32 @@ internal sealed class AuthenticationService : IAuthenticationService
         //we need to seed roles first zehahhahaha 
         //await _userManager.AddToRoleAsync(user, registerModel.role);
 
-        var authClaims = new List<Claim>
-        {
-            new(ClaimTypes.NameIdentifier, user.Id),
-            new(ClaimTypes.Name, user.UserName),
-            new(ClaimTypes.Email,registerModel.Email),
-            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(),
-                ClaimValueTypes.Integer64),
-            new Claim(ClaimTypes.Role, registerModel.role ?? string.Empty)
-        };
+        #region Old Using Normal Identity ID
+        //var authClaims = new List<Claim>
+        //{
+        //    new(ClaimTypes.NameIdentifier, user.Id),
+        //    new(ClaimTypes.Name, user.UserName),
+        //    new(ClaimTypes.Email,registerModel.Email),
+        //    new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+        //    new(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(),
+        //        ClaimValueTypes.Integer64),
+        //    new Claim(ClaimTypes.Role, registerModel.role ?? string.Empty)
+        //}; 
+        #endregion
 
 
-        await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, registerModel.role ?? string.Empty)); //to test something ..
+        await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, registerModel.Role ?? string.Empty)); //to test something ..
 
-        return new UserResultDto(
+        return new AuthUserResultDto(
          user.Id,
          user.UserName,
-         user.Email,
-         _tokenService.GenerateAccessToken(authClaims));
+         user.Email);
 
 
     }
 
 
-    public Task<UserResultDto> LoginUserAsync(LoginUserDto loginModel)
+    public Task<AuthUserResultDto> LoginUserAsync(LoginUserDto loginModel)
     {
         throw new NotImplementedException();
     }

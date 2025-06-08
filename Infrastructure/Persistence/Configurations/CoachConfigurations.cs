@@ -1,11 +1,6 @@
 ﻿using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Persistence.Configurations
 {
@@ -29,18 +24,35 @@ namespace Persistence.Configurations
             builder.HasMany(c => c.GymCoaches)
                 .WithOne(gc => gc.Coach)
                 .OnDelete(DeleteBehavior.NoAction);
-            builder.HasMany(c=>c.Trainees)
-                .WithOne(t=>t.Coach)
+
+            builder.HasMany(c => c.Trainees)
+                .WithOne(t => t.Coach)
                 .OnDelete(DeleteBehavior.SetNull);
-            builder.HasMany(c=>c.Classes)
-                .WithOne(c=>c.Coach)
+
+            builder.HasMany(c => c.Classes)
+                .WithOne(c => c.Coach)
                 .OnDelete(DeleteBehavior.SetNull);
-            builder.HasMany(c=>c.ExercisesSchedules)
-                .WithOne(es=>es.Coach)
+
+            builder.HasMany(c => c.ExercisesSchedules)
+                .WithOne(es => es.Coach)
                 .OnDelete(DeleteBehavior.NoAction);
-            builder.HasMany(c=>c.MealSchedules)
-                .WithOne(ms=>ms.Coach)
+
+            builder.HasMany(c => c.MealSchedules)
+                .WithOne(ms => ms.Coach)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            #region I will make it later 
+
+            //builder.Property(couch => couch.Specializations)
+            //        .HasConversion(
+            //    toDb => toDb.ToString()
+            //    ,
+            //    fromDb => Enum.Parse<CoachSpecialization>(fromDb)
+            //    );
+
+            #endregion
+
+
 
 
         }

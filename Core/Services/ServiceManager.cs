@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Services.Abstractions;
-using Shared;
 using Shared.Cloudinary;
+using Shared.Jwt;
 
 namespace Services;
 
@@ -20,6 +20,7 @@ public class ServiceManager : IServiceManager
     private readonly Lazy<IAdminService> _lazyAdminService;
     private readonly Lazy<IClassService> _lazyClassService;
     private readonly Lazy<ICoachService> _lazyCoachService;
+    private readonly Lazy<ITraineeService> _lazyTraineeService;
 
 
     public ServiceManager(
@@ -38,6 +39,7 @@ public class ServiceManager : IServiceManager
         _lazyAdminService = new(() => new AdminService(AuthenticationService, unitOfWork));
         _lazyClassService = new(() => new ClassService(unitOfWork, mapper));
         _lazyCoachService = new(() => new CoachService(AuthenticationService, unitOfWork, UserServices, mapper));
+        _lazyTraineeService = new(() => new TraineeService(AuthenticationService, unitOfWork, UserServices, mapper, TokenService));
 
     }
 
@@ -53,6 +55,6 @@ public class ServiceManager : IServiceManager
 
     public ICoachService CoachService => _lazyCoachService.Value;
 
-    public ITraineeService TraineeService => throw new NotImplementedException();
+    public ITraineeService TraineeService => _lazyTraineeService.Value;
     public IClassService ClassService => _lazyClassService.Value;
 }

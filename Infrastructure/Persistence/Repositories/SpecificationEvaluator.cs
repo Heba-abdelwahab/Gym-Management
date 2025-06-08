@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Domain.Common;
+﻿using Domain.Common;
 using Domain.Contracts;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,27 +6,33 @@ namespace Persistence.Repositories
 {
     internal static class SpecificationEvaluator
     {
-        public static IQueryable<T> GetQuery<T,TKey>(IQueryable<T>query, ISpecification<T,TKey> specification) where T :EntityBase<TKey>
+        public static IQueryable<T> GetQuery<T, TKey>(IQueryable<T> inputQuery,
+            ISpecification<T, TKey> spec) where T : EntityBase<TKey>
         {
-            if (specification.Criteria != null)
-                query = query.Where(specification.Criteria);
+            var query = inputQuery;
 
-            if (specification.Includes!=null && specification.Includes.Count > 0)
-            {
-                foreach (var include in specification.Includes) 
-                    query = query.Include(include);               
-            }
-            if(specification.OrderBy != null)
-                query = query.OrderBy(specification.OrderBy);
+            if (spec.Criteria is not null)
+                query = query.Where(spec.Criteria);
 
-            else if(specification.OrderByDesending != null)
-                query = query.OrderByDescending(specification.OrderByDesending);
 
-            if (specification.Take != null)
-                query = query.Take(specification.Take.Value);
+            if (spec.Includes is not null)
+                query = spec.Includes.Aggregate(query, (current, expressions) => current.Include(expressions));
 
-            if(specification.Skip != null)
-                query = query.Skip(specification.Skip.Value);
+            if (spec.IncludeStrings is not null)
+                query = spec.IncludeStrings.Aggregate(query, (current, stringInclude) => current.Include(stringInclude));
+
+
+            if (spec.OrderBy is not null)
+                query = query.OrderBy(spec.OrderBy);
+
+            else if (spec.OrderByDescending is not null)
+                query = query.OrderByDescending(spec.OrderByDescending);
+
+            if (spec.Take is not null)
+                query = query.Take(spec.Take.Value);
+
+            if (spec.Skip is not null)
+                query = query.Skip(spec.Skip.Value);
 
             return query;
         }
