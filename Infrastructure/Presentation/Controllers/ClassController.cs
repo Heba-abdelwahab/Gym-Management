@@ -28,10 +28,24 @@ namespace Presentation.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateClassAsync(ClassDto newClass)
+        public async Task<IActionResult> CreateClass(ClassDto newClass)
         {
             var addedClass = await _serviceManager.ClassService.CreateClassAsync(newClass);
             return CreatedAtAction(nameof(GetClassById), new {id = addedClass.Id}, addedClass);
+        }
+
+        [HttpPut("{id:int}")]
+        public async Task<IActionResult> UpdateClass(int id, ClassDto updatedClassDto)
+        {
+            var updatedClass = await _serviceManager.ClassService.UpdateClassAsync(id, updatedClassDto);
+            return Ok(updatedClass);
+        }
+
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> DeleteClass(int id)
+        {
+            await _serviceManager.ClassService.DeleteClassByIdAsync(id);
+            return Ok($"Class with Id: {id} Deleted Successfully.");
         }
     }
 }

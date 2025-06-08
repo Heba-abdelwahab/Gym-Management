@@ -7,5 +7,7 @@ namespace Services.Abstractions
         Task<IReadOnlyList<ClassToReturnDto>> GetAllClassesAsync();
         Task<ClassToReturnDto> GetClassByIdAsync(int id);
         Task<ClassToReturnDto> CreateClassAsync(ClassDto newClassDto);
+        Task<ClassToReturnDto> UpdateClassAsync(int id, ClassDto updatedClassDto);
+        Task DeleteClassByIdAsync(int id);
     }
 }

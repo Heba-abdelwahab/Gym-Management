@@ -53,7 +53,39 @@ namespace Services
                 return _mapper.Map<ClassToReturnDto>(addedClass);
             }
 
-            throw new ClassNotFoundException(newClass.Id);
+            throw new Exception("Failed to add the Entered Class.");
+        }
+
+        public async Task<ClassToReturnDto> UpdateClassAsync(int id, ClassDto updatedClassDto)
+        {
+            var mappedClass = _mapper.Map<Class>(updatedClassDto);
+            mappedClass.Id = id;
+            _classRepo.Update(mappedClass);
+            bool isSaved = await _unitOfWork.CompleteSaveAsync();
+
+            if (isSaved)
+            {
+                return _mapper.Map<ClassToReturnDto>(mappedClass);
+            }
+
+            throw new Exception($"Failed to update the Class with Id: {id}."); 
+        }
+
+        public async Task DeleteClassByIdAsync(int id)
+        {
+            var selectedClass = await _classRepo.GetByIdAsync(id);
+            if (selectedClass is null)
+            {
+                throw new ClassNotFoundException(id);
+            }
+
+            _classRepo.Delete(selectedClass);
+            bool isDeleted = await _unitOfWork.CompleteSaveAsync();
+
+            if(!isDeleted)
+            {
+                throw new Exception($"Failed to delete the Class with Id: {id}");
+            }
         }
     }
 }
