@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Persistence;
 
@@ -11,9 +12,11 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(GymDbContext))]
-    partial class GymDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250608085805_UpdateAppUserAndAddingNewPropToTraineeEntityAndCoach")]
+    partial class UpdateAppUserAndAddingNewPropToTraineeEntityAndCoach
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -128,9 +131,6 @@ namespace Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Capcity")
-                        .HasColumnType("int");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -243,11 +243,7 @@ namespace Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("CoachId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("CoachId1")
+                    b.Property<int>("CoachId")
                         .HasColumnType("int");
 
                     b.Property<int>("GymId")
@@ -264,7 +260,7 @@ namespace Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CoachId1");
+                    b.HasIndex("CoachId");
 
                     b.HasIndex("GymId");
 
@@ -316,16 +312,10 @@ namespace Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("AppUserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AppUserId");
 
                     b.ToTable("GymOwners");
                 });
@@ -525,10 +515,6 @@ namespace Persistence.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("AppUserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("AppUserId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<int?>("CoachId")
@@ -1100,8 +1086,9 @@ namespace Persistence.Migrations
                 {
                     b.HasOne("Domain.Entities.Coach", "Coach")
                         .WithMany("GymCoaches")
-                        .HasForeignKey("CoachId1")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .HasForeignKey("CoachId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.HasOne("Domain.Entities.Gym", "Gym")
                         .WithMany("GymCoaches")
@@ -1131,17 +1118,6 @@ namespace Persistence.Migrations
                     b.Navigation("Feature");
 
                     b.Navigation("Gym");
-                });
-
-            modelBuilder.Entity("Domain.Entities.GymOwner", b =>
-                {
-                    b.HasOne("Domain.Entities.AppUser", "AppUser")
-                        .WithMany()
-                        .HasForeignKey("AppUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AppUser");
                 });
 
             modelBuilder.Entity("Domain.Entities.Meal", b =>
@@ -1237,14 +1213,12 @@ namespace Persistence.Migrations
                 {
                     b.HasOne("Domain.Entities.AppUser", "AppUser")
                         .WithMany()
-                        .HasForeignKey("AppUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AppUserId");
 
                     b.HasOne("Domain.Entities.Coach", "Coach")
                         .WithMany("Trainees")
                         .HasForeignKey("CoachId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("Domain.Entities.Gym", "Gym")
                         .WithMany("Trainees")
@@ -1253,9 +1227,7 @@ namespace Persistence.Migrations
 
                     b.HasOne("Domain.Entities.Membership", "Membership")
                         .WithMany("Trainees")
-                        .HasForeignKey("MembershipId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .HasForeignKey("MembershipId");
 
                     b.OwnsOne("Domain.ValueObjects.Address", "Address", b1 =>
                         {

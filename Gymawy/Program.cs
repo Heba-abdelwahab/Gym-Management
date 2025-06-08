@@ -11,8 +11,8 @@ using Persistence;
 using Persistence.Repositories;
 using Services;
 using Services.Abstractions;
-using Shared;
 using Shared.Cloudinary;
+using Shared.Jwt;
 using System.Text;
 namespace Gymawy
 {
@@ -20,6 +20,7 @@ namespace Gymawy
     {
         public static async Task Main(string[] args)
         {
+
             var builder = WebApplication.CreateBuilder(args);
 
 
