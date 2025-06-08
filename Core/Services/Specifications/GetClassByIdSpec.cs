@@ -7,8 +7,8 @@ namespace Services.Specifications
     {
         public GetClassByIdSpec(int id) : base(c => c.Id == id)
         {
-            AddIclude(c => c.Coach);
-            AddIclude(c => c.Gym);
+            AddIncludes(c => c.Coach);
+            AddIncludes(c => c.Gym);
         }
     }
 }

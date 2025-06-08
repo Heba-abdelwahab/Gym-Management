@@ -7,7 +7,7 @@ namespace Services.Specifications
     {
         public GetCoachByIdSpec(int id):base(c => c.Id == id)
         {
-            AddIclude(c => c.AppUser);
+            AddIncludes(c => c.AppUser);
         }
     }
 }

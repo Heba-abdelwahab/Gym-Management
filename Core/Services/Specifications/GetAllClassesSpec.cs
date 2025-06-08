@@ -7,8 +7,8 @@ namespace Services.Specifications
     {
         public GetAllClassesSpec()
         {
-            AddIclude(c => c.Coach);
-            AddIclude(c => c.Gym);
+            AddIncludes(c => c.Coach);
+            AddIncludes(c => c.Gym);
         }
     }
 }
