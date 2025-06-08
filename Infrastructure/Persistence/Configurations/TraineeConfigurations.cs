@@ -26,6 +26,9 @@ namespace Persistence.Configurations
                     location.Property(location => location.Y).HasColumnType("float");
                 });
             });
+            //builder.HasOne(c => c.AppUser)
+            //.WithOne()
+            //.HasForeignKey<Trainee>(c => c.Id);
         }
     }
 }

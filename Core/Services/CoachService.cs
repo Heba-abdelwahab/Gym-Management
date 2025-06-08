@@ -2,8 +2,10 @@
 using Domain.Contracts;
 using Domain.Entities;
 using Services.Abstractions;
+using Services.Specifications;
 using Shared;
-
+using Domain.Exceptions;
+using Services.MappingProfiles;
 namespace Services
 {
     public class CoachService : ICoachService
@@ -44,5 +46,17 @@ namespace Services
             return result;
 
         }
+        public async Task<IEnumerable<CoachPendingDto>> GetGymPendingCoachs(int gymId)
+        {
+            Gym? gym = await _unitOfWork.GetRepositories<Gym, int>().GetByIdAsync(gymId);
+            if (gym == null)
+                throw new GymNotFoundException(gymId);
+            IRepository<Coach,int> coachRepo= _unitOfWork.GetRepositories<Coach, int>();
+            IEnumerable<Coach> coachs = await coachRepo.GetAllWithSpecAsync(new GetGymPendingCoachsSpec(gymId));
+            IEnumerable<CoachPendingDto> coachPendingDtos= _mapper.Map<IEnumerable<CoachPendingDto>>(coachs);
+            return coachPendingDtos;
+        }
+
+
     }
 }

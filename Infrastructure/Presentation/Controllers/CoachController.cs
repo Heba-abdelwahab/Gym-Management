@@ -11,18 +11,18 @@ namespace Presentation.Controllers
 {
     public class CoachController : ApiControllerBase
     {
-        private readonly ICoachService _coachService;
+        private readonly IServiceManager _serviceManager;
 
-        public CoachController(ICoachService coachService)
+        public CoachController(IServiceManager serviceManager)
         {
-            _coachService = coachService;
+            _serviceManager = serviceManager;
         }
 
         [HttpPost("request-gym")]
         public async Task<IActionResult> RequestToBecomeCoachAsync(int gymId, HashSet<WorkDayDto> workDayDtos)
         {
            
-            var result = await _coachService.RequestToBecomeCoachAsync(gymId, workDayDtos);
+            var result = await _serviceManager.CoachService.RequestToBecomeCoachAsync(gymId, workDayDtos);
 
             if (result)
                 return Ok("Request to become a coach has been successfully submitted.");
@@ -30,6 +30,20 @@ namespace Presentation.Controllers
             else
                 return StatusCode(500, "An error occurred while processing your request, Please try again.");
             
+        }
+
+        [HttpGet("PendingCoach/{gymId:int}")]
+        public async Task<ActionResult<CoachPendingDto>> GetGymPendingCoachs(int gymId)
+        {
+            var coachs = await _serviceManager.CoachService.GetGymPendingCoachs(gymId);
+            return Ok(coachs);
+        }
+
+        [HttpPost("HandleCoachJobRequest/{gymId:int}")]
+        public async Task<ActionResult<CoachPendingDto>> HandleCoachJobRequest(int gymId,HandleJobRequestDto jobRequestDto)
+        {
+            var coachs = await _serviceManager.CoachService.GetGymPendingCoachs(gymId);
+            return Ok(coachs);
         }
     }
 }
