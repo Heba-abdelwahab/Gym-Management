@@ -2,6 +2,7 @@
 using Domain.Contracts;
 using Domain.Entities;
 using Services.Abstractions;
+using Services.Specifications;
 using Shared;
 
 namespace Services
@@ -44,5 +45,16 @@ namespace Services
             return result;
 
         }
+
+        public async Task<List<CoachToReturnDto>> GetCoachesbyGym(int gymId)
+        {
+            var coaches = await _unitOfWork.GetRepositories<Coach, int>()
+                                           .GetAllWithSpecAsync(new GetCoaches(gymId));
+
+            var result = _mapper.Map<List<CoachToReturnDto>>(coaches);
+
+            return result;
+        }
+
     }
 }

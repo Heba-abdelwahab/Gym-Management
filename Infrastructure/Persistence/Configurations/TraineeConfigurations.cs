@@ -13,7 +13,10 @@ namespace Persistence.Configurations
     internal class TraineeConfigurations : IEntityTypeConfiguration<Trainee>
     {
         public void Configure(EntityTypeBuilder<Trainee> builder)
+
         {
+            
+
             builder.OwnsOne(trainee => trainee.Address, address =>
             {
                 address.Property(o => o.City).HasColumnType("varchar(50)");

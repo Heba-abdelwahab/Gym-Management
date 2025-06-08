@@ -14,6 +14,10 @@ namespace Services.MappingProfiles
         public Mapper()
         {
             CreateMap<WorkDayDto, WorkDay>().ReverseMap();
+            CreateMap<Coach, CoachToReturnDto>()
+                .ForCtorParam("FirstName", x => x.MapFrom(src => src.AppUser.FirstName))
+                .ForCtorParam("LastName", x => x.MapFrom(src => src.AppUser.LastName));
+
         }
     }
 }

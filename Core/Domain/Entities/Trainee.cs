@@ -9,7 +9,8 @@ namespace Domain.Entities
         public DateTime MembershipStartDate { get; set; }
         public DateTime MembershipEndDate { get; set; }
 
-
+        public string AppUserId { get; set; }
+        public AppUser? AppUser { get; set; }
         public int GymId { get; set; }
         public int MembershipId { get; set; }
         public int? CoachId { get; set; }

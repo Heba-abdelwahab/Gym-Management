@@ -11,18 +11,19 @@ namespace Presentation.Controllers
 {
     public class CoachController : ApiControllerBase
     {
-        private readonly ICoachService _coachService;
+        private readonly IServiceManager _serviceManager;
 
-        public CoachController(ICoachService coachService)
+        public CoachController(IServiceManager serviceManager)
         {
-            _coachService = coachService;
+        
+            _serviceManager = serviceManager;
         }
 
         [HttpPost("request-gym")]
         public async Task<IActionResult> RequestToBecomeCoachAsync(int gymId, HashSet<WorkDayDto> workDayDtos)
         {
            
-            var result = await _coachService.RequestToBecomeCoachAsync(gymId, workDayDtos);
+            var result = await _serviceManager.CoachService.RequestToBecomeCoachAsync(gymId, workDayDtos);
 
             if (result)
                 return Ok("Request to become a coach has been successfully submitted.");
@@ -31,5 +32,20 @@ namespace Presentation.Controllers
                 return StatusCode(500, "An error occurred while processing your request, Please try again.");
             
         }
+
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> GetCoachesBygem(int id)
+        {
+
+            var Coaches=await _serviceManager.CoachService.GetCoachesbyGym(id);
+            if (Coaches.Any())
+                return Ok(Coaches);
+
+            else
+                return StatusCode(500, "An error occurred, Please try again.");
+
+        }
+
+
+        }
     }
-}

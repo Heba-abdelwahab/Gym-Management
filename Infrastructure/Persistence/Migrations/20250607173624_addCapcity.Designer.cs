@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Persistence;
 
@@ -11,9 +12,11 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(GymDbContext))]
-    partial class GymDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250607173624_addCapcity")]
+    partial class addCapcity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -512,10 +515,6 @@ namespace Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("AppUserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<int?>("CoachId")
                         .HasColumnType("int");
 
@@ -539,8 +538,6 @@ namespace Persistence.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AppUserId");
 
                     b.HasIndex("CoachId");
 
@@ -1207,12 +1204,6 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Domain.Entities.Trainee", b =>
                 {
-                    b.HasOne("Domain.Entities.AppUser", "AppUser")
-                        .WithMany()
-                        .HasForeignKey("AppUserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("Domain.Entities.Coach", "Coach")
                         .WithMany("Trainees")
                         .HasForeignKey("CoachId")
@@ -1278,8 +1269,6 @@ namespace Persistence.Migrations
 
                     b.Navigation("Address")
                         .IsRequired();
-
-                    b.Navigation("AppUser");
 
                     b.Navigation("Coach");
 
