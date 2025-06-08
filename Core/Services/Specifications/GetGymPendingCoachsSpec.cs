@@ -11,9 +11,12 @@ namespace Services.Specifications
 {
     public class GetGymPendingCoachsSpec:SpecificationBase<Coach,int>
     {
-        public GetGymPendingCoachsSpec(int gymId) :base(coach=>coach.GymCoaches.Any(gc=>gc.GymId== gymId&&gc.Status== RequestStatus.Pending))
+        public GetGymPendingCoachsSpec(int gymId) : base(
+            coach=>coach.GymCoaches.
+                   Any(gc=>gc.GymId== gymId && gc.Status == RequestStatus.Pending)
+        )
         {
-            AddIclude(c => c.AppUser);            
+            AddIclude(c => c.AppUser);
         }
     }
 }

@@ -51,12 +51,23 @@ namespace Services
             Gym? gym = await _unitOfWork.GetRepositories<Gym, int>().GetByIdAsync(gymId);
             if (gym == null)
                 throw new GymNotFoundException(gymId);
+
             IRepository<Coach,int> coachRepo= _unitOfWork.GetRepositories<Coach, int>();
             IEnumerable<Coach> coachs = await coachRepo.GetAllWithSpecAsync(new GetGymPendingCoachsSpec(gymId));
+
             IEnumerable<CoachPendingDto> coachPendingDtos= _mapper.Map<IEnumerable<CoachPendingDto>>(coachs);
+
             return coachPendingDtos;
         }
 
+        public async Task HandleCoachJobRequest(int gymId, HandleJobRequestDto jobRequestDto)
+        {
+            //Gym? gym = await _unitOfWork.GetRepositories<Gym, int>().GetByIdAsync(gymId);
+            //if (gym == null)
+            //    throw new GymNotFoundException(gymId);
 
+            await _unitOfWork.GetRepositories<GymCoach, int>().GetByIdAsync(gymId);
+
+        }
     }
 }

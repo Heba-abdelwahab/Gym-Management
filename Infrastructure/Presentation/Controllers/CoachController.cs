@@ -42,8 +42,8 @@ namespace Presentation.Controllers
         [HttpPost("HandleCoachJobRequest/{gymId:int}")]
         public async Task<ActionResult<CoachPendingDto>> HandleCoachJobRequest(int gymId,HandleJobRequestDto jobRequestDto)
         {
-            var coachs = await _serviceManager.CoachService.GetGymPendingCoachs(gymId);
-            return Ok(coachs);
+            await _serviceManager.CoachService.HandleCoachJobRequest(gymId, jobRequestDto);
+            return Ok("Job Request is Handled");
         }
     }
 }

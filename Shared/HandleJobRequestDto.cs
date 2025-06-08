@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,8 @@ namespace Shared
 {
     public class HandleJobRequestDto
     {
-        public int GymId { get; set; }
+        public int CoachId { get; set; }
+        public bool IsAccepted { get; set; } 
+
     }
 }
