@@ -5,7 +5,7 @@ public interface IUserService
 {
 
 
-    public string? Id { get; }
+    Task<int?> GetUserIdAsync();
     public string? UserEmail { get; }
 
     Task<IEnumerable<UserDto>> GetCairoUser();
