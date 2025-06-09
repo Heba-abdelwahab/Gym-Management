@@ -10,4 +10,5 @@ public interface IServiceManager
     public IAdminService AdminService { get; }
     public ICoachService CoachService { get; }
     public ITraineeService TraineeService { get; }
+    public IGymService GymService { get; }
 }

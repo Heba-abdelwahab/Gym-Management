@@ -10,7 +10,7 @@ namespace Domain.Entities
         public int Duration { get; set; }         // represent by month number
         public int Count { get; set; }            // number of trainees in this program
         public int GymId { get; set; }
-        public ICollection<Feature> Features { get; set; } = new List<Feature>();
+        public ICollection<GymFeature> Features { get; set; } = new List<GymFeature>();
         public ICollection<Trainee> Trainees { get; set; } = new List<Trainee>();
         public Gym Gym { get; set; }
 

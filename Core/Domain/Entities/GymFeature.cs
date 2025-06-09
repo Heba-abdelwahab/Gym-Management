@@ -17,5 +17,6 @@ namespace Domain.Entities
         public Gym Gym { get; set; }
         public Feature Feature { get; set; }
         public ICollection<TraineeSelectedFeature> TraineeSelectedFeatures { get; set; }=new HashSet<TraineeSelectedFeature>();
+        public ICollection<Membership> Memberships { get; set; } = new HashSet<Membership>();
     }
 }

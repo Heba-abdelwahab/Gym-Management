@@ -20,6 +20,7 @@ public class ServiceManager : IServiceManager
     private readonly Lazy<IAdminService> _lazyAdminService;
     private readonly Lazy<ICoachService> _lazyCoachService;
     private readonly Lazy<ITraineeService> _lazyTraineeService;
+    private readonly Lazy<IGymService> _lazyGymService;
 
 
     public ServiceManager(
@@ -38,7 +39,7 @@ public class ServiceManager : IServiceManager
         _lazyAdminService = new(() => new AdminService(AuthenticationService, unitOfWork, TokenService));
         _lazyCoachService = new(() => new CoachService(AuthenticationService, unitOfWork, UserServices, mapper, TokenService));
         _lazyTraineeService = new(() => new TraineeService(AuthenticationService, unitOfWork, UserServices, mapper, TokenService));
-
+        _lazyGymService = new(() => new GymService(unitOfWork, mapper));
     }
 
     public IPhotoService PhotoService => _lazyPhotoService.Value;
@@ -54,4 +55,6 @@ public class ServiceManager : IServiceManager
     public ICoachService CoachService => _lazyCoachService.Value;
 
     public ITraineeService TraineeService => _lazyTraineeService.Value;
+
+    public IGymService GymService => _lazyGymService.Value;
 }
