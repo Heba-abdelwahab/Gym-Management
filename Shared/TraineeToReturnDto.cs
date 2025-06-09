@@ -6,11 +6,15 @@ using System.Threading.Tasks;
 
 namespace Shared
 {
-    public record TraineeToReturnDto(  int Id ,
-     string FirstName ,
-     string LastName ,
-     DateTime MembershipStartDate ,
-     DateTime MembershipEndDate );
+    public  class TraineeToReturnDto
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string MemberShipName { get; set; }
+        public DateTime MembershipStartDate { get; set; }
+        public DateTime MembershipEndDate { get; set; }
+    }
+
 
 
 }

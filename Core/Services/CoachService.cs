@@ -8,6 +8,7 @@ using Services.Specifications;
 using Shared;
 using Domain.Exceptions;
 using Services.MappingProfiles;
+using Domain.Enums;
 namespace Services
 {
     public class CoachService : ICoachService
@@ -57,9 +58,13 @@ namespace Services
 
         public async Task<List<CoachToReturnDto>> GetCoachesbyGym(int gymId)
         {
+           
             var coaches = await _unitOfWork.GetRepositories<Coach, int>()
                                            .GetAllWithSpecAsync(new GetCoaches(gymId));
-
+            if(!coaches.Any())
+            {
+                throw new GymNotFoundException(gymId);
+            }
             var result = _mapper.Map<List<CoachToReturnDto>>(coaches);
 
             return result;
@@ -136,12 +141,16 @@ namespace Services
 
         public async Task HandleCoachJobRequest(int gymId, HandleJobRequestDto jobRequestDto)
         {
-            //Gym? gym = await _unitOfWork.GetRepositories<Gym, int>().GetByIdAsync(gymId);
-            //if (gym == null)
-            //    throw new GymNotFoundException(gymId);
 
-            await _unitOfWork.GetRepositories<GymCoach, int>().GetByIdAsync(gymId);
+            
+            var gymCoach= await _unitOfWork.GetRepositories<GymCoach, int>().GetByIdWithSpecAsync(new GetGymCoachSpec(gymId,jobRequestDto.CoachId));
+            if (gymCoach == null)
+                throw new GymCoachNotFoundException(gymId, jobRequestDto.CoachId);
 
+            gymCoach.Status = jobRequestDto.IsAccepted==true ? RequestStatus.Accepted : RequestStatus.Rejected;
+
+            if (!await _unitOfWork.CompleteSaveAsync())
+                throw new Exception("fail to update the job request status");
         }
     }
 }
