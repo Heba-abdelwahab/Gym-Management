@@ -22,10 +22,10 @@ namespace Presentation.Controllers
         }
 
         [HttpPost("request-gym")]
-        public async Task<IActionResult> RequestToBecomeCoachAsync(int gymId, HashSet<WorkDayDto> workDayDtos)
+        public async Task<IActionResult> RequestToBecomeCoachAsync(CoachRequestGymDto request)
         {
            
-            var result = await _serviceManager.CoachService.RequestToBecomeCoachAsync(gymId, workDayDtos);
+            var result = await _serviceManager.CoachService.RequestToBecomeCoachAsync(request);
 
             if (result)
                 return Ok("Request to become a coach has been successfully submitted.");

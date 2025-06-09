@@ -5,7 +5,7 @@ namespace Services.Abstractions;
 public interface ICoachService
 {
     // Request into gym to become a coach
-    Task<bool> RequestToBecomeCoachAsync(int gymId, HashSet<WorkDayDto> workDays);
+    Task<bool> RequestToBecomeCoachAsync(CoachRequestGymDto coachRequest);
     Task<List<CoachToReturnDto>> GetCoachesbyGym(int gymId);
 
     // Creates a new meal schedule for a trainee.
