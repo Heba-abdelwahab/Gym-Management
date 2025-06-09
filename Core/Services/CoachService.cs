@@ -57,9 +57,13 @@ namespace Services
 
         public async Task<List<CoachToReturnDto>> GetCoachesbyGym(int gymId)
         {
+           
             var coaches = await _unitOfWork.GetRepositories<Coach, int>()
                                            .GetAllWithSpecAsync(new GetCoaches(gymId));
-
+            if(!coaches.Any())
+            {
+                throw new GymNotFoundException(gymId);
+            }
             var result = _mapper.Map<List<CoachToReturnDto>>(coaches);
 
             return result;

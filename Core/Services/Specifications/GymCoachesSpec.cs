@@ -8,13 +8,10 @@ using Domain.Entities;
 
 namespace Services.Specifications
 {
-    internal class GetTraineeByGemSpec:SpecificationBase<Trainee,int>
+    public class GymCoachesSpec:SpecificationBase<GymCoach,int>
     {
-
-      public  GetTraineeByGemSpec(int gymid) :base(t=>t.GymId==gymid)
+        public GymCoachesSpec(int coachid):base(g=>g.CoachId==coachid)
         {
-            AddIncludes(t => t.AppUser);
-            AddIncludes(t=>t.Membership);
         }
     }
 }

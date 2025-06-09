@@ -7,8 +7,10 @@ using AutoMapper;
 using Domain.Constants;
 using Domain.Contracts;
 using Domain.Entities;
+using Domain.Exceptions;
 using Domain.ValueObjects;
 using Services.Abstractions;
+using Services.Specifications;
 using Shared;
 
 namespace Services;
@@ -35,6 +37,36 @@ internal sealed class TraineeService : ITraineeService
         _tokenService = tokenService;
 
     }
+
+    public async Task<bool> AssignCoachToTrainee(AssignCoachToTraineeDto assignCoachToTrainee)
+    {
+        Trainee trainee = await _unitOfWork.GetRepositories<Trainee, int>().GetByIdAsync(assignCoachToTrainee.TraineeId);
+        Coach coach = await _unitOfWork.GetRepositories<Coach, int>().GetByIdAsync(assignCoachToTrainee.CoachId);
+        GymCoach gymCoach = await _unitOfWork.GetRepositories<GymCoach, int>().GetByIdWithSpecAsync(new GymCoachesSpec(assignCoachToTrainee.CoachId));
+        if (trainee == null)
+        {
+            throw new TraineeNotFoundException(assignCoachToTrainee.TraineeId);
+        }
+        if (coach == null)
+        {
+            throw new CoeachesNotFoundException(assignCoachToTrainee.CoachId);
+        }
+        if (coach.CurrentCapcity < gymCoach.Capcity) { 
+        trainee.CoachId = assignCoachToTrainee.CoachId;
+            coach.CurrentCapcity++;
+
+        _unitOfWork.GetRepositories<Trainee, int>().Update(trainee);
+            _unitOfWork.GetRepositories<Coach, int>().Update(coach);
+
+        }
+        var result = await _unitOfWork.CompleteSaveAsync();
+
+        return result;
+        
+
+
+    }
+
     public async Task<AuthTraineeResultDto> CreateTraineeAsync(RegisterTraineeDto request)
     {
         var registerUser = new RegisterUserDto
@@ -72,4 +104,18 @@ internal sealed class TraineeService : ITraineeService
 
 
     }
+
+    public async Task<List<TraineeToReturnDto>> GetTrineesByGem(int gymId)
+    {
+        var Trainees = await _unitOfWork.GetRepositories<Trainee, int>().
+            GetAllWithSpecAsync(new GetTraineeByGemSpec(gymId));
+        if (!Trainees.Any())
+        {
+            throw new GymNotFoundException(gymId);
+        }
+        var result = _mapper.Map<List<TraineeToReturnDto>>(Trainees);
+
+        return result;
+    }
+
 }
