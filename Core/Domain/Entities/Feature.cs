@@ -12,6 +12,6 @@ namespace Domain.Entities
         public string Name { get; set; }
         public bool IsExtra { get; set; }
         ICollection<GymFeature> GymFeatures { get; set; } = new List<GymFeature>();  //common+extra
-        ICollection<TraineeSelectedFeature> TraineeSelectedFeatures { get; set; } = new List<TraineeSelectedFeature>();
+        //ICollection<TraineeSelectedFeature> TraineeSelectedFeatures { get; set; } = new List<TraineeSelectedFeature>();
     }
 }

@@ -12,6 +12,7 @@ using Domain.ValueObjects;
 using Services.Abstractions;
 using Services.Specifications;
 using Shared;
+using Shared.TraineeGym;
 
 namespace Services;
 
@@ -116,6 +117,42 @@ internal sealed class TraineeService : ITraineeService
         var result = _mapper.Map<List<TraineeToReturnDto>>(Trainees);
 
         return result;
+    }
+
+
+    // Trainee With Gym Membership
+    public async Task<IReadOnlyList<GymMembershipsDto>> GetAllMembershipsForGym(int GymId)
+    {
+        var Memberships = await _unitOfWork.GetRepositories<Membership, int>().
+            GetAllWithSpecAsync(new MembershipSpec(GymId));
+
+        var membershipsDto = _mapper.Map<IReadOnlyList<GymMembershipsDto>>(Memberships);
+        if (membershipsDto is null)
+            throw new GymNotFoundException(GymId);
+
+        return membershipsDto;
+    }
+
+    // Assign Trainee To Membership
+    public async Task<bool> AssignTraineeToMembership(int membershipId)
+    {
+        int? TraineeId = 1 /*_userServices.Id*/;
+        var Trainee = await _unitOfWork.GetRepositories<Trainee, int>().GetByIdAsync(TraineeId!.Value);
+
+        if (Trainee == null)
+            throw new TraineeNotFoundException(TraineeId.Value);
+
+        var membership = await _unitOfWork.GetRepositories<Membership, int>().GetByIdAsync(membershipId);
+        
+        if (membership == null)
+            throw new MembershipNotFoundException(membershipId);
+
+        Trainee.MembershipId = membershipId;
+        Trainee.MembershipStartDate = DateTime.UtcNow;
+        Trainee.MembershipEndDate = DateTime.UtcNow.AddDays(membership.Duration);
+        Trainee.GymId = membership.GymId;
+
+        return await _unitOfWork.CompleteSaveAsync();
     }
 
 }

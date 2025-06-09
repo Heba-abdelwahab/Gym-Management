@@ -37,7 +37,7 @@ namespace Services
 
         public async Task<bool> RequestToBecomeCoachAsync(CoachRequestGymDto coachRequest)
         {
-            var coachId = 1/*_userServices.Id*/;
+            var coachId = _userServices.Id;
             var gymRepo = await _unitOfWork.GetRepositories<Gym, int>().GetByIdAsync(coachRequest.gymId);
             if (gymRepo == null)
                 return false;
@@ -46,7 +46,7 @@ namespace Services
             var request = new GymCoach
             {
                 GymId = coachRequest.gymId,
-                CoachId = coachId!,
+                CoachId = coachId!.Value,
                 WorkDays = _mapper.Map<ICollection<WorkDay>>(coachRequest.workDayDtos),
             };
 
