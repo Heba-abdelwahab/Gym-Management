@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class final : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -241,6 +241,7 @@ namespace Persistence.Migrations
                     AppUserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     DateOfBirth = table.Column<DateOnly>(type: "date", nullable: true),
                     ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CurrentCapcity = table.Column<int>(type: "int", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -364,6 +365,7 @@ namespace Persistence.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Salary = table.Column<double>(type: "float", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
+                    Capcity = table.Column<int>(type: "int", nullable: false),
                     GymId = table.Column<int>(type: "int", nullable: false),
                     CoachId = table.Column<int>(type: "int", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)

@@ -12,8 +12,8 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(GymDbContext))]
-    [Migration("20250609151238_addCapcityforCoach")]
-    partial class addCapcityforCoach
+    [Migration("20250609160756_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
