@@ -17,8 +17,8 @@ namespace Domain.Entities
         public int CurrentCapacity { get; set; } 
         public int GymId { get; set; }
         public int? CoachId { get; set; }
-        public Gym Gym { get; set; }
+        public Gym? Gym { get; set; }
         public Coach? Coach { get; set; }
-        public ICollection<Trainee> Trainees { get; set; } = new List<Trainee>();
+        public ICollection<Trainee>? Trainees { get; set; } = new List<Trainee>();
     }
 }

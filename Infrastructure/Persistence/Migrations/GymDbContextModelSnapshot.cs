@@ -241,7 +241,11 @@ namespace Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CoachId")
+                    b.Property<string>("CoachId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("CoachId1")
                         .HasColumnType("int");
 
                     b.Property<int>("GymId")
@@ -258,7 +262,7 @@ namespace Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CoachId");
+                    b.HasIndex("CoachId1");
 
                     b.HasIndex("GymId");
 
@@ -1098,9 +1102,8 @@ namespace Persistence.Migrations
                 {
                     b.HasOne("Domain.Entities.Coach", "Coach")
                         .WithMany("GymCoaches")
-                        .HasForeignKey("CoachId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .HasForeignKey("CoachId1")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("Domain.Entities.Gym", "Gym")
                         .WithMany("GymCoaches")
