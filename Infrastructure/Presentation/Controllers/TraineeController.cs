@@ -43,5 +43,25 @@ public class TraineeController : ApiControllerBase
 
     }
 
+    [HttpGet("get-memberships/{id:int}")]
+    public async Task<IActionResult> GetAllMembershipsForGym(int id)
+    {
+        var memberships = await _serviceManager.TraineeService.GetAllMembershipsForGym(id);
+        if (memberships is not null)
+            return Ok(memberships);
+        else
+            return StatusCode(500, "An error occurred when trying to get memberships, Please try again.");
+    }
+
+    [HttpPost("assign-membership/{membershipId:int}")]
+    public async Task<IActionResult> AssignTraineeToMembership(int membershipId)
+    {
+        var result = await _serviceManager.TraineeService.AssignTraineeToMembership(membershipId);
+        if (result)
+            return Ok("success");
+        else
+            return StatusCode(500, "An error occurred when trying to assign trainee to membership, Please try again.");
+    }
+
 
 }
