@@ -53,12 +53,12 @@ internal sealed class TraineeService : ITraineeService
         }
         if (coach.CurrentCapcity < gymCoach.Capcity) { 
         trainee.CoachId = assignCoachToTrainee.CoachId;
-            coach.CurrentCapcity++;
+         coach.CurrentCapcity++;
 
         _unitOfWork.GetRepositories<Trainee, int>().Update(trainee);
             _unitOfWork.GetRepositories<Coach, int>().Update(coach);
 
-        }
+       }
         var result = await _unitOfWork.CompleteSaveAsync();
 
         return result;
