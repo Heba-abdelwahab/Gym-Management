@@ -7,10 +7,5 @@ using System.Threading.Tasks;
 
 namespace Shared
 {
-    public class HandleJobRequestDto
-    {
-        public int CoachId { get; set; }
-        public bool IsAccepted { get; set; } 
-
-    }
+    public record HandleJobRequestDto(int CoachId , bool IsAccepted);
 }
