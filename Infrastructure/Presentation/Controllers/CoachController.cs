@@ -49,7 +49,7 @@ namespace Presentation.Controllers
             return Ok("Job Request is Handled");
         }
 
-        [HttpPost("create-diet")]
+        [HttpPost("create-diet/{traineeId:int}")]
         public async Task<IActionResult> CreateDietForTraineeAsync( int traineeId, MealScheduleDto dietDto)
         {
             var result = await _serviceManager.CoachService.CreateDietAsync(traineeId, dietDto);
@@ -73,6 +73,19 @@ namespace Presentation.Controllers
             else
                 return StatusCode(500, "An error occurred, Please try again.");
 
+        }
+
+        [HttpPost("create-exercise-schedule/{traineeId:int}")]
+        public async Task<IActionResult> CreateExerciseScheduleForTrainee(int traineeId, ExerciseScheduleDto exerciseScheduleDto)
+        {
+            var result = await _serviceManager.CoachService.CreateExerciseScheduleAsync(traineeId, exerciseScheduleDto);
+
+            if (result)
+            {
+                return Ok(new { Message = "Exercise schedule created successfully." });
+            }
+
+            return BadRequest("Failed to create exercise schedule.");
         }
 
     }

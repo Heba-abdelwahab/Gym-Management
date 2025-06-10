@@ -73,16 +73,21 @@ namespace Services
 
         public async Task<bool> CreateDietAsync(int traineeId, MealScheduleDto dietDto)
         {
+            var coachId = _userServices.Id;
 
             var trainee = await _unitOfWork.GetRepositories<Trainee, int>().GetByIdAsync(traineeId);
-            if (trainee == null)
+            if (trainee is null)
             {
-                //throw new NotFoundException($"Trainee with ID {traineeId} not found.");
-                return false;
+                throw new TraineeNotFoundException(traineeId);
             }
 
+            var authorizedCoach = await IsCoachAuthorizedToAccessTraineeAsync(coachId!.Value, trainee);
+
+            if (!authorizedCoach)
+                throw new Exception("Un authorized Coach to access this trainee");
+
             var mealSchedule = _mapper.Map<MealSchedule>(dietDto);
-            mealSchedule.CoachId = _userServices.Id!.Value; // will do it later abo  Salem 
+            mealSchedule.CoachId = coachId!.Value;
             mealSchedule.TraineeId = traineeId;
 
             _unitOfWork.GetRepositories<MealSchedule, int>().Insert(mealSchedule);
@@ -151,6 +156,50 @@ namespace Services
 
             if (!await _unitOfWork.CompleteSaveAsync())
                 throw new Exception("fail to update the job request status");
+        }
+
+        public async Task<bool> CreateExerciseScheduleAsync(int traineeId, ExerciseScheduleDto exerciseScheduleDto)
+        {
+           var coachId = _userServices.Id;
+
+            var trainee = await _unitOfWork.GetRepositories<Trainee, int>().GetByIdAsync(traineeId);
+            if (trainee is null)
+            {
+                throw new TraineeNotFoundException(traineeId);
+            }
+            var authorizedCoach = await IsCoachAuthorizedToAccessTraineeAsync(coachId!.Value, trainee);
+
+            if (!authorizedCoach)
+                throw new Exception("Un authorized Coach to access this trainee");
+
+            var exerciseSchedule = _mapper.Map<ExercisesSchedule>(exerciseScheduleDto);
+
+            exerciseSchedule.CoachId = coachId!.Value;
+            exerciseSchedule.TraineeId = traineeId;
+
+            _unitOfWork.GetRepositories<ExercisesSchedule, int>().Insert(exerciseSchedule);
+
+            return await _unitOfWork.CompleteSaveAsync();
+        }
+
+        public async Task<bool> IsCoachAuthorizedToAccessTraineeAsync(int coachId, Trainee trainee)
+        {
+           
+            if (trainee?.GymId is null)
+                throw new Exception("Trainee has not joined any gym yet.");
+
+            var coachGyms = await _unitOfWork.GetRepositories<GymCoach, int>().GetAllWithSpecAsync(new GymCoachesSpec(coachId));
+
+            var coachGymIds = coachGyms.Select(gc => gc.GymId).ToList();
+
+            if (!coachGymIds.Contains(trainee.GymId.Value))
+                throw new Exception("The coach and the trainee are not in the same gym.");
+
+
+            if (trainee?.CoachId is null)
+                throw new Exception("Trainee has not been assigned to any coach.");
+
+            return trainee.CoachId.Value == coachId; 
         }
     }
 }
