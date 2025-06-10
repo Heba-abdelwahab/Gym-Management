@@ -18,6 +18,12 @@ namespace Services.MappingProfiles
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Feature.Name))
                 .ForMember(dest => dest.IsExtra, opt => opt.MapFrom(src => src.Feature.IsExtra))
                 .ReverseMap();
+
+            CreateMap<TraineeSelectedFeature, TraineeFeatureToReturnDto>()
+                .ForMember(dest => dest.Count, opt => opt.MapFrom(src => src.SessionCount))
+                .ForMember(dest => dest.SessionCost, opt => opt.MapFrom(src => src.GymFeature.Cost))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.GymFeature.Feature.Name));
+
         }
     }
 }

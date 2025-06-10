@@ -244,4 +244,22 @@ internal sealed class TraineeService : ITraineeService
         else
             return null;
     }
+
+    // ================================= Trainee Subscriptions ===================================
+
+    public async Task<TraineeSubscriptionsToReturnDto> TraineeSubscriptions()
+    {
+        int? TraineeId = 1 /*_userServices.Id*/;
+        var TraineeDataSpec = new AllTraineeDataSpec(TraineeId!.Value);
+        var Trainee = await _unitOfWork.GetRepositories<Trainee, int>().GetByIdWithSpecAsync(TraineeDataSpec);
+
+        if (Trainee == null)
+            throw new TraineeNotFoundException(TraineeId.Value);
+
+        var TraineeMapped = _mapper.Map<TraineeSubscriptionsToReturnDto>(Trainee);
+        TraineeMapped.Features = _mapper.Map<IReadOnlyList<TraineeFeatureToReturnDto>>(Trainee.TraineeSelectedFeatures);
+        TraineeMapped.Class = _mapper.Map<IReadOnlyList<ClassTraineeToReturnDto>>(Trainee.Classes);
+
+        return TraineeMapped;
+    }
 }

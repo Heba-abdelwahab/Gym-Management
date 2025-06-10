@@ -108,4 +108,15 @@ public class TraineeController : ApiControllerBase
     }
 
 
+    // ================================== Trainee Subscriptions ===================================
+    [HttpGet("subscriptions")]
+    public async Task<IActionResult> GetTraineeSubscriptions()
+    {
+        var subscriptions = await _serviceManager.TraineeService.TraineeSubscriptions();
+        if (subscriptions is not null)
+            return Ok(subscriptions);
+        else
+            return StatusCode(500, "An error occurred when trying to get subscriptions, Please try again.");
+    }
+
 }

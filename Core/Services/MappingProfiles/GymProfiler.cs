@@ -5,6 +5,7 @@ using Domain.ValueObjects;
 using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.EntityFrameworkCore;
 using Shared;
+using Shared.TraineeGym;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,7 +56,9 @@ namespace Services.MappingProfiles
             CreateMap<AddressDto, Address>().ReverseMap();
             CreateMap<GymExtraFeatureDto, GymFeature>()
            .ForMember(des=>des.Feature, opt => opt.MapFrom(src => new Feature() { Name = src.Name, IsExtra = true }));
-           
+
+            CreateMap<Address, AddressToReturnDto>();
+            CreateMap<Gym, GymToReturnDto>();
            
         }
     }

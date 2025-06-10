@@ -15,5 +15,5 @@ public interface ITraineeService
     Task<bool> JoinClass(int classId);
     Task<IReadOnlyList<GymFeatureToReturnDto>> GetGymFeatures(int gymId);
     Task<TraineeFeatureToReturnDto?> AssignTraineeToFeature(int featureId, int count);
-
+    Task<TraineeSubscriptionsToReturnDto> TraineeSubscriptions();
 }
