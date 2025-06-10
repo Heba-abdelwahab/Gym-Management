@@ -8,9 +8,9 @@ namespace Shared.TraineeGym
 {
     public class TraineeFeatureToReturnDto
     {
-        public string Name { get; set; }
         public int Count { get; set; }
         public decimal SessionCost { get; set; }
         public double TotalCost { get; set; }
+        public string Name { get; set; }
     }
 }
