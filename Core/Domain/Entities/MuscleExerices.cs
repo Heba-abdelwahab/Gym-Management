@@ -14,7 +14,7 @@ namespace Domain.Entities
         public DateTime Day { get; set; }
         public int MuscleId { get; set; }
         public int ExercisesScheduleId { get; set; }
-        public ExercisesSchedule ExercisesSchedule { get; set; }
+        public ExercisesSchedule? ExercisesSchedule { get; set; }
         public Muscle Muscle { get; set; }
 
     }

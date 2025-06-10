@@ -1,4 +1,5 @@
-﻿using Shared;
+﻿using Domain.Entities;
+using Shared;
 
 namespace Services.Abstractions;
 
@@ -18,4 +19,7 @@ public interface ICoachService
 
     Task<IEnumerable<CoachPendingDto>> GetGymPendingCoachs(int gymId);
     Task HandleCoachJobRequest(int gymId, HandleJobRequestDto jobRequestDto);
+
+    Task<bool> CreateExerciseScheduleAsync(int traineeId, ExerciseScheduleDto exerciseScheduleDto);
+    Task<bool> IsCoachAuthorizedToAccessTraineeAsync(int coachId, Trainee trainee);
 }

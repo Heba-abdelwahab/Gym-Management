@@ -22,6 +22,13 @@ namespace Services.MappingProfiles
                            opt => opt.MapFrom(src => new Schedule { StartDay = src.StartDate, EndDay = src.EndDate }));
 
 
+            CreateMap<MuscleExerciseDto, MuscleExerices>();
+
+            CreateMap<ExerciseScheduleDto, ExercisesSchedule>()
+                .ForMember(dest => dest.schedule,
+                           opt => opt.MapFrom(src => new Schedule { StartDay = src.StartDate, EndDay = src.EndDate }));
+
+
             #region Address & Location
             CreateMap<AddressDto, Address>();
             CreateMap<LocationDto, Location>();
