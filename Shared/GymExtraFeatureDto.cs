@@ -8,11 +8,11 @@ namespace Shared
 {
     public record GymExtraFeatureDto
     (
-        string Name ,
+        int? FeatureId,
         string Image,
         string Description ,
         decimal Cost ,
-        int? FeatureId,
+        string Name ,
         bool IsExtra
 
     );

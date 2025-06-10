@@ -10,4 +10,10 @@ public interface ITraineeService
     Task<bool> AssignCoachToTrainee(AssignCoachToTraineeDto assignCoachToTrainee);
     Task<IReadOnlyList<GymMembershipsDto>> GetAllMembershipsForGym(int GymId);
     Task<bool> AssignTraineeToMembership(int membershipId);
+
+    Task<IReadOnlyList<ClassTraineeToReturnDto>> GetClassesByGym(int GymId);
+    Task<bool> JoinClass(int classId);
+    Task<IReadOnlyList<GymFeatureToReturnDto>> GetGymFeatures(int gymId);
+    Task<TraineeFeatureToReturnDto?> AssignTraineeToFeature(int featureId, int count);
+
 }

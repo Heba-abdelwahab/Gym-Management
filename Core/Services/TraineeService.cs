@@ -52,18 +52,19 @@ internal sealed class TraineeService : ITraineeService
         {
             throw new CoeachesNotFoundException(assignCoachToTrainee.CoachId);
         }
-        if (coach.CurrentCapcity < gymCoach.Capcity) { 
-        trainee.CoachId = assignCoachToTrainee.CoachId;
-         coach.CurrentCapcity++;
+        if (coach.CurrentCapcity < gymCoach.Capcity)
+        {
+            trainee.CoachId = assignCoachToTrainee.CoachId;
+            coach.CurrentCapcity++;
 
-        _unitOfWork.GetRepositories<Trainee, int>().Update(trainee);
+            _unitOfWork.GetRepositories<Trainee, int>().Update(trainee);
             _unitOfWork.GetRepositories<Coach, int>().Update(coach);
 
-       }
+        }
         var result = await _unitOfWork.CompleteSaveAsync();
 
         return result;
-        
+
 
 
     }
@@ -120,7 +121,7 @@ internal sealed class TraineeService : ITraineeService
     }
 
 
-    // Trainee With Gym Membership
+    // =================================== Gym Membership ===================================
     public async Task<IReadOnlyList<GymMembershipsDto>> GetAllMembershipsForGym(int GymId)
     {
         var Memberships = await _unitOfWork.GetRepositories<Membership, int>().
@@ -136,14 +137,14 @@ internal sealed class TraineeService : ITraineeService
     // Assign Trainee To Membership
     public async Task<bool> AssignTraineeToMembership(int membershipId)
     {
-        int? TraineeId = 1 /*_userServices.Id*/;
+        int? TraineeId = _userServices.Id;
         var Trainee = await _unitOfWork.GetRepositories<Trainee, int>().GetByIdAsync(TraineeId!.Value);
 
         if (Trainee == null)
             throw new TraineeNotFoundException(TraineeId.Value);
 
         var membership = await _unitOfWork.GetRepositories<Membership, int>().GetByIdAsync(membershipId);
-        
+
         if (membership == null)
             throw new MembershipNotFoundException(membershipId);
 
@@ -155,4 +156,92 @@ internal sealed class TraineeService : ITraineeService
         return await _unitOfWork.CompleteSaveAsync();
     }
 
+    // ================================= Gym Classes ===================================
+    public async Task<IReadOnlyList<ClassTraineeToReturnDto>> GetClassesByGym(int GymId)
+    {
+        var Spec = new ClassesForTraineeSpec(GymId);
+        var classes = await _unitOfWork.GetRepositories<Class, int>().GetAllWithSpecAsync(Spec);
+
+        if (classes is null)
+            throw new GymNotFoundException(GymId);
+
+        var classesDto = _mapper.Map<IReadOnlyList<ClassTraineeToReturnDto>>(classes);
+        return classesDto;
+    }
+
+    public async Task<bool> JoinClass(int classId)
+    {
+        int? TraineeId = _userServices.Id;
+        var trainee = await _unitOfWork.GetRepositories<Trainee, int>().GetByIdAsync(TraineeId!.Value);
+
+        var ClassSpec = new ClassWithTraineesSpec(classId);
+        var classEntity = await _unitOfWork.GetRepositories<Class, int>().GetByIdWithSpecAsync(ClassSpec);
+
+        if (trainee == null)
+            throw new TraineeNotFoundException(TraineeId.Value);
+        if (classEntity == null)
+            throw new ClassNotFoundException(classId);
+
+        // check if the trainee is already in the class
+        if (classEntity.Trainees.Any(t => t.Id == trainee.Id))
+            throw new TraineeAlreadyInClassException(trainee.Id, classId);
+
+        if (classEntity.Trainees.Count >= classEntity.Capacity)
+            throw new ClassFullException(classId);
+        classEntity.Trainees.Add(trainee);
+
+        return await _unitOfWork.CompleteSaveAsync();
+    }
+
+
+    // ================================= Gym Features ===================================
+
+    // Get Gym Features
+    public async Task<IReadOnlyList<GymFeatureToReturnDto>> GetGymFeatures(int gymId)
+    {
+        var FeatureSpec = new GymFeatureSpec(gymId);
+        var Features = (IReadOnlyList<GymFeature>)await _unitOfWork.GetRepositories<GymFeature, int>().GetAllWithSpecAsync(FeatureSpec);
+
+        if (Features is null)
+            throw new GymNotFoundException(gymId);
+
+        var FeaturesMapped = _mapper.Map<IReadOnlyList<GymFeatureToReturnDto>>(Features);
+
+        return FeaturesMapped;
+    }
+
+    // Assign Trainee To Feature
+    public async Task<TraineeFeatureToReturnDto?> AssignTraineeToFeature(int featureId, int count)
+    {
+        int? TraineeId = _userServices.Id;
+        var trainee = await _unitOfWork.GetRepositories<Trainee, int>().GetByIdAsync(TraineeId!.Value);
+
+        var WholeFeatureSpec = new WholeFeature(featureId);
+        var Feature = await _unitOfWork.GetRepositories<GymFeature, int>().GetByIdWithSpecAsync(WholeFeatureSpec);
+
+        if (trainee == null)
+            throw new TraineeNotFoundException(TraineeId.Value);
+
+        if (Feature == null)
+            throw new GymFeatureNotFoundException(featureId);
+        trainee.TraineeSelectedFeatures.Add(new TraineeSelectedFeature
+        {
+            GymFeatureId = featureId,
+            TraineeId = trainee.Id,
+            SessionCount = count,
+            TotalCost = (double)(Feature.Cost * count)
+        });
+        var result = await _unitOfWork.CompleteSaveAsync();
+        if (result)
+            return new TraineeFeatureToReturnDto()
+            {
+                Name = Feature.Feature.Name,
+                Count = count,
+                SessionCost = Feature.Cost,
+                TotalCost = (double)(Feature.Cost * count)
+            };
+
+        else
+            return null;
+    }
 }

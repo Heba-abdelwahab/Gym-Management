@@ -19,9 +19,9 @@ public class TraineeController : ApiControllerBase
     [HttpGet("Trainees/{gymId:int}")]
     public async Task<IActionResult> GetTraineeByGYm(int gymId)
     {
-        var trainees=await _serviceManager.TraineeService.GetTrineesByGem(gymId);
-        if(trainees.Any())
-        return Ok(trainees);
+        var trainees = await _serviceManager.TraineeService.GetTrineesByGem(gymId);
+        if (trainees.Any())
+            return Ok(trainees);
 
         else
             return StatusCode(500, "An error occurred when Trying to get Trainees, Please try again.");
@@ -34,9 +34,9 @@ public class TraineeController : ApiControllerBase
     [HttpPost]
     public async Task<IActionResult> AssignCoachToTrainee(AssignCoachToTraineeDto assignCoachToTrainee)
     {
-     var t= await _serviceManager.TraineeService.AssignCoachToTrainee(assignCoachToTrainee);
-        if(t)
-        return Ok("success");
+        var t = await _serviceManager.TraineeService.AssignCoachToTrainee(assignCoachToTrainee);
+        if (t)
+            return Ok("success");
         else
             return StatusCode(500, "An error occurred when Assigning coach to trainee, Please try again.");
 
@@ -61,6 +61,50 @@ public class TraineeController : ApiControllerBase
             return Ok("success");
         else
             return StatusCode(500, "An error occurred when trying to assign trainee to membership, Please try again.");
+    }
+
+    // Classes For Trainee
+    [HttpGet("classes/{gymId:int}")]
+    public async Task<IActionResult> GetClassesByGym(int gymId)
+    {
+        var classes = await _serviceManager.TraineeService.GetClassesByGym(gymId);
+        if (classes is not null)
+            return Ok(classes);
+        else
+            return StatusCode(500, "An error occurred when trying to get classes, Please try again.");
+    }
+
+    // Join Class
+    [HttpPost("join-class/{classId:int}")]
+    public async Task<IActionResult> JoinClass(int classId)
+    {
+        var result = await _serviceManager.TraineeService.JoinClass(classId);
+        if (result)
+            return Ok("success");
+        else
+            return StatusCode(500, "An error occurred when trying to join class, Please try again.");
+    }
+
+    // Show Gym Features
+    [HttpGet("features/{gymId:int}")]
+    public async Task<IActionResult> GetGymFeatures(int gymId)
+    {
+        var features = await _serviceManager.TraineeService.GetGymFeatures(gymId);
+        if (features is not null)
+            return Ok(features);
+        else
+            return StatusCode(500, "An error occurred when trying to get gym features, Please try again.");
+    }
+
+    // Assign Trainee To Feature
+    [HttpPost("add-feature/{featureId:int}")]
+    public async Task<IActionResult> AssignTraineeToFeature(int featureId, [FromQuery] int count)
+    {
+        var result = await _serviceManager.TraineeService.AssignTraineeToFeature(featureId, count);
+        if (result is not null)
+            return Ok(result);
+        else
+            return StatusCode(500, "An error occurred when trying to assign trainee to feature, Please try again.");
     }
 
 
