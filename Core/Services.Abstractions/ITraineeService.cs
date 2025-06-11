@@ -1,5 +1,6 @@
 ﻿using Shared;
 using Shared.TraineeGym;
+using System.Collections.Generic;
 
 namespace Services.Abstractions;
 
@@ -16,4 +17,6 @@ public interface ITraineeService
     Task<IReadOnlyList<GymFeatureToReturnDto>> GetGymFeatures(int gymId);
     Task<TraineeFeatureToReturnDto?> AssignTraineeToFeature(int featureId, int count);
     Task<TraineeSubscriptionsToReturnDto> TraineeSubscriptions();
+    Task<IReadOnlyList<GymToReturnDto>> AllGyms();
+    Task<GymToReturnDto> GetGymById(int gymId);
 }

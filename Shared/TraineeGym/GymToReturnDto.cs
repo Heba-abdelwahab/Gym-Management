@@ -9,8 +9,9 @@ namespace Shared.TraineeGym
 {
     public class GymToReturnDto
     {
-        public GymType GymType { get; set; }
-        public string Media { get; set; }
+        public int Id { get; set; }
+        public string GymType { get; set; }
+        public string Logo { get; set; }
         public string Name { get; set; }
         public string Phone { get; set; }
         public string Description { get; set; }
