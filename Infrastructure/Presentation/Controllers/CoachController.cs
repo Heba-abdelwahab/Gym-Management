@@ -49,8 +49,9 @@ namespace Presentation.Controllers
             return Ok("Job Request is Handled");
         }
 
-        [HttpPost("create-diet/{traineeId:int}")]
-        public async Task<IActionResult> CreateDietForTraineeAsync( int traineeId, MealScheduleDto dietDto)
+        #region Diet for Trainee
+        [HttpPost("diet/{traineeId:int}")]
+        public async Task<IActionResult> CreateDietForTrainee( int traineeId, MealScheduleDto dietDto)
         {
             var result = await _serviceManager.CoachService.CreateDietAsync(traineeId, dietDto);
 
@@ -61,6 +62,35 @@ namespace Presentation.Controllers
 
             return BadRequest("Failed to create diet.");
         }
+
+        [HttpGet("diet/{dietId}")]
+        public async Task<IActionResult> GetDietById(int dietId)
+        {
+            var diet = await _serviceManager.CoachService.GetDietByIdAsync(dietId);
+            return diet is null ? NotFound() : Ok(diet);
+        }
+
+        [HttpGet("diets/{traineeId}")]
+        public async Task<IActionResult> GetAllDietsForTrainee(int traineeId)
+        {
+            var diets = await _serviceManager.CoachService.GetDietsForTraineeAsync(traineeId);
+            return Ok(diets);
+        }
+
+        [HttpPut("diet/{dietId}")]
+        public async Task<IActionResult> UpdateDietById(int dietId,  MealScheduleUpdateDto dto)
+        {
+            var result = await _serviceManager.CoachService.UpdateDietAsync(dietId, dto);
+            return result ? Ok("Diet updated successfully.") : BadRequest("Failed to update diet.");
+        }
+
+        [HttpDelete("diet/{dietId}")]
+        public async Task<IActionResult> DeleteDietById(int dietId)
+        {
+            var result = await _serviceManager.CoachService.DeleteDietAsync(dietId);
+            return result ? Ok("Diet deleted successfully.") : BadRequest("Failed to delete diet.");
+        }
+        #endregion
 
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetCoachesBygem(int id)
@@ -75,7 +105,8 @@ namespace Presentation.Controllers
 
         }
 
-        [HttpPost("create-exercise-schedule/{traineeId:int}")]
+        #region Excercise Schdule for Trainee
+        [HttpPost("exercise-schedule/{traineeId:int}")]
         public async Task<IActionResult> CreateExerciseScheduleForTrainee(int traineeId, ExerciseScheduleDto exerciseScheduleDto)
         {
             var result = await _serviceManager.CoachService.CreateExerciseScheduleAsync(traineeId, exerciseScheduleDto);
@@ -87,6 +118,37 @@ namespace Presentation.Controllers
 
             return BadRequest("Failed to create exercise schedule.");
         }
+
+        [HttpGet("exercise-schedule/{scheduleId:int}")]
+        public async Task<IActionResult> GetExerciseScheduleById(int scheduleId)
+        {
+            var schedule = await _serviceManager.CoachService.GetExerciseScheduleByIdAsync(scheduleId);
+            return schedule is null ? NotFound() : Ok(schedule);
+        }
+
+        [HttpGet("exercise-schedules/{traineeId:int}")]
+        public async Task<IActionResult> GetExerciseSchedulesForTrainee(int traineeId)
+        {
+            var schedules = await _serviceManager.CoachService.GetExerciseSchedulesForTraineeAsync(traineeId);
+            return Ok(schedules);
+        }
+
+        [HttpPut("exercise-schedule/{scheduleId:int}")]
+        public async Task<IActionResult> UpdateExerciseScheduleById(int scheduleId, ExerciseScheduleUpdateDto dto)
+        {
+
+            var result = await _serviceManager.CoachService.UpdateExerciseScheduleAsync(scheduleId, dto);
+            return result ? Ok("Exercise schedule updated successfully.") : BadRequest("Failed to update schedule.");
+        }
+
+        [HttpDelete("exercise-schedule/{scheduleId:int}")]
+        public async Task<IActionResult> DeleteExerciseScheduleById(int scheduleId)
+        {
+
+            var result = await _serviceManager.CoachService.DeleteExerciseScheduleAsync(scheduleId);
+            return result ? Ok("Exercise schedule deleted successfully.") : BadRequest("Failed to delete schedule.");
+        }
+        #endregion
 
     }
 }
