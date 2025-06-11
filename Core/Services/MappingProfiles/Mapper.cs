@@ -14,20 +14,35 @@ namespace Services.MappingProfiles
                 .ForCtorParam("FirstName", x => x.MapFrom(src => src.AppUser.FirstName))
                 .ForCtorParam("LastName", x => x.MapFrom(src => src.AppUser.LastName));
 
-
+            
             CreateMap<MealDto, Meal>().ReverseMap();
 
             CreateMap<MealScheduleDto, MealSchedule>()
                 .ForMember(dest => dest.schedule,
                            opt => opt.MapFrom(src => new Schedule { StartDay = src.StartDate, EndDay = src.EndDate }));
-
-
+            #region Exercises Schedule
+            // --- From DTO to Entity ---
             CreateMap<MuscleExerciseDto, MuscleExerices>();
+
+            CreateMap<MuscleExerciseResultDto, MuscleExerices>();
 
             CreateMap<ExerciseScheduleDto, ExercisesSchedule>()
                 .ForMember(dest => dest.schedule,
                            opt => opt.MapFrom(src => new Schedule { StartDay = src.StartDate, EndDay = src.EndDate }));
 
+            CreateMap<ExerciseScheduleUpdateDto, ExercisesSchedule>()
+               .ForMember(dest => dest.schedule,
+                          opt => opt.MapFrom(src => new Schedule { StartDay = src.StartDate, EndDay = src.EndDate }));
+
+            // --- From Entity to DTO ---
+            CreateMap<MuscleExerices, MuscleExerciseResultDto>();
+
+            CreateMap<ExercisesSchedule, ExerciseScheduleResultDto>()
+                .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.schedule.StartDay))
+                .ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.schedule.EndDay));
+
+         
+            #endregion
 
             #region Address & Location
             CreateMap<AddressDto, Address>();

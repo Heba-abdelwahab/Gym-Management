@@ -75,7 +75,8 @@ namespace Presentation.Controllers
 
         }
 
-        [HttpPost("create-exercise-schedule/{traineeId:int}")]
+        #region Excercise Schdule for Trainee
+        [HttpPost("exercise-schedule/{traineeId:int}")]
         public async Task<IActionResult> CreateExerciseScheduleForTrainee(int traineeId, ExerciseScheduleDto exerciseScheduleDto)
         {
             var result = await _serviceManager.CoachService.CreateExerciseScheduleAsync(traineeId, exerciseScheduleDto);
@@ -87,6 +88,37 @@ namespace Presentation.Controllers
 
             return BadRequest("Failed to create exercise schedule.");
         }
+
+        [HttpGet("exercise-schedule/{scheduleId:int}")]
+        public async Task<IActionResult> GetById(int scheduleId)
+        {
+            var schedule = await _serviceManager.CoachService.GetExerciseScheduleByIdAsync(scheduleId);
+            return schedule is null ? NotFound() : Ok(schedule);
+        }
+
+        [HttpGet("exercise-schedules/{traineeId:int}")]
+        public async Task<IActionResult> GetAllForTrainee(int traineeId)
+        {
+            var schedules = await _serviceManager.CoachService.GetExerciseSchedulesForTraineeAsync(traineeId);
+            return Ok(schedules);
+        }
+
+        [HttpPut("exercise-schedule/{scheduleId:int}")]
+        public async Task<IActionResult> Update(int scheduleId, ExerciseScheduleUpdateDto dto)
+        {
+
+            var result = await _serviceManager.CoachService.UpdateExerciseScheduleAsync(scheduleId, dto);
+            return result ? Ok("Exercise schedule updated successfully.") : BadRequest("Failed to update schedule.");
+        }
+
+        [HttpDelete("exercise-schedule/{scheduleId:int}")]
+        public async Task<IActionResult> Delete(int scheduleId)
+        {
+
+            var result = await _serviceManager.CoachService.DeleteExerciseScheduleAsync(scheduleId);
+            return result ? Ok("Exercise schedule deleted successfully.") : BadRequest("Failed to delete schedule.");
+        }
+        #endregion
 
     }
 }
