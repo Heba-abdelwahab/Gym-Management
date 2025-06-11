@@ -9,10 +9,13 @@ public interface ICoachService
     Task<bool> RequestToBecomeCoachAsync(CoachRequestGymDto coachRequest);
     Task<List<CoachToReturnDto>> GetCoachesbyGym(int gymId);
 
-    // Creates a new meal schedule for a trainee.
+    #region Diet for trainee
     Task<bool> CreateDietAsync(int traineeId, MealScheduleDto dietDto);
-
-
+    Task<MealScheduleResultDto?> GetDietByIdAsync(int dietId);
+    Task<IEnumerable<MealScheduleResultDto>> GetDietsForTraineeAsync(int traineeId);
+    Task<bool> UpdateDietAsync(int dietId, MealScheduleUpdateDto dto);
+    Task<bool> DeleteDietAsync(int dietId);
+    #endregion
     Task<AuthCoachResultDto> CreateCoachAsync(RegisterCoachDto request);
 
 

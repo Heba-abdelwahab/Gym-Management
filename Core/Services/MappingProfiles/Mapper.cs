@@ -14,17 +14,28 @@ namespace Services.MappingProfiles
                 .ForCtorParam("FirstName", x => x.MapFrom(src => src.AppUser.FirstName))
                 .ForCtorParam("LastName", x => x.MapFrom(src => src.AppUser.LastName));
 
-            
+            #region Diet
+            // From DTO to Entity
             CreateMap<MealDto, Meal>().ReverseMap();
+            CreateMap<MealResultDto, Meal>().ReverseMap();
 
             CreateMap<MealScheduleDto, MealSchedule>()
-                .ForMember(dest => dest.schedule,
-                           opt => opt.MapFrom(src => new Schedule { StartDay = src.StartDate, EndDay = src.EndDate }));
-            #region Exercises Schedule
-            // --- From DTO to Entity ---
-            CreateMap<MuscleExerciseDto, MuscleExerices>();
+                .ForMember(dest => dest.schedule, opt => opt.MapFrom(src => new Schedule { StartDay = src.StartDate, EndDay = src.EndDate }));
 
-            CreateMap<MuscleExerciseResultDto, MuscleExerices>();
+            CreateMap<MealScheduleUpdateDto, MealSchedule>()
+                .ForMember(dest => dest.schedule, opt => opt.MapFrom(src => new Schedule { StartDay = src.StartDate, EndDay = src.EndDate }));
+
+            // From Entity to DTO
+            CreateMap<MealSchedule, MealScheduleResultDto>()
+                .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.schedule.StartDay))
+                .ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.schedule.EndDay));
+            #endregion
+
+            #region Exercise Schedule
+            // --- From DTO to Entity ---
+            CreateMap<MuscleExerciseDto, MuscleExerices>().ReverseMap();
+
+            CreateMap<MuscleExerciseResultDto, MuscleExerices>().ReverseMap();
 
             CreateMap<ExerciseScheduleDto, ExercisesSchedule>()
                 .ForMember(dest => dest.schedule,
@@ -35,7 +46,6 @@ namespace Services.MappingProfiles
                           opt => opt.MapFrom(src => new Schedule { StartDay = src.StartDate, EndDay = src.EndDate }));
 
             // --- From Entity to DTO ---
-            CreateMap<MuscleExerices, MuscleExerciseResultDto>();
 
             CreateMap<ExercisesSchedule, ExerciseScheduleResultDto>()
                 .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.schedule.StartDay))
