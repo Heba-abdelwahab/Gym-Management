@@ -15,7 +15,7 @@ namespace Shared.TraineeGym
         public decimal Cost { get; set; }
         public int Capacity { get; set; }
         public int CurrentCapacity { get; set; }
-        public int? CoachId { get; set; }
+        //public int? CoachId { get; set; }
         public CoachToReturnDto? Coach { get; set; }
 
     }

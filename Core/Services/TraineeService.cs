@@ -262,4 +262,23 @@ internal sealed class TraineeService : ITraineeService
 
         return TraineeMapped;
     }
+
+    // ============================== Trainee Gyms ===================================
+    public async Task<IReadOnlyList<GymToReturnDto>> AllGyms()
+    {
+        var gyms = await _unitOfWork.GetRepositories<Gym, int>().GetAllAsync();
+        if (gyms is null)
+            throw new GymNotFoundException(0); // Assuming 0 is an invalid gym ID
+        var gymsMapped = _mapper.Map<IReadOnlyList<GymToReturnDto>>(gyms);
+        return gymsMapped;
+    }
+
+    public async Task<GymToReturnDto> GetGymById(int gymId)
+    {
+        var gyms = await _unitOfWork.GetRepositories<Gym, int>().GetByIdAsync(gymId);
+        if (gyms is null)
+            throw new GymNotFoundException(0); // Assuming 0 is an invalid gym ID
+        var gymsMapped = _mapper.Map<GymToReturnDto>(gyms);
+        return gymsMapped;
+    }
 }

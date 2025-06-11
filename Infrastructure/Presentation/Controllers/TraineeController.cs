@@ -119,4 +119,25 @@ public class TraineeController : ApiControllerBase
             return StatusCode(500, "An error occurred when trying to get subscriptions, Please try again.");
     }
 
+
+    // =================================== Trainee Gym ==============================================
+    [HttpGet("all-gyms")]
+    public async Task<IActionResult> GetAllGymsData()
+    {
+        var GymsData = await _serviceManager.TraineeService.AllGyms();
+        if(GymsData is not null)
+            return Ok(GymsData);
+        else
+            return StatusCode(500, "An error occurred when trying to get Gyms, Please try again.");
+    }
+
+    [HttpGet("gym/{gymId:int}")]
+    public async Task<IActionResult> GetGymById(int gymId)
+    {
+        var gym = await _serviceManager.TraineeService.GetGymById(gymId);
+        if (gym is not null)
+            return Ok(gym);
+        else
+            return StatusCode(500, "An error occurred when trying to get gym, Please try again.");
+    }
 }

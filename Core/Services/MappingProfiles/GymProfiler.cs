@@ -58,7 +58,8 @@ namespace Services.MappingProfiles
            .ForMember(des=>des.Feature, opt => opt.MapFrom(src => new Feature() { Name = src.Name, IsExtra = true }));
 
             CreateMap<Address, AddressToReturnDto>();
-            CreateMap<Gym, GymToReturnDto>();
+            CreateMap<Gym, GymToReturnDto>()
+                .ForMember(dest => dest.Logo, opt => opt.MapFrom(src => src.Media));
            
         }
     }
