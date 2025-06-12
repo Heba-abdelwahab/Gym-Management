@@ -5,13 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Domain.Contracts;
 using Domain.Entities;
-
+using Domain.Enums;
 namespace Services.Specifications
 {
     internal class GetCoaches:SpecificationBase<Coach,int>
     {
 
-        public GetCoaches(int id) : base(c=>c.GymCoaches.Any(g=>g.GymId==id))
+        public GetCoaches(int id) : base(c=>c.GymCoaches.Any(g=>g.GymId==id&&g.Status==RequestStatus.Accepted))
         {
             AddIncludes(c => c.AppUser);
         }
