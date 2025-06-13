@@ -31,11 +31,13 @@ namespace Persistence
         public DbSet<MealSchedule> MealSchedules { get; set; }
         public DbSet<Membership> Memberships { get; set; }
        // public DbSet<Muscle> Muscles { get; set; }
-        public DbSet<MuscleExerices> MuscleExercises { get; set; }
+        public DbSet<ScheduledExercise> ScheduledExercises { get; set; }
         public DbSet<Trainee> Trainees { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<WorkDay> WorkDays { get; set; }
+        public DbSet<Exercise> Exercises { get; set; }
 
+        public DbSet<Muscle> Muscles { get; set; }
 
     }
    

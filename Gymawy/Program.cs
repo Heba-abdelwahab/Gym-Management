@@ -84,19 +84,22 @@ namespace Gymawy
 
               });
 
+            builder.Services.AddScoped<IDbInitializer, DbInitializer>();
+
+
             #endregion
 
             var app = builder.Build();
 
-            using (var scoped = app.Services.CreateScope())
-            {
-                using (var dbContext = scoped.ServiceProvider.GetRequiredService<GymDbContext>())
-                {
-                    if (dbContext.Database.GetPendingMigrations().Any())
-                        await dbContext.Database.MigrateAsync();
-                }
-            }
-
+            //using (var scoped = app.Services.CreateScope())
+            //{
+            //    using (var dbContext = scoped.ServiceProvider.GetRequiredService<GymDbContext>())
+            //    {
+            //        if (dbContext.Database.GetPendingMigrations().Any())
+            //            await dbContext.Database.MigrateAsync();
+            //    }
+            //}
+            await app.SeedDbAsync();
 
             #region PipeLines
 

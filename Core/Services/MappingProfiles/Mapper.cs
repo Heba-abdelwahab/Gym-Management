@@ -33,9 +33,12 @@ namespace Services.MappingProfiles
 
             #region Exercise Schedule
             // --- From DTO to Entity ---
-            CreateMap<MuscleExerciseDto, MuscleExerices>().ReverseMap();
+            CreateMap<ExerciseResultDto, Exercise>().ReverseMap();
+            CreateMap<MuscleResultDto, Muscle>().ReverseMap();
+            CreateMap<ScheduledExerciseDto, ScheduledExercise>().ReverseMap();
+            CreateMap<ScheduledExerciseUpdateDto, ScheduledExercise>().ReverseMap();
 
-            CreateMap<MuscleExerciseResultDto, MuscleExerices>().ReverseMap();
+            CreateMap<ScheduledExerciseResultDto, ScheduledExercise>().ReverseMap();
 
             CreateMap<ExerciseScheduleDto, ExercisesSchedule>()
                 .ForMember(dest => dest.schedule,
