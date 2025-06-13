@@ -12,8 +12,8 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(GymDbContext))]
-    [Migration("20250608165508_InitialCreating")]
-    partial class InitialCreating
+    [Migration("20250609160756_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -124,7 +124,7 @@ namespace Persistence.Migrations
                     b.Property<string>("AppUserId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("Capcity")
+                    b.Property<int>("CurrentCapcity")
                         .HasColumnType("int");
 
                     b.Property<DateOnly?>("DateOfBirth")
@@ -184,16 +184,14 @@ namespace Persistence.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("MembershipId")
-                        .HasColumnType("int");
+                    b.Property<bool>("IsExtra")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("MembershipId");
 
                     b.ToTable("Features");
                 });
@@ -245,6 +243,9 @@ namespace Persistence.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Capcity")
+                        .HasColumnType("int");
 
                     b.Property<int>("CoachId")
                         .HasColumnType("int");
@@ -542,13 +543,13 @@ namespace Persistence.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime>("MembershipEndDate")
+                    b.Property<DateTime?>("MembershipEndDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("MembershipId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("MembershipStartDate")
+                    b.Property<DateTime?>("MembershipStartDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("ReasonForJoining")
@@ -654,6 +655,21 @@ namespace Persistence.Migrations
                     b.HasIndex("GymCoachId");
 
                     b.ToTable("WorkDays");
+                });
+
+            modelBuilder.Entity("GymFeatureMembership", b =>
+                {
+                    b.Property<int>("FeaturesId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MembershipsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("FeaturesId", "MembershipsId");
+
+                    b.HasIndex("MembershipsId");
+
+                    b.ToTable("GymFeatureMembership");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -1024,13 +1040,6 @@ namespace Persistence.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Domain.Entities.Feature", b =>
-                {
-                    b.HasOne("Domain.Entities.Membership", null)
-                        .WithMany("Features")
-                        .HasForeignKey("MembershipId");
-                });
-
             modelBuilder.Entity("Domain.Entities.Gym", b =>
                 {
                     b.HasOne("Domain.Entities.GymOwner", "GymOwner")
@@ -1338,6 +1347,21 @@ namespace Persistence.Migrations
                     b.Navigation("GymCoach");
                 });
 
+            modelBuilder.Entity("GymFeatureMembership", b =>
+                {
+                    b.HasOne("Domain.Entities.GymFeature", null)
+                        .WithMany()
+                        .HasForeignKey("FeaturesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Membership", null)
+                        .WithMany()
+                        .HasForeignKey("MembershipsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -1444,8 +1468,6 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Domain.Entities.Membership", b =>
                 {
-                    b.Navigation("Features");
-
                     b.Navigation("Trainees");
                 });
 

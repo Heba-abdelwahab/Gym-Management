@@ -12,8 +12,8 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(GymDbContext))]
-    [Migration("20250609064952_AddIsExtra_EditMemebershipinFeature")]
-    partial class AddIsExtra_EditMemebershipinFeature
+    [Migration("20250610180009_updateExcerciseEntities")]
+    partial class updateExcerciseEntities
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -124,7 +124,7 @@ namespace Persistence.Migrations
                     b.Property<string>("AppUserId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("Capcity")
+                    b.Property<int>("CurrentCapcity")
                         .HasColumnType("int");
 
                     b.Property<DateOnly?>("DateOfBirth")
@@ -243,6 +243,9 @@ namespace Persistence.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Capcity")
+                        .HasColumnType("int");
 
                     b.Property<int>("CoachId")
                         .HasColumnType("int");
@@ -429,9 +432,6 @@ namespace Persistence.Migrations
                     b.Property<decimal>("Cost")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("Count")
-                        .HasColumnType("int");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -540,13 +540,13 @@ namespace Persistence.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime>("MembershipEndDate")
+                    b.Property<DateTime?>("MembershipEndDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("MembershipId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("MembershipStartDate")
+                    b.Property<DateTime?>("MembershipStartDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("ReasonForJoining")

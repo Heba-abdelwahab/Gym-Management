@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreating : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -52,6 +52,21 @@ namespace Persistence.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Features",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsExtra = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Features", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -226,7 +241,7 @@ namespace Persistence.Migrations
                     AppUserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     DateOfBirth = table.Column<DateOnly>(type: "date", nullable: true),
                     ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Capcity = table.Column<int>(type: "int", nullable: false),
+                    CurrentCapcity = table.Column<int>(type: "int", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -350,6 +365,7 @@ namespace Persistence.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Salary = table.Column<double>(type: "float", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
+                    Capcity = table.Column<int>(type: "int", nullable: false),
                     GymId = table.Column<int>(type: "int", nullable: false),
                     CoachId = table.Column<int>(type: "int", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
@@ -364,6 +380,35 @@ namespace Persistence.Migrations
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_GymCoach_Gyms_GymId",
+                        column: x => x.GymId,
+                        principalTable: "Gyms",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "GymFeature",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Image = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Cost = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    GymId = table.Column<int>(type: "int", nullable: false),
+                    FeatureId = table.Column<int>(type: "int", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GymFeature", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_GymFeature_Features_FeatureId",
+                        column: x => x.FeatureId,
+                        principalTable: "Features",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_GymFeature_Gyms_GymId",
                         column: x => x.GymId,
                         principalTable: "Gyms",
                         principalColumn: "Id");
@@ -417,23 +462,27 @@ namespace Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Features",
+                name: "GymFeatureMembership",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    MembershipId = table.Column<int>(type: "int", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                    FeaturesId = table.Column<int>(type: "int", nullable: false),
+                    MembershipsId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Features", x => x.Id);
+                    table.PrimaryKey("PK_GymFeatureMembership", x => new { x.FeaturesId, x.MembershipsId });
                     table.ForeignKey(
-                        name: "FK_Features_Memberships_MembershipId",
-                        column: x => x.MembershipId,
+                        name: "FK_GymFeatureMembership_GymFeature_FeaturesId",
+                        column: x => x.FeaturesId,
+                        principalTable: "GymFeature",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_GymFeatureMembership_Memberships_MembershipsId",
+                        column: x => x.MembershipsId,
                         principalTable: "Memberships",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -448,8 +497,8 @@ namespace Persistence.Migrations
                     Address_Location_X = table.Column<double>(type: "float", nullable: true),
                     Address_Location_Y = table.Column<double>(type: "float", nullable: true),
                     ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    MembershipStartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    MembershipEndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    MembershipStartDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    MembershipEndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DateOfBirth = table.Column<DateOnly>(type: "date", nullable: true),
                     ReasonForJoining = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Weight = table.Column<double>(type: "float", nullable: true),
@@ -481,35 +530,6 @@ namespace Persistence.Migrations
                         name: "FK_Trainees_Memberships_MembershipId",
                         column: x => x.MembershipId,
                         principalTable: "Memberships",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "GymFeature",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Image = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Cost = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    GymId = table.Column<int>(type: "int", nullable: false),
-                    FeatureId = table.Column<int>(type: "int", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_GymFeature", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_GymFeature_Features_FeatureId",
-                        column: x => x.FeatureId,
-                        principalTable: "Features",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_GymFeature_Gyms_GymId",
-                        column: x => x.GymId,
-                        principalTable: "Gyms",
                         principalColumn: "Id");
                 });
 
@@ -750,11 +770,6 @@ namespace Persistence.Migrations
                 column: "TraineeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Features_MembershipId",
-                table: "Features",
-                column: "MembershipId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_GymCoach_CoachId",
                 table: "GymCoach",
                 column: "CoachId");
@@ -773,6 +788,11 @@ namespace Persistence.Migrations
                 name: "IX_GymFeature_GymId",
                 table: "GymFeature",
                 column: "GymId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GymFeatureMembership_MembershipsId",
+                table: "GymFeatureMembership",
+                column: "MembershipsId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_GymOwners_AppUserId",
@@ -878,6 +898,9 @@ namespace Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "ClassTrainee");
+
+            migrationBuilder.DropTable(
+                name: "GymFeatureMembership");
 
             migrationBuilder.DropTable(
                 name: "Meals");

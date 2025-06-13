@@ -10,9 +10,9 @@ namespace Shared
     (
         int? FeatureId,
         string Image,
-        string Description,
-        decimal Cost,
-        string Name,
+        string Description ,
+        decimal Cost ,
+        string Name ,
         bool IsExtra
 
     );
