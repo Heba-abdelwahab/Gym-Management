@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Shared
 {
-    public record MuscleExerciseResultDto
+    public record ScheduledExerciseResultDto
     {
         public int Id { get; init; }
         public string Description { get; init; }
