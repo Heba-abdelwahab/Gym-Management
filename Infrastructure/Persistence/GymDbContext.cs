@@ -26,12 +26,12 @@ namespace Persistence
         public DbSet<Meal> Meals { get; set; }
         public DbSet<MealSchedule> MealSchedules { get; set; }
         public DbSet<Membership> Memberships { get; set; }
-       // public DbSet<Muscle> Muscles { get; set; }
+        // public DbSet<Muscle> Muscles { get; set; }
         public DbSet<ScheduledExercise> ScheduledExercises { get; set; }
         // public DbSet<Muscle> Muscles { get; set; }
-        public DbSet<MuscleExerices> MuscleExercises { get; set; }
+        //public DbSet<MuscleExerices> MuscleExercises { get; set; }
         public DbSet<WorkDay> WorkDays { get; set; }
-
+        public DbSet<Exercise> Exercises { get; set; }
 
 
         #region Users
