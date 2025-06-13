@@ -95,6 +95,84 @@ namespace Services
             return mapper.Map<IEnumerable< ItemDto>>(features);
         }
 
+        public async Task<IEnumerable<GymFeatureDto>> GetFeaturesByGymId(int gymId)
+        {
+            Gym gym = await unitOfWork.GetRepositories<Gym,int>().GetByIdAsync(gymId);
+            if (gym == null)
+                throw new GymNotFoundException(gymId);
+            var gymFeatures = await unitOfWork.GetRepositories<GymFeature, int>().GetAllWithSpecAsync(new GymFeatureSpec(gymId));
+            var gymFeaturesDto= mapper.Map<IEnumerable< GymFeatureDto>>(gymFeatures);
 
+            return gymFeaturesDto;
+        }
+
+        public async Task<GymFeatureDto> GetGymFeatureById(int gymFeatureId)
+        {
+            var gymFeature = await unitOfWork.GetRepositories<GymFeature, int>().GetByIdWithSpecAsync(new WholeFeature(gymFeatureId));
+            if(gymFeature == null)
+                throw new GymFeatureNotFoundException(gymFeatureId);
+            var gymFeatureDto = mapper.Map<GymFeatureDto>(gymFeature);
+            return gymFeatureDto;
+        }
+
+        public async Task AddNonExGymFeature(int gymId, NonExGymFeatureDto NonExGymFeatureDto)
+        {
+            Gym gym = await unitOfWork.GetRepositories<Gym, int>().GetByIdAsync(gymId);
+            Feature feature = await unitOfWork.GetRepositories<Feature, int>().GetByIdAsync(NonExGymFeatureDto.FeatureId);
+
+            if (gym == null)
+                throw new GymNotFoundException(gymId);
+            if (feature == null)
+                throw new FeatureNotFoundExceptions(NonExGymFeatureDto.FeatureId);
+
+            var newGymFeature = mapper.Map<GymFeature>(NonExGymFeatureDto);
+            newGymFeature.GymId = gymId;
+
+            unitOfWork.GetRepositories<GymFeature, int>().Insert(newGymFeature);
+            await unitOfWork.CompleteSaveAsync();
+        }
+        public async Task AddExtraGymFeature(int gymId, ExGymFeatureDto gymFeatureDto)
+        {
+            Gym gym = await unitOfWork.GetRepositories<Gym, int>().GetByIdAsync(gymId);
+            if (gym == null)
+                throw new GymNotFoundException(gymId);
+
+            var newGymFeature = mapper.Map<GymFeature>(gymFeatureDto);
+            newGymFeature.GymId = gymId;
+
+            unitOfWork.GetRepositories<GymFeature, int>().Insert(newGymFeature);
+            await unitOfWork.CompleteSaveAsync();
+        }
+        public async Task UpdateGymFeature(int gymFeatureId, GymFeaturePutDto GymFeaturePutDto)
+        {
+            GymFeature gymFeature = await unitOfWork.GetRepositories<GymFeature, int>().GetByIdAsync(gymFeatureId);
+            if(gymFeature == null)
+                throw new GymFeatureNotFoundException(gymFeatureId);
+
+            //if (gymFeature.Cost != GymFeaturePutDto.Cost) ;
+            //***notify memebers about cost change of feature***
+
+            mapper.Map(GymFeaturePutDto, gymFeature);
+            unitOfWork.GetRepositories<GymFeature,int>().Update(gymFeature);
+
+            if (!await unitOfWork.CompleteSaveAsync())
+                throw new Exception($"fail to update Gym Feature of id {gymFeatureId}");
+
+        }
+
+        public async Task DeleteGymFeature(int gymFeatureId)
+        {
+            GymFeature gymFeature = await unitOfWork.GetRepositories<GymFeature, int>().GetByIdAsync(gymFeatureId);
+            if (gymFeature == null)
+                throw new GymFeatureNotFoundException(gymFeatureId);
+
+            // ***notify members who use this feature***
+            // ***notify members who subsribe to program contain that feature***
+
+            unitOfWork.GetRepositories<GymFeature, int>().Delete(gymFeature);
+
+            if (!await unitOfWork.CompleteSaveAsync())
+                throw new Exception($"fail to delete Gym Feature of id {gymFeatureId}");
+        }
     }
 }

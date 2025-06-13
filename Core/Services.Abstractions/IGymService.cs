@@ -13,5 +13,14 @@ namespace Services.Abstractions
         IEnumerable<ItemDto> GetGymTypes();
         Task<IEnumerable<ItemDto>> GetGymFeatures();
         Task UpdateGym(int gymId,GymDto gymDto);
+        Task <IEnumerable<GymFeatureDto>> GetFeaturesByGymId (int gymId);
+        Task<GymFeatureDto> GetGymFeatureById(int gymFeatureId);
+        Task AddNonExGymFeature(int gymId , NonExGymFeatureDto NonExGymFeatureDto);
+        Task AddExtraGymFeature(int gymId, ExGymFeatureDto ExGymFeature);
+
+        Task UpdateGymFeature(int gymFeatureId , GymFeaturePutDto GymFeaturePutDto);
+        Task DeleteGymFeature(int gymFeatureId);
+
+
     }
 }

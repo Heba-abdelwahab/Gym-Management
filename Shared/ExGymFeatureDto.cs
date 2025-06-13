@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Shared
 {
-    public record GymExFeatureDto
+    public record ExGymFeatureDto
     (
         [Required]
         string Name ,

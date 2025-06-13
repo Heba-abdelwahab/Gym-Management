@@ -3,15 +3,8 @@ using AutoMapper.Features;
 using Domain.Entities;
 using Domain.Enums;
 using Domain.ValueObjects;
-using Microsoft.AspNetCore.Mvc.TagHelpers;
-using Microsoft.EntityFrameworkCore;
 using Shared;
 using Shared.TraineeGym;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Services.MappingProfiles
 {
@@ -50,12 +43,19 @@ namespace Services.MappingProfiles
             //    })));
 
             CreateMap<AddressDto, Address>().ReverseMap();
-            CreateMap<GymExtraFeatureDto, GymFeature>()
-           .ForMember(des=>des.Feature, opt => opt.MapFrom(src => new Feature() { Name = src.Name, IsExtra = true }));
+            CreateMap<GymFeature, GymFeatureDto>()
+                .ForMember(des=>des.Name, opt => opt.MapFrom(src => src.Feature.Name));
+
+            CreateMap<NonExGymFeatureDto, GymFeature>();
+            CreateMap<ExGymFeatureDto,GymFeature>()
+                .ForMember(des=>des.Feature,opt=>opt.MapFrom(src=>new Feature() { Name = src.Name , IsExtra = true}));
+            CreateMap<GymFeaturePutDto, GymFeature>();
 
             CreateMap<Address, AddressToReturnDto>();
             CreateMap<Gym, GymToReturnDto>()
                 .ForMember(dest => dest.Logo, opt => opt.MapFrom(src => src.Media));
+
+            CreateMap<Feature, ItemDto > ();
            
         }
     }

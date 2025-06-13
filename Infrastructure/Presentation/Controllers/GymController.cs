@@ -1,4 +1,5 @@
-﻿using Domain.Enums;
+﻿using Domain.Entities;
+using Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Services.Abstractions;
 using Shared;
@@ -45,6 +46,47 @@ namespace Presentation.Controllers
         {
             var features = await serviceManager.GymService.GetGymFeatures();
             return Ok(features);
+        }
+        [HttpGet("GetFeaturesByGymId/{gymId:int}")]
+        public async Task<ActionResult> GetGymFeatures(int gymId)
+        {
+            var features = await serviceManager.GymService.GetFeaturesByGymId(gymId);
+            return Ok(features);
+        }
+
+
+        [HttpGet("GetGymFeatureById/{gymFeatureId:int}")]
+        public async Task<ActionResult> GetGymFeatureById(int gymFeatureId)
+        {
+            var features = await serviceManager.GymService.GetGymFeatureById(gymFeatureId);
+            return Ok(features);
+        }
+
+        [HttpPost("NonExGymFeature/{gymId:int}")]
+        public async Task<ActionResult> AddNonExGymFeature(int gymId, NonExGymFeatureDto NonExGymFeatureDto)
+        {
+            await serviceManager.GymService.AddNonExGymFeature(gymId,NonExGymFeatureDto);
+            return Ok();
+        }
+
+        [HttpPost("ExtraGymFeature/{gymId:int}")]
+        public async Task<ActionResult> AddExtraGymFeature(int gymId, ExGymFeatureDto gymFeatureDto)
+        {
+            await serviceManager.GymService.AddExtraGymFeature(gymId, gymFeatureDto);
+            return Ok();
+        }
+
+        [HttpPut("GymFeature/{gymFeatureId:int}")]
+        public async Task<ActionResult>  UpdateGymFeature(int gymFeatureId, GymFeaturePutDto GymFeaturePutDto)
+        {
+            await serviceManager.GymService.UpdateGymFeature(gymFeatureId, GymFeaturePutDto);
+            return Ok();
+        }
+        [HttpDelete("GymFeature/{gymFeatureId:int}")]
+        public async Task<ActionResult> DeleteGymFeature(int gymFeatureId)
+        {
+            await serviceManager.GymService.DeleteGymFeature(gymFeatureId);
+            return Ok();
         }
     }
 }

@@ -245,7 +245,6 @@ namespace Persistence.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("CoachId")
-                    b.Property<int?>("CoachId1")
                         .HasColumnType("int");
 
                     b.Property<int>("GymId")

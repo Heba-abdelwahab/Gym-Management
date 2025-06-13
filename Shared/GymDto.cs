@@ -19,8 +19,8 @@ namespace Shared
         int GymOwnerId,
         //IFormFile? GymImage,
         AddressDto Address ,
-        IEnumerable<GymExFeatureDto>?GymExtraFeatures,
-        IEnumerable<GymFeatureDto>?GymFeatures
+        IEnumerable<ExGymFeatureDto>?GymExtraFeatures,
+        IEnumerable<NonExGymFeatureDto>?GymFeatures
     );
     
 }
