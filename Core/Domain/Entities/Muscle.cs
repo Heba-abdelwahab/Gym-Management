@@ -10,6 +10,9 @@ namespace Domain.Entities
     public class Muscle:EntityBase<int>
     {
         public string Name { get; set; }
-        public ICollection<MuscleExerices>? MuscleExerices { get; set; } = new List<MuscleExerices>();
+
+        public string? ImageUrl { get; set; }
+
+        public ICollection<Exercise> Exercises { get; set; } = new List<Exercise>();
     }
 }

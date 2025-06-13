@@ -26,6 +26,8 @@ namespace Persistence
         public DbSet<Meal> Meals { get; set; }
         public DbSet<MealSchedule> MealSchedules { get; set; }
         public DbSet<Membership> Memberships { get; set; }
+       // public DbSet<Muscle> Muscles { get; set; }
+        public DbSet<ScheduledExercise> ScheduledExercises { get; set; }
         // public DbSet<Muscle> Muscles { get; set; }
         public DbSet<MuscleExerices> MuscleExercises { get; set; }
         public DbSet<WorkDay> WorkDays { get; set; }
@@ -47,6 +49,7 @@ namespace Persistence
         public DbSet<Group> Groups => Set<Group>();
         public DbSet<Connection> Connections => Set<Connection>();
 
+        public DbSet<Muscle> Muscles { get; set; }
 
     }
 
