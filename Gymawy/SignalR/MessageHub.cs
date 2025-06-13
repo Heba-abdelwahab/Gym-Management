@@ -1,10 +1,8 @@
 ﻿using AutoMapper;
 using Domain.Contracts;
-using Domain.Entities;
 using Domain.Entities.Chat;
 using Domain.ValueObjects.Chat;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using Presentation.Extensions;
 using Shared.Chat;
@@ -15,17 +13,22 @@ namespace Gymawy.SignalR;
 public class MessageHub : Hub
 {
     private readonly IMessageRepository _messageRepository;
-    private readonly UserManager<AppUser> _userManager;
+    //private readonly UserManager<AppUser> _userManager;
+    private readonly IUserRepository _userRepository;
     private readonly IMapper _mapper;
     private readonly IHubContext<PresenceHub> _presenceHub;
 
     public MessageHub(IMessageRepository messageRepository,
-    UserManager<AppUser> userManager, IMapper mapper, IHubContext<PresenceHub> presenceHub)
+    //UserManager<AppUser> userManager, 
+    IUserRepository userRepository,
+    IMapper mapper, IHubContext<PresenceHub> presenceHub)
     {
         _mapper = mapper;
         _presenceHub = presenceHub;
         _messageRepository = messageRepository;
-        _userManager = userManager;
+        //_userManager = userManager;
+        _userRepository = userRepository;
+
     }
 
     public override async Task OnConnectedAsync()
@@ -63,34 +66,34 @@ public class MessageHub : Hub
         if (username == createMessageDto.RecipientUsername.ToLower())
             throw new HubException("you can't send message to yourself");
 
-        var sender = await _userManager.FindByNameAsync(username);
-        var recipient = await _userManager.FindByNameAsync(createMessageDto.RecipientUsername);
+        var sender = await _userRepository.GetUserByUserNameAsync(username);
+        var recipient = await _userRepository.GetUserByUserNameAsync(createMessageDto.RecipientUsername);
 
         if (recipient is null) throw new HubException("Not Found User");
 
 
         var message = new Message
         {
-            Sender = sender,
+            Sender = sender!,
             Recipient = recipient,
-            SenderUsername = sender.UserName,
-            RecipientUsername = recipient.UserName,
+            SenderUsername = sender!.UserName!,
+            RecipientUsername = recipient.UserName!,
             Content = createMessageDto.Content
         };
 
-        var groupName = GetGroupName(sender.UserName, recipient.UserName);
+        var groupName = GetGroupName(sender?.UserName!, recipient?.UserName!);
 
         var group = await _messageRepository.GetMessageGroupAsync(groupName);
 
-        if (group.Connections.Any(c => c.Username == recipient.UserName))
+        if (group.Connections.Any(c => c.Username == recipient?.UserName))
             message.DateRead = DateTime.UtcNow;
         else
         {
-            var connectionIds = await PresenceTracker.GetConnectionsForUserAsync(recipient.UserName);
+            var connectionIds = await PresenceTracker.GetConnectionsForUserAsync(recipient?.UserName!);
             if (connectionIds is not null)
             {
                 await _presenceHub.Clients.Clients(connectionIds).SendAsync("NewMessageReceived",
-                new { username = $"{sender.FirstName} {sender.LastName}", KnownAs = sender.UserName });
+                new { username = $"{sender?.FirstName} {sender?.LastName}", KnownAs = sender?.UserName });
             }
         }
 
