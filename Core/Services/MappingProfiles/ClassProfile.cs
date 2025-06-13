@@ -19,6 +19,8 @@ namespace Services.MappingProfiles
             CreateMap<Class, ClassTraineeToReturnDto>()
                 .ForMember(dest => dest.CurrentCapacity, opt => opt.MapFrom(src => src.Trainees.Count));
 
+            CreateMap<Class, ClassGymWithCoachToReturnDto>();
+
 
         }
 

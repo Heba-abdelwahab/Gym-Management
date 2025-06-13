@@ -19,4 +19,6 @@ public interface ITraineeService
     Task<TraineeSubscriptionsToReturnDto> TraineeSubscriptions();
     Task<IReadOnlyList<GymToReturnDto>> AllGyms();
     Task<GymToReturnDto> GetGymById(int gymId);
+    Task<IReadOnlyList<ClassGymWithCoachToReturnDto>> GetAllClasses();
+    Task<TraineeCoachToReturnDto> GetTraineeCoach();
 }

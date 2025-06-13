@@ -143,6 +143,10 @@ internal sealed class TraineeService : ITraineeService
         if (Trainee == null)
             throw new TraineeNotFoundException(TraineeId.Value);
 
+        // Check if the trainee already has an active membership
+        if (Trainee.MembershipId.HasValue && Trainee.MembershipEndDate > DateTime.UtcNow)
+            throw new TraineeAlreadyHasActiveMembershipException(TraineeId.Value);
+
         var membership = await _unitOfWork.GetRepositories<Membership, int>().GetByIdAsync(membershipId);
 
         if (membership == null)
@@ -213,8 +217,8 @@ internal sealed class TraineeService : ITraineeService
     // Assign Trainee To Feature
     public async Task<TraineeFeatureToReturnDto?> AssignTraineeToFeature(int featureId, int count)
     {
-        int? TraineeId = _userServices.Id;
-        var trainee = await _unitOfWork.GetRepositories<Trainee, int>().GetByIdAsync(TraineeId!.Value);
+        int? TraineeId = 1/*_userServices.Id*/;
+        var trainee = await _unitOfWork.GetRepositories<Trainee, int>().GetByIdWithSpecAsync(new TraineeWithSelectedFeatures(TraineeId!.Value));
 
         var WholeFeatureSpec = new WholeFeature(featureId);
         var Feature = await _unitOfWork.GetRepositories<GymFeature, int>().GetByIdWithSpecAsync(WholeFeatureSpec);
@@ -224,6 +228,30 @@ internal sealed class TraineeService : ITraineeService
 
         if (Feature == null)
             throw new GymFeatureNotFoundException(featureId);
+
+        // Check if the trainee already has this feature selected with its count
+        var existingFeature = trainee.TraineeSelectedFeatures.FirstOrDefault(f => f.GymFeatureId == featureId);
+        if (existingFeature != null)
+        {
+            // If the feature already exists, update the count and total cost
+            existingFeature.SessionCount += count;
+            existingFeature.TotalCost = (double)(Feature.Cost * existingFeature.SessionCount);
+
+            _unitOfWork.GetRepositories<TraineeSelectedFeature, int>().Update(existingFeature);
+            var Result = await _unitOfWork.CompleteSaveAsync();
+
+            if (Result)
+                return new TraineeFeatureToReturnDto()
+                {
+                    Name = Feature.Feature.Name,
+                    Count = existingFeature.SessionCount,
+                    SessionCost = Feature.Cost,
+                    TotalCost = existingFeature.TotalCost
+                };
+            else
+                return null;
+        }
+
         trainee.TraineeSelectedFeatures.Add(new TraineeSelectedFeature
         {
             GymFeatureId = featureId,
@@ -231,6 +259,7 @@ internal sealed class TraineeService : ITraineeService
             SessionCount = count,
             TotalCost = (double)(Feature.Cost * count)
         });
+
         var result = await _unitOfWork.CompleteSaveAsync();
         if (result)
             return new TraineeFeatureToReturnDto()
@@ -259,6 +288,7 @@ internal sealed class TraineeService : ITraineeService
         var TraineeMapped = _mapper.Map<TraineeSubscriptionsToReturnDto>(Trainee);
         TraineeMapped.Features = _mapper.Map<IReadOnlyList<TraineeFeatureToReturnDto>>(Trainee.TraineeSelectedFeatures);
         TraineeMapped.Class = _mapper.Map<IReadOnlyList<ClassTraineeToReturnDto>>(Trainee.Classes);
+        TraineeMapped.GymData = _mapper.Map<GymToReturnDto>(Trainee.Gym);
 
         return TraineeMapped;
     }
@@ -280,5 +310,29 @@ internal sealed class TraineeService : ITraineeService
             throw new GymNotFoundException(0); // Assuming 0 is an invalid gym ID
         var gymsMapped = _mapper.Map<GymToReturnDto>(gyms);
         return gymsMapped;
+    }
+
+    public async Task<IReadOnlyList<ClassGymWithCoachToReturnDto>> GetAllClasses()
+    {
+        var classesSpec = new ClassWithCoachAndGymSpec();
+        var classes = await _unitOfWork.GetRepositories<Class, int>().GetAllWithSpecAsync(classesSpec);
+        if (classes is null)
+            throw new GymNotFoundException(0); 
+        var classesMapped = _mapper.Map<IReadOnlyList<ClassGymWithCoachToReturnDto>>(classes);
+        return classesMapped;
+    }
+
+    public async Task<TraineeCoachToReturnDto> GetTraineeCoach()
+    {
+        int? TraineeId = 1 /*_userServices.Id*/;
+        var TraineeCoachSpec = new GetTraineeCoach(TraineeId!.Value);
+        var TraineeCoach = await _unitOfWork.GetRepositories<Trainee, int>().GetByIdWithSpecAsync(TraineeCoachSpec);
+
+        if (TraineeCoach is null)
+            throw new TraineeNotFoundException(TraineeId.Value);
+        var CoachMapped = _mapper.Map<TraineeCoachToReturnDto>(TraineeCoach.Coach);
+        CoachMapped.TraineeCount = TraineeCoach.Coach!.Trainees.Count;
+        return CoachMapped;
+
     }
 }
