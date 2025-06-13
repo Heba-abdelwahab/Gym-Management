@@ -95,7 +95,8 @@ public class AdminService : IAdminService
     {
 
         var registerUser = new RegisterUserDto // need to change later
-            (request.FirstName, request.LastName, request.UserName, request.Email, request.Password, Roles.Admin);
+            (request.FirstName, request.LastName, request.UserName,
+            request.Email, request.Password, request.PhoneNumber, Roles.Admin);
 
         var authResult = await _authenticationService.RegisterUserAsync(registerUser);
 
@@ -113,7 +114,7 @@ public class AdminService : IAdminService
         {
 
             var adminClaims = _tokenService.GenerateAuthClaims(
-                    admin.Id, registerUser.UserName,
+                    admin.Id, admin.AppUserId, registerUser.UserName,
                      registerUser.Email, registerUser.Role);
 
             return new AuthAdminResultDto(

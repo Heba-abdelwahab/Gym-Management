@@ -36,7 +36,7 @@ public class ServiceManager : IServiceManager
         _lazyPhotoService = new(() => new PhotoService(config));
         _lazyUserService = new(() => new UserService(httpContextAccessor, unitOfWork));
         _lazyTokenService = new(() => new TokenService(jwtOptions));
-        _lazyAuthenticationService = new(() => new AuthenticationService(userManager, TokenService));
+        _lazyAuthenticationService = new(() => new AuthenticationService(userManager, TokenService, unitOfWork));
         _lazyAdminService = new(() => new AdminService(AuthenticationService, unitOfWork, TokenService));
         _lazyClassService = new(() => new ClassService(unitOfWork, mapper));
         _lazyCoachService = new(() => new CoachService(AuthenticationService, unitOfWork, UserServices, mapper, TokenService));

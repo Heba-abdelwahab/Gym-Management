@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Domain.Constants;
 using Domain.Contracts;
 using Domain.Entities;
@@ -72,7 +67,8 @@ internal sealed class TraineeService : ITraineeService
     public async Task<AuthTraineeResultDto> CreateTraineeAsync(RegisterTraineeDto request)
     {
         var registerUser = new RegisterUserDto
-          (request.FirstName, request.LastName, request.UserName, request.Email, request.Password, Roles.Trainee);
+          (request.FirstName, request.LastName, request.UserName,
+          request.Email, request.Password, request.PhoneNumber, Roles.Trainee);
 
         var authResult = await _authenticationService.RegisterUserAsync(registerUser);
 
@@ -93,7 +89,7 @@ internal sealed class TraineeService : ITraineeService
         {
 
             var coachClaims = _tokenService.GenerateAuthClaims(
-                    trainee.Id, registerUser.UserName,
+                    trainee.Id, trainee.AppUserId, registerUser.UserName,
                      registerUser.Email, registerUser.Role);
 
             return new AuthTraineeResultDto(

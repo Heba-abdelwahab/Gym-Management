@@ -9,6 +9,7 @@ public record RegisterTraineeDto(
     double? Weight,
     string? ReasonForJoining,
     DateOnly DateOfBirth,
+    string PhoneNumber,
     string Role,
     AddressDto Address
     );
