@@ -10,5 +10,8 @@ namespace Services.Abstractions
     public interface IGymService
     {
         Task RequestAddGym(GymDto gymDto);
+        IEnumerable<ItemDto> GetGymTypes();
+        Task<IEnumerable<ItemDto>> GetGymFeatures();
+        Task UpdateGym(int gymId,GymDto gymDto);
     }
 }

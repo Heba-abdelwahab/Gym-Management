@@ -17,9 +17,9 @@ namespace Domain.Entities
         public string Name { get; set; }
         public string Phone { get; set; }
         public string Description { get; set; }
+        //public RequestStatus Status { get; set; } = RequestStatus.Pending;
 
         public int GymOwnerId { get; set; }
-
         public GymOwner GymOwner { get; set; }
         public ICollection<GymFeature> GymFeatures { get; set; }=new List<GymFeature>();
         public ICollection<GymCoach> GymCoaches { get; set; } =new List<GymCoach>();
