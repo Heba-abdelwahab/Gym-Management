@@ -20,11 +20,25 @@ namespace Services
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
-
-        public GymService(IUnitOfWork unitOfWork , IMapper mapper)
+        private readonly IUserService _userServices;
+        public GymService(IUnitOfWork unitOfWork , IMapper mapper, IUserService _userServices)
         {
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
+            this._userServices = _userServices;
+        }
+
+        public async Task<GymGetDto> GetGymById(int gymId)
+        {
+            Gym gym = await unitOfWork.GetRepositories<Gym, int>().GetByIdAsync(gymId);
+
+            if (gym == null)
+                throw new GymNotFoundException(gymId);
+            
+            var gymDeto = mapper.Map<GymGetDto>(gym);
+
+            return gymDeto;
+
         }
         private async Task<Boolean> validateGymFeatures(GymDto gymDto)
         {
@@ -52,34 +66,28 @@ namespace Services
            if( await validateGymFeatures(gymDto))
             {
                 Gym gym = mapper.Map<Gym>(gymDto);
+
+                gym.GymOwnerId = _userServices.Id.Value;
                 gym.Media = ""; ///////////////////////////// ???
                 unitOfWork.GetRepositories<Gym, int>().Insert(gym);
-                await unitOfWork.CompleteSaveAsync();
+                if( ! await unitOfWork.CompleteSaveAsync() )
+                    throw new Exception ("fail to request add Gym");
             }
 
         }
 
-        public async Task UpdateGym(int gymId,GymDto gymDto)
+        public async Task UpdateGym(int gymId, GymUpdateDto gymUpdateDto)
         {
-            ////Console.WriteLine(x);
+            Gym gym = await unitOfWork.GetRepositories<Gym, int>().GetByIdAsync(gymId);
 
-            //if (await validateGymFeatures(gymDto))
-            //{
+            if (gym == null)
+                throw new GymNotFoundException(gymId);
 
-            //    //Gym gym = await unitOfWork.GetRepositories<Gym, int>().GetByIdWithSpecAsync(new GetGymWithFeaturesSpec(gymId));
-            //    ////var deletedGymFeature = gym.GymFeatures
-            //    //                      //  .Where(f => !gymDto.GymFeatures.Any(gf => gf.FeatureId == f.FeatureId)&& !gymDto.GymExtraFeatures.Any(gf => gf.FeatureId == f.FeatureId));
-            //    //var deletedExGymFeature = gym.GymFeatures.Where(f => !gymDto.GymFeatures.Any(gf => gf.FeatureId == f.FeatureId) && f.Feature.IsExtra);
+            mapper.Map(gymUpdateDto, gym);
+            unitOfWork.GetRepositories<Gym,int>().Update(gym);
 
-            //    ////// gym.GymFeatures.Where(gf => gf.Feature.IsExtra).ToList().ForEach(gf => gf.Feature = null);
-            //    //// //gym.GymFeatures.Clear();
-            //    //// await unitOfWork.CompleteSaveAsync();
-
-            //    //gym = mapper.Map<Gym>(gymDto);
-            //    //gym.Media = ""; ///////////////////////////// ???
-            //    //unitOfWork.GetRepositories<Gym, int>().Update(gym);
-            //    //await unitOfWork.CompleteSaveAsync();
-            //}
+            if (!await unitOfWork.CompleteSaveAsync())
+                throw new Exception($"fail to update Gym with id {gymId}");
         }
 
         public IEnumerable<ItemDto> GetGymTypes()
@@ -174,5 +182,7 @@ namespace Services
             if (!await unitOfWork.CompleteSaveAsync())
                 throw new Exception($"fail to delete Gym Feature of id {gymFeatureId}");
         }
+
+
     }
 }

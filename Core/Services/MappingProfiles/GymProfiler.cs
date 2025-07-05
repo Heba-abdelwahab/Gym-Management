@@ -43,14 +43,15 @@ namespace Services.MappingProfiles
             //    })));
 
             CreateMap<AddressDto, Address>().ReverseMap();
+            CreateMap<LocationDto,Location>().ReverseMap();
             CreateMap<GymFeature, GymFeatureDto>()
                 .ForMember(des=>des.Name, opt => opt.MapFrom(src => src.Feature.Name));
-
+            CreateMap<GymUpdateDto, Gym>();
             CreateMap<NonExGymFeatureDto, GymFeature>();
             CreateMap<ExGymFeatureDto,GymFeature>()
                 .ForMember(des=>des.Feature,opt=>opt.MapFrom(src=>new Feature() { Name = src.Name , IsExtra = true}));
             CreateMap<GymFeaturePutDto, GymFeature>();
-
+            CreateMap<Gym, GymGetDto>();
             CreateMap<Address, AddressToReturnDto>();
             CreateMap<Gym, GymToReturnDto>()
                 .ForMember(dest => dest.Logo, opt => opt.MapFrom(src => src.Media));

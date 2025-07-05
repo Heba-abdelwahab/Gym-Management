@@ -3,11 +3,6 @@ using Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Services.Abstractions;
 using Shared;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Presentation.Controllers
 {
@@ -20,6 +15,13 @@ namespace Presentation.Controllers
             this.serviceManager = serviceManager;
         }
 
+        [HttpGet("{gymId:int}")]
+        public async Task<ActionResult> GetGymById(int gymId)
+        {
+            var gymDto= await serviceManager.GymService.GetGymById(gymId);
+            return Ok(gymDto);
+        }
+
         [HttpPost("RequestAddGym")]
         public async Task<ActionResult> RequestAddGym(GymDto gymDto)
         {
@@ -27,10 +29,10 @@ namespace Presentation.Controllers
             return Ok();
         }
 
-        [HttpPost("UpdateGym/{gymId:int}")]
-        public async Task<ActionResult> UpdateGym(int gymId, GymDto gymDto)
+        [HttpPut("{gymId:int}")]
+        public async Task<ActionResult> UpdateGym(int gymId, GymUpdateDto gymUpdateDto)
         {
-            await serviceManager.GymService.UpdateGym(gymId, gymDto);
+            await serviceManager.GymService.UpdateGym(gymId, gymUpdateDto);
             return Ok();
         }
 
@@ -82,6 +84,7 @@ namespace Presentation.Controllers
             await serviceManager.GymService.UpdateGymFeature(gymFeatureId, GymFeaturePutDto);
             return Ok();
         }
+
         [HttpDelete("GymFeature/{gymFeatureId:int}")]
         public async Task<ActionResult> DeleteGymFeature(int gymFeatureId)
         {

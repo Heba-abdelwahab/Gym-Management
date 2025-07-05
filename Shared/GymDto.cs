@@ -9,9 +9,9 @@ namespace Shared
         string Name ,
         [Required]
         [Phone(ErrorMessage ="Invalid phone number format.")]
-        string Phone ,
+        string Phone,
         [Required]
-        string Description ,
+        string Description,
         [Required]
         [Range(0,2,ErrorMessage ="rang must be from 0 to 2.")]
         GymType GymType ,

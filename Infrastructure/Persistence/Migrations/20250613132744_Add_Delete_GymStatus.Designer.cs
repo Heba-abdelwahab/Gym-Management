@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Persistence;
 
@@ -11,9 +12,11 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(GymDbContext))]
-    partial class GymDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250613132744_Add_Delete_GymStatus")]
+    partial class Add_Delete_GymStatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -417,19 +420,9 @@ namespace Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("featureId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("gymId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CoachId");
-
-                    b.HasIndex("featureId");
-
-                    b.HasIndex("gymId");
 
                     b.ToTable("Media");
                 });
@@ -1132,7 +1125,7 @@ namespace Persistence.Migrations
             modelBuilder.Entity("Domain.Entities.GymFeature", b =>
                 {
                     b.HasOne("Domain.Entities.Feature", "Feature")
-                        .WithMany("GymFeatures")
+                        .WithMany()
                         .HasForeignKey("FeatureId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1216,18 +1209,6 @@ namespace Persistence.Migrations
                     b.HasOne("Domain.Entities.Coach", null)
                         .WithMany("Certificates")
                         .HasForeignKey("CoachId");
-
-                    b.HasOne("Domain.Entities.Feature", "feature")
-                        .WithMany("Images")
-                        .HasForeignKey("featureId");
-
-                    b.HasOne("Domain.Entities.Gym", "gym")
-                        .WithMany("Images")
-                        .HasForeignKey("gymId");
-
-                    b.Navigation("feature");
-
-                    b.Navigation("gym");
                 });
 
             modelBuilder.Entity("Domain.Entities.Membership", b =>
@@ -1455,13 +1436,6 @@ namespace Persistence.Migrations
                     b.Navigation("MuscleExerices");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Feature", b =>
-                {
-                    b.Navigation("GymFeatures");
-
-                    b.Navigation("Images");
-                });
-
             modelBuilder.Entity("Domain.Entities.Gym", b =>
                 {
                     b.Navigation("Classes");
@@ -1469,8 +1443,6 @@ namespace Persistence.Migrations
                     b.Navigation("GymCoaches");
 
                     b.Navigation("GymFeatures");
-
-                    b.Navigation("Images");
 
                     b.Navigation("Memberships");
 

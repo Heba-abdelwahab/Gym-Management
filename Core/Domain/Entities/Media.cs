@@ -10,5 +10,11 @@ namespace Domain.Entities
         public int PublicId { get; set; }
         public bool IsMain { get; set; } = false;
 
+        public int? gymId { get; set; }
+        public int? featureId { get; set; }
+
+        public Gym? gym { get; set; }
+        public Feature? feature { get; set; }
+
     }
 }
