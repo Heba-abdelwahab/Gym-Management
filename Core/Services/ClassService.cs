@@ -120,6 +120,9 @@ namespace Services
                 throw new ClassNotFoundException(classId);
 
             selectedClass.Trainees?.Remove(selectedTrainee);
+            selectedClass.CurrentCapacity--;
+            _classRepo.Update(selectedClass);
+
             bool isDeleted = await _unitOfWork.CompleteSaveAsync();
 
             if (!isDeleted)
@@ -137,18 +140,29 @@ namespace Services
             if (selectedClass is null || selectedTrainee is null)
                 throw new ClassNotFoundException(classId);
 
-            selectedClass.Trainees?.Add(selectedTrainee);
-            bool isAdded = await _unitOfWork.CompleteSaveAsync();
-
-            if(isAdded)
+            if (selectedClass.CurrentCapacity < selectedClass.Capacity)
             {
-                var mappedTrainee = _mapper.Map<ClassTraineeToReturnDto>(selectedTrainee);
-                return mappedTrainee;
+                selectedClass.Trainees?.Add(selectedTrainee);
+                selectedClass.CurrentCapacity++;
+                _classRepo.Update(selectedClass);
+
+                bool isAdded = await _unitOfWork.CompleteSaveAsync();
+
+                if (isAdded)
+                {
+                    var mappedTrainee = _mapper.Map<ClassTraineeToReturnDto>(selectedTrainee);
+                    return mappedTrainee;
+                }
+                else
+                {
+                    throw new Exception($"Failed to add the Trainee with Id: {traineeId} to Class with Id: {classId}.");
+                }
             }
             else
             {
-                throw new Exception($"Failed to add the Trainee with Id: {traineeId} to Class with Id: {classId}.");
+                throw new Exception($"Failed to add the selected Trainee to the class because Capacity is Full.");
             }
+            
         }
 
         public async Task<IReadOnlyList<ClassTraineeToReturnDto>> GetTraineesNotInClassAsync(int classId)

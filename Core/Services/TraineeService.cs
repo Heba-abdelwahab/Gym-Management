@@ -153,7 +153,7 @@ internal sealed class TraineeService : ITraineeService
     }
 
     // ================================= Gym Classes ===================================
-    public async Task<IReadOnlyList<ClassTraineeToReturnDto>> GetClassesByGym(int GymId)
+    public async Task<IReadOnlyList<Shared.TraineeGym.ClassTraineeToReturnDto>> GetClassesByGym(int GymId)
     {
         var Spec = new ClassesForTraineeSpec(GymId);
         var classes = await _unitOfWork.GetRepositories<Class, int>().GetAllWithSpecAsync(Spec);
@@ -161,7 +161,7 @@ internal sealed class TraineeService : ITraineeService
         if (classes is null)
             throw new GymNotFoundException(GymId);
 
-        var classesDto = _mapper.Map<IReadOnlyList<ClassTraineeToReturnDto>>(classes);
+        var classesDto = _mapper.Map<IReadOnlyList<Shared.TraineeGym.ClassTraineeToReturnDto>>(classes);
         return classesDto;
     }
 
@@ -254,7 +254,7 @@ internal sealed class TraineeService : ITraineeService
 
         var TraineeMapped = _mapper.Map<TraineeSubscriptionsToReturnDto>(Trainee);
         TraineeMapped.Features = _mapper.Map<IReadOnlyList<TraineeFeatureToReturnDto>>(Trainee.TraineeSelectedFeatures);
-        TraineeMapped.Class = _mapper.Map<IReadOnlyList<ClassTraineeToReturnDto>>(Trainee.Classes);
+        TraineeMapped.Class = _mapper.Map<IReadOnlyList<Shared.TraineeGym.ClassTraineeToReturnDto>>(Trainee.Classes);
 
         return TraineeMapped;
     }
