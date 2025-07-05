@@ -83,6 +83,9 @@ namespace Persistence.Migrations
                     b.Property<int>("CurrentCapacity")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -243,11 +246,7 @@ namespace Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("CoachId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("CoachId1")
+                    b.Property<int>("CoachId")
                         .HasColumnType("int");
 
                     b.Property<int>("GymId")
@@ -264,7 +263,7 @@ namespace Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CoachId1");
+                    b.HasIndex("CoachId");
 
                     b.HasIndex("GymId");
 
@@ -1096,8 +1095,9 @@ namespace Persistence.Migrations
                 {
                     b.HasOne("Domain.Entities.Coach", "Coach")
                         .WithMany("GymCoaches")
-                        .HasForeignKey("CoachId1")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .HasForeignKey("CoachId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.HasOne("Domain.Entities.Gym", "Gym")
                         .WithMany("GymCoaches")

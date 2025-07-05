@@ -28,6 +28,19 @@ namespace Services
             
             return mappedClasses;
         }
+        public async Task<IReadOnlyList<ClassToReturnDto>> GetClassesByGymAsync(int gymId)
+        {
+            var gym = await _unitOfWork.GetRepositories<Gym, int>().GetByIdAsync(gymId);
+            if(gym is null)
+            {
+                throw new GymNotFoundException(gymId);
+            }
+
+            var gymClasses = await _classRepo.GetAllWithSpecAsync(new GetClassesByGymSpec(gymId));
+            var mappedClasses = _mapper.Map<IReadOnlyList<ClassToReturnDto>>(gymClasses);
+
+            return mappedClasses;
+        }
 
         public async Task<ClassToReturnDto> GetClassByIdAsync(int id)
         {
@@ -86,6 +99,70 @@ namespace Services
             {
                 throw new Exception($"Failed to delete the Class with Id: {id}");
             }
+
+            /////// send notification to all trainees and coach
+        }
+
+        public async Task<IReadOnlyList<ClassTraineeToReturnDto>> GetClassTraineesAsync(int classId)
+        {
+            var selectedClass = await _classRepo.GetByIdWithSpecAsync(new GetClassTraineesSpec(classId));
+            var mappedTrainees = _mapper.Map<IReadOnlyList<ClassTraineeToReturnDto>>(selectedClass.Trainees);
+
+            return mappedTrainees;
+        }
+
+        public async Task RemoveTraineeFromClassAsync(int classId, int traineeId)
+        {
+            var selectedClass = await _classRepo.GetByIdWithSpecAsync(new GetClassTraineesSpec(classId));
+            var selectedTrainee = await _unitOfWork.GetRepositories<Trainee, int>().GetByIdAsync(traineeId);
+
+            if(selectedClass is null || selectedTrainee is null)
+                throw new ClassNotFoundException(classId);
+
+            selectedClass.Trainees?.Remove(selectedTrainee);
+            bool isDeleted = await _unitOfWork.CompleteSaveAsync();
+
+            if (!isDeleted)
+                throw new Exception($"Failed to delete the Trainee with Id: {traineeId} from Class with Id: {classId}");
+
+            /////// send notification to the trainee
+
+        }
+
+        public async Task<ClassTraineeToReturnDto> AddTraineeToClassAsync(int classId, int traineeId)
+        {
+            var selectedClass = await _classRepo.GetByIdWithSpecAsync(new GetClassTraineesSpec(classId));
+            var selectedTrainee = await _unitOfWork.GetRepositories<Trainee, int>().GetByIdWithSpecAsync(new GetTraineeByIdSpec(traineeId));
+
+            if (selectedClass is null || selectedTrainee is null)
+                throw new ClassNotFoundException(classId);
+
+            selectedClass.Trainees?.Add(selectedTrainee);
+            bool isAdded = await _unitOfWork.CompleteSaveAsync();
+
+            if(isAdded)
+            {
+                var mappedTrainee = _mapper.Map<ClassTraineeToReturnDto>(selectedTrainee);
+                return mappedTrainee;
+            }
+            else
+            {
+                throw new Exception($"Failed to add the Trainee with Id: {traineeId} to Class with Id: {classId}.");
+            }
+        }
+
+        public async Task<IReadOnlyList<ClassTraineeToReturnDto>> GetTraineesNotInClassAsync(int classId)
+        {
+            var selectedClass = await _classRepo.GetByIdWithSpecAsync(new GetClassTraineesSpec(classId));
+            if (selectedClass is null)
+            {
+                throw new ClassNotFoundException(classId);
+            }
+               
+            var notJoinedTrainees = await _unitOfWork.GetRepositories<Trainee, int>().GetAllWithSpecAsync(new GetTraineesNotInClass(classId));
+            var mappedTrainees = _mapper.Map<IReadOnlyList<ClassTraineeToReturnDto>>(notJoinedTrainees);
+
+            return mappedTrainees;
         }
     }
 }

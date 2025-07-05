@@ -7,7 +7,7 @@ namespace Services.Specifications
     {
         public GetAllClassesSpec()
         {
-            AddIncludes(c => c.Coach);
+            AddIncludes($"{nameof(Coach)}.{nameof(AppUser)}");
             AddIncludes(c => c.Gym);
         }
     }

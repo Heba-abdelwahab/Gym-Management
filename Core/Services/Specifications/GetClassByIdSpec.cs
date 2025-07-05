@@ -7,7 +7,7 @@ namespace Services.Specifications
     {
         public GetClassByIdSpec(int id) : base(c => c.Id == id)
         {
-            AddIncludes(c => c.Coach);
+            AddIncludes($"{nameof(Coach)}.{nameof(AppUser)}");
             AddIncludes(c => c.Gym);
         }
     }
