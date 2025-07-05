@@ -9,6 +9,7 @@ namespace Services.Specifications
         {
             AddIncludes($"{nameof(Coach)}.{nameof(AppUser)}");
             AddIncludes(c => c.Gym);
+           
         }
     }
 }

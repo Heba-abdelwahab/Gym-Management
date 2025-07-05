@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Domain.Entities;
 using Shared;
+using Shared.TraineeGym;
 
 namespace Services.MappingProfiles
 {
@@ -18,6 +19,12 @@ namespace Services.MappingProfiles
                 .ForCtorParam("LastName", opt => opt.MapFrom(src => src.AppUser.LastName))
                 .ForCtorParam("PhoneNumber", opt => opt.MapFrom(src => src.AppUser.PhoneNumber))
                 .ForCtorParam("Id", opt => opt.MapFrom(src => src.Id));
+
+            // Mapping for ClassTraineeToReturnDto and CurrentTraineesCount From Trainees collection
+            CreateMap<Class, ClassTraineeToReturnDto>()
+                .ForMember(dest => dest.CurrentCapacity, opt => opt.MapFrom(src => src.Trainees.Count));
+
+
         }
 
     }

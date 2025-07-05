@@ -12,7 +12,9 @@ namespace Services.Specifications
     {
 
       public  GetTraineeByGemSpec(int gymid) :base(t=>t.GymId==gymid)
-        { 
+        {
+            AddIncludes(t => t.AppUser);
+            AddIncludes(t=>t.Membership);
         }
     }
 }
