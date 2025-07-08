@@ -1,8 +1,11 @@
 ﻿using Domain.Entities;
 using Domain.Enums;
+using Domain.Exceptions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Services.Abstractions;
 using Shared;
+using System.Text.Json;
 
 namespace Presentation.Controllers
 {
@@ -23,16 +26,28 @@ namespace Presentation.Controllers
         }
 
         [HttpPost("RequestAddGym")]
-        public async Task<ActionResult> RequestAddGym(GymDto gymDto)
+        public async Task<ActionResult> RequestAddGym([FromForm] GymWithFilesDto gymWithFilesDto)
         {
-            await serviceManager.GymService.RequestAddGym(gymDto);
+            var gymDto = JsonSerializer.Deserialize<GymDto>(gymWithFilesDto.gymInfo , new JsonSerializerOptions { PropertyNameCaseInsensitive=true});
+
+            TryValidateModel(gymDto);
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            await serviceManager.GymService.RequestAddGym(gymWithFilesDto, gymDto);
             return Ok();
         }
 
         [HttpPut("{gymId:int}")]
-        public async Task<ActionResult> UpdateGym(int gymId, GymUpdateDto gymUpdateDto)
+        public async Task<ActionResult> UpdateGym(int gymId, [FromForm] GymWithFilesUpdate gymWithFilesUpdate)
         {
-            await serviceManager.GymService.UpdateGym(gymId, gymUpdateDto);
+            var gymDto = JsonSerializer.Deserialize<GymUpdateDto>(gymWithFilesUpdate.gymInfo , new JsonSerializerOptions { PropertyNameCaseInsensitive=true});
+            TryValidateModel(gymDto);
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            await serviceManager.GymService.UpdateGym(gymId, gymWithFilesUpdate, gymDto);
             return Ok();
         }
 

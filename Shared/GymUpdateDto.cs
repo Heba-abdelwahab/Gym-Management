@@ -21,8 +21,6 @@ namespace Shared
     [Required]
     [Range(0,2,ErrorMessage ="rang must be from 0 to 2.")]
     GymType GymType,
-    [Required]
-    int GymOwnerId,
     //IFormFile? GymImage,
     AddressDto Address
     );

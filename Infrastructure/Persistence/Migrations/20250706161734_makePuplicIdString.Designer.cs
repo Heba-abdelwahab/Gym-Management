@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Persistence;
 
@@ -11,9 +12,11 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(GymDbContext))]
-    partial class GymDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250706161734_makePuplicIdString")]
+    partial class makePuplicIdString
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -220,6 +223,10 @@ namespace Persistence.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<string>("Media")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("varchar(50)");
@@ -290,6 +297,10 @@ namespace Persistence.Migrations
 
                     b.Property<int>("GymId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Image")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -395,6 +406,20 @@ namespace Persistence.Migrations
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
+
+                    b.Property<bool>("IsMain")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("PublicId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("featureId")
                         .HasColumnType("int");
@@ -1083,40 +1108,10 @@ namespace Persistence.Migrations
                             b1.Navigation("Location");
                         });
 
-                    b.OwnsOne("Domain.ValueObjects.MediaValueObj", "Media", b1 =>
-                        {
-                            b1.Property<int>("GymId")
-                                .HasColumnType("int");
-
-                            b1.Property<bool>("IsMain")
-                                .HasColumnType("bit");
-
-                            b1.Property<string>("PublicId")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<int>("Type")
-                                .HasColumnType("int");
-
-                            b1.Property<string>("Url")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.HasKey("GymId");
-
-                            b1.ToTable("Gyms");
-
-                            b1.WithOwner()
-                                .HasForeignKey("GymId");
-                        });
-
                     b.Navigation("Address")
                         .IsRequired();
 
                     b.Navigation("GymOwner");
-
-                    b.Navigation("Media")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Entities.GymCoach", b =>
@@ -1152,39 +1147,9 @@ namespace Persistence.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.OwnsOne("Domain.ValueObjects.MediaValueObj", "Image", b1 =>
-                        {
-                            b1.Property<int>("GymFeatureId")
-                                .HasColumnType("int");
-
-                            b1.Property<bool>("IsMain")
-                                .HasColumnType("bit");
-
-                            b1.Property<string>("PublicId")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<int>("Type")
-                                .HasColumnType("int");
-
-                            b1.Property<string>("Url")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.HasKey("GymFeatureId");
-
-                            b1.ToTable("GymFeature");
-
-                            b1.WithOwner()
-                                .HasForeignKey("GymFeatureId");
-                        });
-
                     b.Navigation("Feature");
 
                     b.Navigation("Gym");
-
-                    b.Navigation("Image")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Entities.GymOwner", b =>
@@ -1263,36 +1228,6 @@ namespace Persistence.Migrations
                     b.HasOne("Domain.Entities.Gym", "gym")
                         .WithMany("Images")
                         .HasForeignKey("gymId");
-
-                    b.OwnsOne("Domain.ValueObjects.MediaValueObj", "MediaValue", b1 =>
-                        {
-                            b1.Property<int>("MediaId")
-                                .HasColumnType("int");
-
-                            b1.Property<bool>("IsMain")
-                                .HasColumnType("bit");
-
-                            b1.Property<string>("PublicId")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<int>("Type")
-                                .HasColumnType("int");
-
-                            b1.Property<string>("Url")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.HasKey("MediaId");
-
-                            b1.ToTable("Media");
-
-                            b1.WithOwner()
-                                .HasForeignKey("MediaId");
-                        });
-
-                    b.Navigation("MediaValue")
-                        .IsRequired();
 
                     b.Navigation("feature");
 

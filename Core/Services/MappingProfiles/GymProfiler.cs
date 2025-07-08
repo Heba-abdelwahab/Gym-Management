@@ -12,35 +12,72 @@ namespace Services.MappingProfiles
     {
         public GymProfiler()
         {
-            CreateMap<GymDto, Gym>()
-            .ForMember(des => des.GymFeatures,
-                opt => opt.MapFrom(src => src.GymFeatures.Select(gf => new GymFeature()
-                {
-                    Cost = gf.Cost,
-                    Description = gf.Description,
-                    Image = gf.Image,
-                    FeatureId = gf.FeatureId
-                })
-                .Concat(src.GymExtraFeatures.Select(gef => new GymFeature()
-                {
-                    Cost = gef.Cost,
-                    Description = gef.Description,
-                    Image = gef.Image,
-                    Feature = new Feature() { Name = gef.Name, IsExtra = true }
-
-                }))
-                )
-            );
             //CreateMap<GymDto, Gym>()
             //.ForMember(des => des.GymFeatures,
-            //    opt => opt.MapFrom(src => src.GymExtraFeatureDto.Select(gef => new GymFeature()
+            //    opt => opt.MapFrom(src => src.GymFeatures.Select(gf => new GymFeature()
+            //    {
+            //        Cost = gf.Cost,
+            //        Description = gf.Description,
+            //        Image = gf.Image,
+            //        FeatureId = gf.FeatureId
+            //    })
+            //    .Concat(src.GymExtraFeatures.Select(gef => new GymFeature()
             //    {
             //        Cost = gef.Cost,
             //        Description = gef.Description,
             //        Image = gef.Image,
-            //        Feature = gef.IsExtra ? new Feature() { Name = gef.Name, IsExtra = true } :null,
-            //        FeatureId = gef.IsExtra ?0:gef.FeatureId.Value,
-            //    })));
+            //        Feature = new Feature() { Name = gef.Name, IsExtra = true }
+
+            //    }))
+            //    )
+            //);
+            CreateMap<GymDto, Gym>()
+                .ForMember(des => des.GymFeatures,
+                    opt => opt.MapFrom((src, dest, destMember, context) =>
+                    {
+                        var exFeatureImages = ((IEnumerable<PhotoUploadedResult>)context.Items["exFeatureImages"])?.ToList();
+                        var FeatureImages = ((IEnumerable<PhotoUploadedResult>)context.Items["FeatureImages"])?.ToList();
+
+                        return src.GymFeatures.Select((gf, idx) =>
+                        {
+
+                            var photResult = new MediaValueObj()
+                            {
+                                Url = FeatureImages[idx].ImageName,
+                                PublicId = FeatureImages[idx].PublicId,
+                                Type = MediaType.Img
+                            };
+                            return new GymFeature()
+                            {
+                                Cost = gf.Cost,
+                                Description = gf.Description,
+                                Image = photResult,
+                                FeatureId = gf.FeatureId
+                            };
+                        })
+                        .Concat(src.GymExtraFeatures.Select((gef, idx) =>
+                        {
+                            var photResult = new MediaValueObj()
+                            {
+                                Url = exFeatureImages[idx].ImageName,
+                                PublicId = exFeatureImages[idx].PublicId,
+                                Type = MediaType.Img
+                            };
+
+                            return new GymFeature()
+                            {
+                                Cost = gef.Cost,
+                                Description = gef.Description,
+                                Image = photResult,
+                                Feature = new Feature()
+                                {
+                                    Name = gef.Name,
+                                    IsExtra = true
+                                }
+                            };
+                        }));
+                    }));
+
 
             CreateMap<AddressDto, Address>().ReverseMap();
             CreateMap<LocationDto,Location>().ReverseMap();
@@ -51,7 +88,11 @@ namespace Services.MappingProfiles
             CreateMap<ExGymFeatureDto,GymFeature>()
                 .ForMember(des=>des.Feature,opt=>opt.MapFrom(src=>new Feature() { Name = src.Name , IsExtra = true}));
             CreateMap<GymFeaturePutDto, GymFeature>();
-            CreateMap<Gym, GymGetDto>();
+            CreateMap<Gym, GymGetDto>()
+                .ForMember(des=>des.MediaUrl,opt=>opt.MapFrom(src=>src.Media.Url))
+                .ForMember(des => des.GymImagesUrl, opt=>opt.MapFrom(src=>src.Images.Select(img=>img.MediaValue.Url).ToList()));
+            CreateMap<GymUpdateDto, Gym>();
+                
             CreateMap<Address, AddressToReturnDto>();
             CreateMap<Gym, GymToReturnDto>()
                 .ForMember(dest => dest.Logo, opt => opt.MapFrom(src => src.Media));

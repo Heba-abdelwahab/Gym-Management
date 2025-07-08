@@ -1,4 +1,5 @@
 ﻿using Domain.Enums;
+using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
 namespace Shared
@@ -17,7 +18,6 @@ namespace Shared
         GymType GymType ,
         [Required]
         int GymOwnerId,
-        //IFormFile? GymImage,
         AddressDto Address ,
         IEnumerable<ExGymFeatureDto>?GymExtraFeatures,
         IEnumerable<NonExGymFeatureDto>?GymFeatures

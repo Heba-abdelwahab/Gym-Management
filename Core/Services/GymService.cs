@@ -3,16 +3,22 @@ using Domain.Contracts;
 using Domain.Entities;
 using Domain.Enums;
 using Domain.Exceptions;
+using Domain.ValueObjects;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
 using Services.Abstractions;
 using Services.Specifications;
 using Shared;
+using Shared.Cloudinary;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Services
 {
@@ -21,22 +27,28 @@ namespace Services
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
         private readonly IUserService _userServices;
-        public GymService(IUnitOfWork unitOfWork , IMapper mapper, IUserService _userServices)
+        private readonly IPhotoService photoService;
+        private readonly IOptionsMonitor<CloudinarySettings> config;
+
+        public GymService(IUnitOfWork unitOfWork , IMapper mapper, IUserService _userServices,IPhotoService photoService, IOptionsMonitor<CloudinarySettings> _config)
         {
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
             this._userServices = _userServices;
+            this.photoService = photoService;
+            config = _config;
         }
 
         public async Task<GymGetDto> GetGymById(int gymId)
         {
-            Gym gym = await unitOfWork.GetRepositories<Gym, int>().GetByIdAsync(gymId);
+            Gym gym = await unitOfWork.GetRepositories<Gym, int>().GetByIdWithSpecAsync(new GetGymWithImagesSpec(gymId));
 
             if (gym == null)
                 throw new GymNotFoundException(gymId);
             
             var gymDeto = mapper.Map<GymGetDto>(gym);
-
+            gymDeto.MediaUrl= config.CurrentValue.CloudinaryBaseUrl+gymDeto.MediaUrl;
+            gymDeto.GymImagesUrl=gymDeto.GymImagesUrl.Select(img=> config.CurrentValue.CloudinaryBaseUrl + img).ToList();
             return gymDeto;
 
         }
@@ -60,30 +72,177 @@ namespace Services
 
             return true;
         }
-        public async Task RequestAddGym (GymDto gymDto)
+        //public async Task RequestAddGym (GymWithFilesDto gymWithFilesDto, GymDto gymDto)
+        //{
+
+        //   if( await validateGymFeatures(gymDto))
+        //   {
+        //        IEnumerable<Task<PhotoUploadedResult>> loadingExFeaturesImageTask = null;
+        //        IEnumerable<Task<PhotoUploadedResult>> loadingFeaturesImageTask = null;
+        //        var loadingImagesTasks = gymWithFilesDto.GymImages.Select(img=>photoService.AddPhotoAsync(img)).ToList();
+        //        var logoLoadingTask = photoService.AddPhotoAsync(gymWithFilesDto.Media);
+
+        //        if (gymWithFilesDto.GymExtraFeaturesImages != null)
+        //            loadingExFeaturesImageTask = gymWithFilesDto.GymExtraFeaturesImages.Select(img => photoService.AddPhotoAsync(img)).ToList();
+
+        //        if (gymWithFilesDto.GymFeaturesImages != null)
+        //            loadingFeaturesImageTask = gymWithFilesDto.GymFeaturesImages.Select(img => photoService.AddPhotoAsync(img)).ToList();
+
+
+        //        //gym.GymOwnerId = _userServices.Id.Value;
+        //       // gym.GymOwnerId = 1;
+
+        //        IEnumerable<PhotoUploadedResult> photoUploadedResults=null, ExFeaturesImageResult=null, FeaturesImageResult=null;
+
+        //        photoUploadedResults = await Task.WhenAll(loadingImagesTasks);
+
+        //        if (loadingExFeaturesImageTask != null)
+        //            ExFeaturesImageResult = await Task.WhenAll(loadingExFeaturesImageTask);
+
+        //        if (loadingFeaturesImageTask != null)
+        //            FeaturesImageResult = await Task.WhenAll(loadingFeaturesImageTask);
+
+        //        var LogoUploadedResults = await logoLoadingTask;
+
+
+        //        Gym gym = mapper.Map<Gym>(gymDto, opt =>
+        //        {
+        //            opt.Items["exFeatureImages"] = ExFeaturesImageResult;
+        //            opt.Items["FeatureImages"] = FeaturesImageResult;
+
+        //        });
+
+        //        foreach (var image in photoUploadedResults)
+        //            gym.Images.Add(new Media()
+        //            {
+        //                MediaValue = new MediaValueObj()
+        //                {
+        //                    Url = image.ImageName,
+        //                    PublicId = image.PublicId,
+        //                    Type = MediaType.Img
+        //                }
+
+        //            });
+
+        //         gym.Media =new MediaValueObj()
+        //         {
+        //             Url = LogoUploadedResults.ImageName,
+        //             PublicId = LogoUploadedResults.PublicId,
+        //             Type = MediaType.Img
+        //         };
+
+
+        //         unitOfWork.GetRepositories<Gym, int>().Insert(gym);
+        //         if( ! await unitOfWork.CompleteSaveAsync() )
+        //            throw new Exception ("fail to request add Gym");
+
+        //    }
+
+        //}
+
+
+        public async Task RequestAddGym(GymWithFilesDto gymWithFilesDto, GymDto gymDto)
         {
+            if (!await validateGymFeatures(gymDto))
+                throw new Exception("Gym features validation failed.");
 
-           if( await validateGymFeatures(gymDto))
+            var uploadLogoTask = photoService.AddPhotoAsync(gymWithFilesDto.Media);
+            var uploadMainImagesTasks = gymWithFilesDto.GymImages.Select(img => photoService.AddPhotoAsync(img)).ToList();
+            var uploadExtraFeaturesTasks = gymWithFilesDto.GymExtraFeaturesImages?.Select(img => photoService.AddPhotoAsync(img)).ToList();
+            var uploadFeaturesTasks = gymWithFilesDto.GymFeaturesImages?.Select(img => photoService.AddPhotoAsync(img)).ToList();
+
+            var mainImagesResult = await Task.WhenAll(uploadMainImagesTasks);
+            var logoUploadResult = await uploadLogoTask;
+            var extraFeaturesResult = uploadExtraFeaturesTasks != null ? await Task.WhenAll(uploadExtraFeaturesTasks) : null;
+            var featuresResult = uploadFeaturesTasks != null ? await Task.WhenAll(uploadFeaturesTasks) : null;
+
+            var gym = mapper.Map<Gym>(gymDto, opt =>
             {
-                Gym gym = mapper.Map<Gym>(gymDto);
+                opt.Items["exFeatureImages"] = extraFeaturesResult;
+                opt.Items["FeatureImages"] = featuresResult;
+            });
 
-                gym.GymOwnerId = _userServices.Id.Value;
-                gym.Media = ""; ///////////////////////////// ???
-                unitOfWork.GetRepositories<Gym, int>().Insert(gym);
-                if( ! await unitOfWork.CompleteSaveAsync() )
-                    throw new Exception ("fail to request add Gym");
+            foreach (var image in mainImagesResult)
+            {
+                gym.Images.Add(new Media
+                {
+                    MediaValue = new MediaValueObj
+                    {
+                        Url = image.ImageName,
+                        PublicId = image.PublicId,
+                        Type = MediaType.Img
+                    }
+                });
             }
 
+            gym.Media = new MediaValueObj
+            {
+                Url = logoUploadResult.ImageName,
+                PublicId = logoUploadResult.PublicId,
+                Type = MediaType.Img
+            };
+
+            unitOfWork.GetRepositories<Gym, int>().Insert(gym);
+
+            if (!await unitOfWork.CompleteSaveAsync())
+                throw new Exception("Failed to request add Gym.");
         }
 
-        public async Task UpdateGym(int gymId, GymUpdateDto gymUpdateDto)
+        public async Task UpdateGym(int gymId, GymWithFilesUpdate gymWithFilesUpdate, GymUpdateDto gymUpdateDto)
         {
-            Gym gym = await unitOfWork.GetRepositories<Gym, int>().GetByIdAsync(gymId);
+            Gym gym;
+
+            if (gymWithFilesUpdate.GymImages==null)
+                gym = await unitOfWork.GetRepositories<Gym, int>().GetByIdAsync(gymId);
+            else
+                gym = await unitOfWork.GetRepositories<Gym, int>().GetByIdWithSpecAsync(new GetGymWithImagesSpec(gymId));
 
             if (gym == null)
                 throw new GymNotFoundException(gymId);
 
             mapper.Map(gymUpdateDto, gym);
+
+            var uploadLogoTask = gymWithFilesUpdate.Media != null ? photoService.AddPhotoAsync(gymWithFilesUpdate.Media) : null;
+            var uploadImagesTasks = gymWithFilesUpdate.GymImages != null ? gymWithFilesUpdate.GymImages.Select(img => photoService.AddPhotoAsync(img)) : null;
+
+            var LogoPhotoRes = uploadLogoTask==null ? null : await uploadLogoTask;
+            var ImagesPhotoRes = uploadImagesTasks == null ? null : await Task.WhenAll(uploadImagesTasks);
+
+
+            if (LogoPhotoRes != null)
+            {             
+                bool isdeleted= await photoService.DeletePhotoAsync(gym.Media.PublicId);
+                gym.Media = new MediaValueObj()
+                {
+                    Url = LogoPhotoRes.ImageName,
+                    PublicId = LogoPhotoRes.PublicId,
+                    Type = MediaType.Img
+                };
+            }
+
+
+            if (ImagesPhotoRes != null)
+            {
+                var deleteImageTaskes = gym.Images.Select(img => photoService.DeletePhotoAsync(img.MediaValue.PublicId));
+                await Task.WhenAll(deleteImageTaskes);
+
+                foreach (var image in gym.Images)
+                    unitOfWork.GetRepositories<Media, int>().Delete(image);
+                gym.Images.Clear();
+
+                foreach (var image in ImagesPhotoRes)
+                    gym.Images.Add(new Media()
+                    {
+                        MediaValue = new MediaValueObj()
+                        {
+                            Url = image.ImageName,
+                            PublicId = image.PublicId,
+                            Type = MediaType.Img
+                        }
+
+                    });
+            }
+
             unitOfWork.GetRepositories<Gym,int>().Update(gym);
 
             if (!await unitOfWork.CompleteSaveAsync())

@@ -41,7 +41,7 @@ public class ServiceManager : IServiceManager
         _lazyClassService = new(() => new ClassService(unitOfWork, mapper));
         _lazyCoachService = new(() => new CoachService(AuthenticationService, unitOfWork, UserServices, mapper, TokenService));
         _lazyTraineeService = new(() => new TraineeService(AuthenticationService, unitOfWork, UserServices, mapper, TokenService));
-        _lazyGymService = new(() => new GymService(unitOfWork, mapper,UserServices));
+        _lazyGymService = new(() => new GymService(unitOfWork, mapper,UserServices,PhotoService, config));
     }
 
     public IPhotoService PhotoService => _lazyPhotoService.Value;

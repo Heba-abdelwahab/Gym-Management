@@ -13,7 +13,7 @@ namespace Domain.Entities
     {
         public Address Address { get; set; }
         public GymType GymType { get; set; }
-        public string Media { get; set; }
+        public MediaValueObj Media { get; set; } //logo
         public string Name { get; set; }
         public string Phone { get; set; }
         public string Description { get; set; }
@@ -26,7 +26,6 @@ namespace Domain.Entities
         public ICollection<Membership> Memberships { get; set; } =new List<Membership>();
         public ICollection<Class> Classes { get; set; } = new List<Class>();
         public ICollection<Trainee> Trainees { get; set; } = new List<Trainee>();
-
-        public ICollection<Media>Images { get; set; }
+        public ICollection<Media>Images { get; set; } = new List<Media>();
     }
 }

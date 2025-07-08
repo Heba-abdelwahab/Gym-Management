@@ -10,12 +10,13 @@ using System.Threading.Tasks;
 namespace Shared
 {
     public record GymGetDto
-    (
-        AddressDto Address ,
-        GymType GymType ,
-        string Media ,
-        string Name ,
-        string Phone ,
-        string Description 
-    );
+    {
+        public AddressDto Address { get; set; }
+        public GymType GymType { get; set; }
+        public string MediaUrl { get; set; }
+        public List<string> GymImagesUrl { get; set; }
+        public string Name { get; set; }
+        public string Phone { get; set; }
+        public string Description { get; set; }
+    }
 }

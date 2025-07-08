@@ -54,6 +54,8 @@ namespace Persistence.Configurations
             builder.HasMany(g => g.Trainees)
                 .WithOne(t => t.Gym)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            builder.OwnsOne(g => g.Media);
         }
     }
 }
