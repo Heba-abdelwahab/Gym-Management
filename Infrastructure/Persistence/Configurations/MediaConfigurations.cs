@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Domain.Entities.Domain.Entities;
 using Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

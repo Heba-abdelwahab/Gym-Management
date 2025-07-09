@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class initialCreat : Migration
+    public partial class intial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -370,29 +370,6 @@ namespace Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Media",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Type = table.Column<int>(type: "int", nullable: false),
-                    Url = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PublicId = table.Column<int>(type: "int", nullable: false),
-                    IsMain = table.Column<bool>(type: "bit", nullable: false),
-                    CoachId = table.Column<int>(type: "int", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Media", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Media_Coaches_CoachId",
-                        column: x => x.CoachId,
-                        principalTable: "Coaches",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Gyms",
                 columns: table => new
                 {
@@ -404,10 +381,15 @@ namespace Persistence.Migrations
                     Address_Location_X = table.Column<double>(type: "float", nullable: true),
                     Address_Location_Y = table.Column<double>(type: "float", nullable: true),
                     GymType = table.Column<int>(type: "int", nullable: false),
-                    Media = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Media_Type = table.Column<int>(type: "int", nullable: false),
+                    Media_Url = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Media_PublicId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Media_IsMain = table.Column<bool>(type: "bit", nullable: false),
                     Name = table.Column<string>(type: "varchar(50)", nullable: false),
                     Phone = table.Column<string>(type: "varchar(50)", nullable: false),
                     Description = table.Column<string>(type: "varchar(50)", nullable: false),
+                    AddGymStatus = table.Column<int>(type: "int", nullable: false),
+                    DeleteGymStatus = table.Column<int>(type: "int", nullable: false),
                     GymOwnerId = table.Column<int>(type: "int", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -487,7 +469,10 @@ namespace Persistence.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Image = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Image_Type = table.Column<int>(type: "int", nullable: false),
+                    Image_Url = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Image_PublicId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Image_IsMain = table.Column<bool>(type: "bit", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Cost = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     GymId = table.Column<int>(type: "int", nullable: false),
@@ -506,6 +491,41 @@ namespace Persistence.Migrations
                     table.ForeignKey(
                         name: "FK_GymFeature_Gyms_GymId",
                         column: x => x.GymId,
+                        principalTable: "Gyms",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Media",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    MediaValue_Type = table.Column<int>(type: "int", nullable: false),
+                    MediaValue_Url = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MediaValue_PublicId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MediaValue_IsMain = table.Column<bool>(type: "bit", nullable: false),
+                    gymId = table.Column<int>(type: "int", nullable: true),
+                    featureId = table.Column<int>(type: "int", nullable: true),
+                    CoachId = table.Column<int>(type: "int", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Media", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Media_Coaches_CoachId",
+                        column: x => x.CoachId,
+                        principalTable: "Coaches",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Media_Features_featureId",
+                        column: x => x.featureId,
+                        principalTable: "Features",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Media_Gyms_gymId",
+                        column: x => x.gymId,
                         principalTable: "Gyms",
                         principalColumn: "Id");
                 });
@@ -926,6 +946,16 @@ namespace Persistence.Migrations
                 name: "IX_Media_CoachId",
                 table: "Media",
                 column: "CoachId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Media_featureId",
+                table: "Media",
+                column: "featureId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Media_gymId",
+                table: "Media",
+                column: "gymId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Memberships_GymId",

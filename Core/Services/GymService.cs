@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Domain.Contracts;
 using Domain.Entities;
+using Domain.Entities.Domain.Entities;
 using Domain.Enums;
 using Domain.Exceptions;
 using Domain.ValueObjects;
@@ -170,7 +171,7 @@ namespace Services
                     {
                         Url = image.ImageName,
                         PublicId = image.PublicId,
-                        Type = MediaType.Img
+                        Type = MediaType.Image
                     }
                 });
             }
@@ -179,7 +180,7 @@ namespace Services
             {
                 Url = logoUploadResult.ImageName,
                 PublicId = logoUploadResult.PublicId,
-                Type = MediaType.Img
+                Type = MediaType.Image
             };
 
             unitOfWork.GetRepositories<Gym, int>().Insert(gym);
@@ -216,7 +217,7 @@ namespace Services
                 {
                     Url = LogoPhotoRes.ImageName,
                     PublicId = LogoPhotoRes.PublicId,
-                    Type = MediaType.Img
+                    Type = MediaType.Image
                 };
             }
 
@@ -237,7 +238,7 @@ namespace Services
                         {
                             Url = image.ImageName,
                             PublicId = image.PublicId,
-                            Type = MediaType.Img
+                            Type = MediaType.Image
                         }
 
                     });
@@ -301,7 +302,7 @@ namespace Services
             {
                 PublicId = photoResult.PublicId,
                 Url = photoResult.ImageName,
-                Type = MediaType.Img,
+                Type = MediaType.Image,
             };
 
 
@@ -324,7 +325,7 @@ namespace Services
             {
                 PublicId = photoResult.PublicId,
                 Url = photoResult.ImageName,
-                Type = MediaType.Img,
+                Type = MediaType.Image,
             };
 
             unitOfWork.GetRepositories<GymFeature, int>().Insert(newGymFeature);

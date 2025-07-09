@@ -171,7 +171,6 @@ public class UsersController : ApiControllerBase
 
         return BadRequest("Problem setting the main photo ");
 
-
     }
 
 }

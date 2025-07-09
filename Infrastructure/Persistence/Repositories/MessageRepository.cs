@@ -41,7 +41,6 @@ public class MessageRepository : IMessageRepository
         => _dbContext.Messages.Remove(message);
 
 
-
     public async Task<Message?> GetMessage(int id)
         => await _dbContext.Messages.FindAsync(id);
 

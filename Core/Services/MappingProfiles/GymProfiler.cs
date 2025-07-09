@@ -44,7 +44,7 @@ namespace Services.MappingProfiles
                             {
                                 Url = FeatureImages[idx].ImageName,
                                 PublicId = FeatureImages[idx].PublicId,
-                                Type = MediaType.Img
+                                Type = MediaType.Image
                             };
                             return new GymFeature()
                             {
@@ -60,7 +60,7 @@ namespace Services.MappingProfiles
                             {
                                 Url = exFeatureImages[idx].ImageName,
                                 PublicId = exFeatureImages[idx].PublicId,
-                                Type = MediaType.Img
+                                Type = MediaType.Image
                             };
 
                             return new GymFeature()
