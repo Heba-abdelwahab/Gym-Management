@@ -64,15 +64,15 @@ namespace Presentation.Controllers
             var features = await serviceManager.GymService.GetGymFeatures();
             return Ok(features);
         }
-        [HttpGet("GetFeaturesByGymId/{gymId:int}")]
-        public async Task<ActionResult> GetGymFeatures(int gymId)
+        [HttpGet("Features/{gymId:int}")]
+        public async Task<ActionResult> GetFeaturesByGymId(int gymId)
         {
             var features = await serviceManager.GymService.GetFeaturesByGymId(gymId);
             return Ok(features);
         }
 
 
-        [HttpGet("GetGymFeatureById/{gymFeatureId:int}")]
+        [HttpGet("Feature/{gymFeatureId:int}")]
         public async Task<ActionResult> GetGymFeatureById(int gymFeatureId)
         {
             var features = await serviceManager.GymService.GetGymFeatureById(gymFeatureId);
@@ -80,31 +80,32 @@ namespace Presentation.Controllers
         }
 
         [HttpPost("NonExGymFeature/{gymId:int}")]
-        public async Task<ActionResult> AddNonExGymFeature(int gymId, NonExGymFeatureDto NonExGymFeatureDto)
+        public async Task<ActionResult> AddNonExGymFeature([FromRoute] int gymId,[FromForm] NonExGymFeatureDto NonExGymFeatureDto)
         {
-            await serviceManager.GymService.AddNonExGymFeature(gymId,NonExGymFeatureDto);
-            return Ok();
+            var featureGymDto= await serviceManager.GymService.AddNonExGymFeature(gymId,NonExGymFeatureDto);
+            return CreatedAtAction(nameof(GetGymFeatureById),new { gymFeatureId  = featureGymDto.Id },featureGymDto);
         }
 
         [HttpPost("ExtraGymFeature/{gymId:int}")]
-        public async Task<ActionResult> AddExtraGymFeature(int gymId, ExGymFeatureDto gymFeatureDto)
+        public async Task<ActionResult> AddExtraGymFeature([FromRoute] int gymId, [FromForm] ExGymFeatureDto gymFeatureDto)
         {
-            await serviceManager.GymService.AddExtraGymFeature(gymId, gymFeatureDto);
-            return Ok();
+            var featureGymDto =  await serviceManager.GymService.AddExtraGymFeature(gymId, gymFeatureDto);
+            return CreatedAtAction(nameof(GetGymFeatureById), new { gymFeatureId = featureGymDto.Id }, featureGymDto);
+
         }
 
         [HttpPut("GymFeature/{gymFeatureId:int}")]
-        public async Task<ActionResult>  UpdateGymFeature(int gymFeatureId, GymFeaturePutDto GymFeaturePutDto)
+        public async Task<ActionResult>  UpdateGymFeature(int gymFeatureId, [FromForm] GymFeaturePutDto GymFeaturePutDto)
         {
-            await serviceManager.GymService.UpdateGymFeature(gymFeatureId, GymFeaturePutDto);
-            return Ok();
+            var updatedGymFeature= await serviceManager.GymService.UpdateGymFeature(gymFeatureId, GymFeaturePutDto);
+            return Ok(updatedGymFeature);
         }
 
         [HttpDelete("GymFeature/{gymFeatureId:int}")]
         public async Task<ActionResult> DeleteGymFeature(int gymFeatureId)
         {
             await serviceManager.GymService.DeleteGymFeature(gymFeatureId);
-            return Ok();
+            return Ok(gymFeatureId);
         }
     }
 }

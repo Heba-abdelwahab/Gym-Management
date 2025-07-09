@@ -267,8 +267,9 @@ namespace Services
             Gym gym = await unitOfWork.GetRepositories<Gym,int>().GetByIdAsync(gymId);
             if (gym == null)
                 throw new GymNotFoundException(gymId);
+            
             var gymFeatures = await unitOfWork.GetRepositories<GymFeature, int>().GetAllWithSpecAsync(new GymFeatureSpec(gymId));
-            var gymFeaturesDto= mapper.Map<IEnumerable< GymFeatureDto>>(gymFeatures);
+            var gymFeaturesDto= mapper.Map<IEnumerable<GymFeatureDto>>(gymFeatures, opt => opt.Items["CloudinaryBaseUrl"]= config.CurrentValue.CloudinaryBaseUrl);
 
             return gymFeaturesDto;
         }
@@ -282,7 +283,7 @@ namespace Services
             return gymFeatureDto;
         }
 
-        public async Task AddNonExGymFeature(int gymId, NonExGymFeatureDto NonExGymFeatureDto)
+        public async Task<GymFeatureDto> AddNonExGymFeature(int gymId, NonExGymFeatureDto NonExGymFeatureDto)
         {
             Gym gym = await unitOfWork.GetRepositories<Gym, int>().GetByIdAsync(gymId);
             Feature feature = await unitOfWork.GetRepositories<Feature, int>().GetByIdAsync(NonExGymFeatureDto.FeatureId);
@@ -295,10 +296,21 @@ namespace Services
             var newGymFeature = mapper.Map<GymFeature>(NonExGymFeatureDto);
             newGymFeature.GymId = gymId;
 
+            var photoResult = await photoService.AddPhotoAsync(NonExGymFeatureDto.Image);
+            newGymFeature.Image = new MediaValueObj()
+            {
+                PublicId = photoResult.PublicId,
+                Url = photoResult.ImageName,
+                Type = MediaType.Img,
+            };
+
+
             unitOfWork.GetRepositories<GymFeature, int>().Insert(newGymFeature);
             await unitOfWork.CompleteSaveAsync();
+
+            return mapper.Map<GymFeatureDto>(newGymFeature, opt => opt.Items["CloudinaryBaseUrl"] = config.CurrentValue.CloudinaryBaseUrl);
         }
-        public async Task AddExtraGymFeature(int gymId, ExGymFeatureDto gymFeatureDto)
+        public async Task<GymFeatureDto> AddExtraGymFeature(int gymId, ExGymFeatureDto gymFeatureDto)
         {
             Gym gym = await unitOfWork.GetRepositories<Gym, int>().GetByIdAsync(gymId);
             if (gym == null)
@@ -307,10 +319,21 @@ namespace Services
             var newGymFeature = mapper.Map<GymFeature>(gymFeatureDto);
             newGymFeature.GymId = gymId;
 
+            var photoResult = await photoService.AddPhotoAsync(gymFeatureDto.Image);
+            newGymFeature.Image = new MediaValueObj()
+            {
+                PublicId = photoResult.PublicId,
+                Url = photoResult.ImageName,
+                Type = MediaType.Img,
+            };
+
             unitOfWork.GetRepositories<GymFeature, int>().Insert(newGymFeature);
             await unitOfWork.CompleteSaveAsync();
+
+            return mapper.Map<GymFeatureDto>(newGymFeature, opt => opt.Items["CloudinaryBaseUrl"] = config.CurrentValue.CloudinaryBaseUrl);
+
         }
-        public async Task UpdateGymFeature(int gymFeatureId, GymFeaturePutDto GymFeaturePutDto)
+        public async Task<GymFeatureDto> UpdateGymFeature(int gymFeatureId, GymFeaturePutDto GymFeaturePutDto)
         {
             GymFeature gymFeature = await unitOfWork.GetRepositories<GymFeature, int>().GetByIdAsync(gymFeatureId);
             if(gymFeature == null)
@@ -319,24 +342,37 @@ namespace Services
             //if (gymFeature.Cost != GymFeaturePutDto.Cost) ;
             //***notify memebers about cost change of feature***
 
+            await photoService.DeletePhotoAsync(gymFeature.Image.PublicId);
+            var photoResult=await photoService.AddPhotoAsync(GymFeaturePutDto.Image);
+
             mapper.Map(GymFeaturePutDto, gymFeature);
+            gymFeature.Image.PublicId = photoResult.PublicId;
+            gymFeature.Image.Url = photoResult.ImageName;
+
             unitOfWork.GetRepositories<GymFeature,int>().Update(gymFeature);
 
             if (!await unitOfWork.CompleteSaveAsync())
                 throw new Exception($"fail to update Gym Feature of id {gymFeatureId}");
 
+            return mapper.Map<GymFeatureDto>(gymFeature, opt => opt.Items["CloudinaryBaseUrl"] = config.CurrentValue.CloudinaryBaseUrl);
+
         }
 
         public async Task DeleteGymFeature(int gymFeatureId)
         {
-            GymFeature gymFeature = await unitOfWork.GetRepositories<GymFeature, int>().GetByIdAsync(gymFeatureId);
+            var gymFeature = await unitOfWork.GetRepositories<GymFeature, int>().GetByIdWithSpecAsync(new WholeFeature(gymFeatureId));
             if (gymFeature == null)
                 throw new GymFeatureNotFoundException(gymFeatureId);
 
             // ***notify members who use this feature***
             // ***notify members who subsribe to program contain that feature***
 
+            await photoService.DeletePhotoAsync(gymFeature.Image.PublicId);
+ 
+
             unitOfWork.GetRepositories<GymFeature, int>().Delete(gymFeature);
+            if (gymFeature.Feature.IsExtra)
+                unitOfWork.GetRepositories<Feature, int>().Delete(gymFeature.Feature);
 
             if (!await unitOfWork.CompleteSaveAsync())
                 throw new Exception($"fail to delete Gym Feature of id {gymFeatureId}");

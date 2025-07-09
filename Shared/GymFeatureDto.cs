@@ -14,5 +14,6 @@ namespace Shared
         public decimal Cost { get; init; }
         public string Name { get; init; }
         public bool IsExtra { get; init; }
+        public int FeatureId { get; set; }
     }
 }

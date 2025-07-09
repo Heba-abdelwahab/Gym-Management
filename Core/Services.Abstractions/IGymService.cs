@@ -17,9 +17,9 @@ namespace Services.Abstractions
         Task<GymGetDto> GetGymById(int gymId);
         Task <IEnumerable<GymFeatureDto>> GetFeaturesByGymId (int gymId);
         Task<GymFeatureDto> GetGymFeatureById(int gymFeatureId);
-        Task AddNonExGymFeature(int gymId , NonExGymFeatureDto NonExGymFeatureDto);
-        Task AddExtraGymFeature(int gymId, ExGymFeatureDto ExGymFeature);
-        Task UpdateGymFeature(int gymFeatureId , GymFeaturePutDto GymFeaturePutDto);
+        Task<GymFeatureDto> AddNonExGymFeature(int gymId , NonExGymFeatureDto NonExGymFeatureDto);
+        Task<GymFeatureDto> AddExtraGymFeature(int gymId, ExGymFeatureDto ExGymFeature);
+        Task<GymFeatureDto> UpdateGymFeature(int gymFeatureId , GymFeaturePutDto GymFeaturePutDto);
         Task DeleteGymFeature(int gymFeatureId);
 
 

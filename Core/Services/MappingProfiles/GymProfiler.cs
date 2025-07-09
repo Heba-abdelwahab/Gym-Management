@@ -40,7 +40,6 @@ namespace Services.MappingProfiles
 
                         return src.GymFeatures.Select((gf, idx) =>
                         {
-
                             var photResult = new MediaValueObj()
                             {
                                 Url = FeatureImages[idx].ImageName,
@@ -82,12 +81,18 @@ namespace Services.MappingProfiles
             CreateMap<AddressDto, Address>().ReverseMap();
             CreateMap<LocationDto,Location>().ReverseMap();
             CreateMap<GymFeature, GymFeatureDto>()
-                .ForMember(des=>des.Name, opt => opt.MapFrom(src => src.Feature.Name));
+                .ForMember(des => des.Name, opt => opt.MapFrom(src => src.Feature.Name))
+                .ForMember(des => des.Image, opt => opt.MapFrom((src,dest,destMemeber,context) => context.Items["CloudinaryBaseUrl"] +src.Image.Url))
+                .ForMember(des=>des.IsExtra,opt=>opt.MapFrom(src=>src.Feature.IsExtra));
+                
             CreateMap<GymUpdateDto, Gym>();
-            CreateMap<NonExGymFeatureDto, GymFeature>();
+            CreateMap<NonExGymFeatureDto, GymFeature>()
+                .ForMember(des=>des.Image,opt=>opt.Ignore());
             CreateMap<ExGymFeatureDto,GymFeature>()
-                .ForMember(des=>des.Feature,opt=>opt.MapFrom(src=>new Feature() { Name = src.Name , IsExtra = true}));
-            CreateMap<GymFeaturePutDto, GymFeature>();
+                .ForMember(des=>des.Feature,opt=>opt.MapFrom(src=>new Feature() { Name = src.Name , IsExtra = true}))
+                .ForMember(des => des.Image, opt => opt.Ignore());
+            CreateMap<GymFeaturePutDto, GymFeature>()
+                .ForMember(des=>des.Image,opt=>opt.Ignore());
             CreateMap<Gym, GymGetDto>()
                 .ForMember(des=>des.MediaUrl,opt=>opt.MapFrom(src=>src.Media.Url))
                 .ForMember(des => des.GymImagesUrl, opt=>opt.MapFrom(src=>src.Images.Select(img=>img.MediaValue.Url).ToList()));
