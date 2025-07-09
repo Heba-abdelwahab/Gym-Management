@@ -5,5 +5,6 @@ namespace Services.Abstractions;
 public interface ITokenService
 {
     string GenerateAccessToken(IEnumerable<Claim> claims);
-    List<Claim> GenerateAuthClaims<TKey>(TKey Id, string UserName, string Email, string Role);
+    List<Claim> GenerateAuthClaims<TKey>
+        (TKey Id, string AppUserId, string UserName, string Email, string Role);
 }

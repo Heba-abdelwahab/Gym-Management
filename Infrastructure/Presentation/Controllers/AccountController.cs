@@ -45,6 +45,9 @@ public class AccountController : ApiControllerBase
     }
     #endregion
 
+    [HttpPost("login")]
+    public async Task<ActionResult<AuthUserLoginResultDto>> RegisterTrainee(LoginUserDto login)
+         => Ok(await _serviceManager.AuthenticationService.LoginUserAsync(login));
 
 
 

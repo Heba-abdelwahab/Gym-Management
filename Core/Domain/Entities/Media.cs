@@ -4,13 +4,12 @@ using Domain.ValueObjects;
 
 namespace Domain.Entities
 {
-    public class Media:EntityBase<int>
+    public class Media : EntityBase<int>
     {
-        public MediaValueObj MediaValue {  get; set; }
-        public int? gymId { get; set; }
-        public int? featureId { get; set; }
-        public Gym? gym { get; set; }
-        public Feature? feature { get; set; }
+        public MediaType Type { get; set; } = MediaType.Image;
+        public string Url { get; set; } = string.Empty;
+        public int PublicId { get; set; }
+        public bool IsMain { get; set; } = false;
 
     }
 }

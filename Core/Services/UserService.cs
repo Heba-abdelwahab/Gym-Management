@@ -1,5 +1,4 @@
-﻿using Domain.Constants;
-using Domain.Contracts;
+﻿using Domain.Contracts;
 using Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Services.Abstractions;
@@ -21,9 +20,10 @@ internal sealed class UserService : IUserService
     }
 
 
-    public int? Id => int.Parse(_httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier)!);
-
+    public int? Id => int.Parse(_httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.Sid)!);
+    public string? AppUserId => _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
     public string? UserEmail => _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.Email);
+
 
 
     public async Task<IEnumerable<UserDto>> GetCairoUser()

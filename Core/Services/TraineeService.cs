@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Domain.Constants;
 using Domain.Contracts;
 using Domain.Entities;
@@ -72,7 +67,8 @@ internal sealed class TraineeService : ITraineeService
     public async Task<AuthTraineeResultDto> CreateTraineeAsync(RegisterTraineeDto request)
     {
         var registerUser = new RegisterUserDto
-          (request.FirstName, request.LastName, request.UserName, request.Email, request.Password, Roles.Trainee);
+          (request.FirstName, request.LastName, request.UserName,
+          request.Email, request.Password, request.PhoneNumber, Roles.Trainee);
 
         var authResult = await _authenticationService.RegisterUserAsync(registerUser);
 
@@ -93,7 +89,7 @@ internal sealed class TraineeService : ITraineeService
         {
 
             var coachClaims = _tokenService.GenerateAuthClaims(
-                    trainee.Id, registerUser.UserName,
+                    trainee.Id, trainee.AppUserId, registerUser.UserName,
                      registerUser.Email, registerUser.Role);
 
             return new AuthTraineeResultDto(
@@ -157,7 +153,7 @@ internal sealed class TraineeService : ITraineeService
     }
 
     // ================================= Gym Classes ===================================
-    public async Task<IReadOnlyList<ClassTraineeToReturnDto>> GetClassesByGym(int GymId)
+    public async Task<IReadOnlyList<Shared.TraineeGym.ClassTraineeToReturnDto>> GetClassesByGym(int GymId)
     {
         var Spec = new ClassesForTraineeSpec(GymId);
         var classes = await _unitOfWork.GetRepositories<Class, int>().GetAllWithSpecAsync(Spec);
@@ -165,7 +161,7 @@ internal sealed class TraineeService : ITraineeService
         if (classes is null)
             throw new GymNotFoundException(GymId);
 
-        var classesDto = _mapper.Map<IReadOnlyList<ClassTraineeToReturnDto>>(classes);
+        var classesDto = _mapper.Map<IReadOnlyList<Shared.TraineeGym.ClassTraineeToReturnDto>>(classes);
         return classesDto;
     }
 
@@ -258,7 +254,7 @@ internal sealed class TraineeService : ITraineeService
 
         var TraineeMapped = _mapper.Map<TraineeSubscriptionsToReturnDto>(Trainee);
         TraineeMapped.Features = _mapper.Map<IReadOnlyList<TraineeFeatureToReturnDto>>(Trainee.TraineeSelectedFeatures);
-        TraineeMapped.Class = _mapper.Map<IReadOnlyList<ClassTraineeToReturnDto>>(Trainee.Classes);
+        TraineeMapped.Class = _mapper.Map<IReadOnlyList<Shared.TraineeGym.ClassTraineeToReturnDto>>(Trainee.Classes);
 
         return TraineeMapped;
     }

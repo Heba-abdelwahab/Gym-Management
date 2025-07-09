@@ -2,12 +2,12 @@
 using Domain.Constants;
 using Domain.Contracts;
 using Domain.Entities;
+using Domain.Enums;
+using Domain.Exceptions;
 using Domain.ValueObjects;
 using Services.Abstractions;
 using Services.Specifications;
 using Shared;
-using Domain.Exceptions;
-using Domain.Enums;
 namespace Services
 {
     public class CoachService : ICoachService
@@ -57,10 +57,10 @@ namespace Services
 
         public async Task<List<CoachToReturnDto>> GetCoachesbyGym(int gymId)
         {
-           
+
             var coaches = await _unitOfWork.GetRepositories<Coach, int>()
                                            .GetAllWithSpecAsync(new GetCoaches(gymId));
-            if(!coaches.Any())
+            if (!coaches.Any())
             {
                 throw new GymNotFoundException(gymId);
             }
@@ -116,10 +116,10 @@ namespace Services
         {
             var dietToUpdate = await _unitOfWork.GetRepositories<MealSchedule, int>().GetByIdWithSpecAsync(new GetDietByIdSpec(dietId));
 
-            if (dietToUpdate is null) 
+            if (dietToUpdate is null)
                 throw new DietNotFoundException(dietId);
 
-            if(dietToUpdate.CoachId != 1)
+            if (dietToUpdate.CoachId != 1)
                 throw new Exception("Unauthorized: You are not the owner of this diet.");
 
             _mapper.Map(dto, dietToUpdate);
@@ -148,7 +148,8 @@ namespace Services
         public async Task<AuthCoachResultDto> CreateCoachAsync(RegisterCoachDto request)
         {
             var registerUser = new RegisterUserDto
-           (request.FirstName, request.LastName, request.UserName, request.Email, request.Password, Roles.Coach);
+           (request.FirstName, request.LastName, request.UserName,
+           request.Email, request.Password, request.PhoneNumber, Roles.Coach);
 
             var authResult = await _authenticationService.RegisterUserAsync(registerUser);
 
@@ -168,7 +169,7 @@ namespace Services
             {
 
                 var coachClaims = _tokenService.GenerateAuthClaims(
-                        coach.Id, registerUser.UserName,
+                        coach.Id, coach.AppUserId, registerUser.UserName,
                          registerUser.Email, registerUser.Role);
 
                 return new AuthCoachResultDto(
@@ -186,10 +187,10 @@ namespace Services
             if (gym == null)
                 throw new GymNotFoundException(gymId);
 
-            IRepository<Coach,int> coachRepo= _unitOfWork.GetRepositories<Coach, int>();
+            IRepository<Coach, int> coachRepo = _unitOfWork.GetRepositories<Coach, int>();
             IEnumerable<Coach> coachs = await coachRepo.GetAllWithSpecAsync(new GetGymPendingCoachsSpec(gymId));
 
-            IEnumerable<CoachPendingDto> coachPendingDtos= _mapper.Map<IEnumerable<CoachPendingDto>>(coachs);
+            IEnumerable<CoachPendingDto> coachPendingDtos = _mapper.Map<IEnumerable<CoachPendingDto>>(coachs);
 
             return coachPendingDtos;
         }
@@ -197,12 +198,12 @@ namespace Services
         public async Task HandleCoachJobRequest(int gymId, HandleJobRequestDto jobRequestDto)
         {
 
-            
-            var gymCoach= await _unitOfWork.GetRepositories<GymCoach, int>().GetByIdWithSpecAsync(new GetGymCoachSpec(gymId,jobRequestDto.CoachId));
+
+            var gymCoach = await _unitOfWork.GetRepositories<GymCoach, int>().GetByIdWithSpecAsync(new GetGymCoachSpec(gymId, jobRequestDto.CoachId));
             if (gymCoach == null)
                 throw new GymCoachNotFoundException(gymId, jobRequestDto.CoachId);
 
-            gymCoach.Status = jobRequestDto.IsAccepted==true ? RequestStatus.Accepted : RequestStatus.Rejected;
+            gymCoach.Status = jobRequestDto.IsAccepted == true ? RequestStatus.Accepted : RequestStatus.Rejected;
 
             if (!await _unitOfWork.CompleteSaveAsync())
                 throw new Exception("fail to update the job request status");
@@ -298,7 +299,7 @@ namespace Services
 
         public async Task<bool> IsCoachAuthorizedToAccessTraineeAsync(int coachId, Trainee trainee)
         {
-           
+
             if (trainee?.GymId is null)
                 throw new Exception("Trainee has not joined any gym yet.");
 
@@ -313,7 +314,7 @@ namespace Services
             if (trainee?.CoachId is null)
                 throw new Exception("Trainee has not been assigned to any coach.");
 
-            return trainee.CoachId.Value == coachId; 
+            return trainee.CoachId.Value == coachId;
         }
         #endregion
     }
