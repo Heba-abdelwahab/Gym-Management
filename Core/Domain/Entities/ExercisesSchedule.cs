@@ -15,7 +15,7 @@ namespace Domain.Entities
         public int TraineeId { get; set; }
         public Coach Coach { get; set; }
         public Trainee Trainee { get; set; }
-        public ICollection<MuscleExerices> MuscleExerices { get; set; } = new List<MuscleExerices>();        
+        public ICollection<ScheduledExercise> ScheduledExercises { get; set; } = new List<ScheduledExercise>();
 
     }
 }

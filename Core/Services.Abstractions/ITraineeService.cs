@@ -14,6 +14,7 @@ public interface ITraineeService
 
     Task<IReadOnlyList<ClassTraineeToReturnDto>> GetClassesByGym(int GymId);
     Task<ClientSecretToReturnDto> JoinClass(int classId);
+
     Task<IReadOnlyList<GymFeatureToReturnDto>> GetGymFeatures(int gymId);
     /*Task<TraineeFeatureToReturnDto?>*/
     Task<ClientSecretToReturnDto> AssignTraineeToFeature(int featureId, int count);

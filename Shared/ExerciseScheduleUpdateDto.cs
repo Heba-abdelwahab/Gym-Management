@@ -10,6 +10,6 @@ namespace Shared
     {
         public DateTime StartDate { get; init; }
         public DateTime EndDate { get; init; }
-        public ICollection<MuscleExerciseResultDto> MuscleExerices { get; init; } = new List<MuscleExerciseResultDto>();
+        public ICollection<ScheduledExerciseUpdateDto> ScheduledExercises { get; init; } = new List<ScheduledExerciseUpdateDto>();
     }
 }

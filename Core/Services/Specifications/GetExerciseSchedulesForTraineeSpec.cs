@@ -12,7 +12,10 @@ namespace Services.Specifications
     {
         public GetExerciseSchedulesForTraineeSpec(int traineeId) : base(s => s.TraineeId == traineeId)
         {
-            AddIncludes(s => s.MuscleExerices);
+            AddIncludes(s => s.ScheduledExercises);
+            AddIncludes("ScheduledExercises.Exercise");
+            AddIncludes("ScheduledExercises.Exercise.TargetMuscle");
+
         }
     }
 }

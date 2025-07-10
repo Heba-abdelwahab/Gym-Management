@@ -17,6 +17,6 @@ namespace Shared
 
         [Required]
         [MinLength(1)]
-        public ICollection<MuscleExerciseDto> MuscleExerices { get; init; } = new List<MuscleExerciseDto>();
+        public ICollection<ScheduledExerciseDto> ScheduledExercises { get; init; } = new List<ScheduledExerciseDto>();
     }
 }

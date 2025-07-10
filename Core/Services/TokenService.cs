@@ -52,11 +52,12 @@ internal sealed class TokenService : ITokenService
 
     }
 
-    public List<Claim> GenerateAuthClaims<TKey>(TKey Id, string UserName, string Email, string Role)
+    public List<Claim> GenerateAuthClaims<TKey>(TKey Id, string AppUserId, string UserName, string Email, string Role)
     {
         var authClaims = new List<Claim>
         {
-            new(ClaimTypes.NameIdentifier, Id?.ToString()!),
+            new(ClaimTypes.NameIdentifier, AppUserId),
+            new(ClaimTypes.Sid, Id?.ToString()!),
             new(ClaimTypes.Name, UserName),
             new(ClaimTypes.Email,Email),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
