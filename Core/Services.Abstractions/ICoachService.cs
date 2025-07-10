@@ -40,4 +40,6 @@ public interface ICoachService
     // AUTHORIZATION
     Task<bool> IsCoachAuthorizedToAccessTraineeAsync(int coachId, Trainee trainee);
     #endregion
+
+    Task<CoachDashboardToReturnDto> GetCoachDashboardAsync(int coachId);
 }

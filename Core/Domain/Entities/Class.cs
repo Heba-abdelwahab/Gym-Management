@@ -10,7 +10,8 @@ namespace Domain.Entities
     public class Class: EntityBase<int>
     {
         public string Name { get; set; }               
-        public string Description { get; set; }       
+        public string Description { get; set; }   
+        public DateTime Date { get; set; }
         //public Schedule Schedule { get; set; }        
         public decimal Cost { get; set; }             
         public int Capacity { get; set; }            

@@ -1,4 +1,5 @@
 ﻿using Domain.Common;
+using Domain.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace Domain.Entities
 {
     public class GymFeature:EntityBase<int>
     {
-        public string Image { get; set; }         
+        public MediaValueObj Image { get; set; }         
         public string Description { get; set; }   
         public decimal Cost { get; set; }
         public int GymId { get; set; }  //foreign key

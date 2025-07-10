@@ -1,14 +1,21 @@
 ﻿using Domain.Common;
 using Domain.Enums;
+using Domain.ValueObjects;
 
 namespace Domain.Entities
 {
-    public class Media : EntityBase<int>
+    namespace Domain.Entities
     {
-        public MediaType Type { get; set; } = MediaType.Image;
-        public string Url { get; set; } = string.Empty;
-        public int PublicId { get; set; }
-        public bool IsMain { get; set; } = false;
+        public class Media : EntityBase<int>
+        {
+            public MediaValueObj MediaValue { get; set; }
+            public int? gymId { get; set; }
+            public int? CoachId { get; set; }
+            //public int? featureId { get; set; }
+            public Gym? gym { get; set; }
+            //public Feature? feature { get; set; }
+            public Coach? Coach { get; set; }
 
+        }
     }
 }

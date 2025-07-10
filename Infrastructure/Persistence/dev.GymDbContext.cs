@@ -21,6 +21,7 @@ namespace Persistence
             builder.Entity<ScheduledExercise>().HasQueryFilter(c => !c.IsDeleted);
             builder.Entity<Trainee>().HasQueryFilter(c => !c.IsDeleted);
             builder.Entity<WorkDay>().HasQueryFilter(c => !c.IsDeleted);
+            builder.Entity<GymFeature>().HasQueryFilter(c => !c.IsDeleted);
 
 
             builder.Entity<Message>()

@@ -10,7 +10,7 @@ namespace Services.Specifications
 {
     public class WholeFeature : SpecificationBase<GymFeature, int>
     {
-        public WholeFeature(int FeatureId) : base(x => x.FeatureId == FeatureId)
+        public WholeFeature(int FeatureId) : base(x => x.Id == FeatureId)
         {
             AddIncludes(x => x.Feature);
 

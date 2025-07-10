@@ -237,6 +237,9 @@ namespace Persistence.Migrations
                     b.Property<int>("CurrentCapacity")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -281,10 +284,6 @@ namespace Persistence.Migrations
                     b.Property<DateOnly?>("DateOfBirth")
                         .HasColumnType("date");
 
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -296,6 +295,37 @@ namespace Persistence.Migrations
                     b.HasIndex("AppUserId");
 
                     b.ToTable("Coaches");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Domain.Entities.Media", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CoachId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("FeatureId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("gymId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CoachId");
+
+                    b.HasIndex("FeatureId");
+
+                    b.HasIndex("gymId");
+
+                    b.ToTable("Media");
                 });
 
             modelBuilder.Entity("Domain.Entities.Exercise", b =>
@@ -394,6 +424,12 @@ namespace Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("AddGymStatus")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DeleteGymStatus")
+                        .HasColumnType("int");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("varchar(50)");
@@ -406,10 +442,6 @@ namespace Persistence.Migrations
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
-
-                    b.Property<string>("Media")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -433,6 +465,9 @@ namespace Persistence.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("ApplicationDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Capcity")
                         .HasColumnType("int");
@@ -481,10 +516,6 @@ namespace Persistence.Migrations
 
                     b.Property<int>("GymId")
                         .HasColumnType("int");
-
-                    b.Property<string>("Image")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -577,40 +608,6 @@ namespace Persistence.Migrations
                     b.ToTable("MealSchedules");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Media", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("CoachId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsMain")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("PublicId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CoachId");
-
-                    b.ToTable("Media");
-                });
-
             modelBuilder.Entity("Domain.Entities.Membership", b =>
                 {
                     b.Property<int>("Id")
@@ -669,35 +666,6 @@ namespace Persistence.Migrations
                     b.ToTable("Muscles");
                 });
 
-            modelBuilder.Entity("Domain.Entities.ScheduledExercise", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("Day")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("ExerciseId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ExercisesScheduleId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ExerciseId");
-
-                    b.HasIndex("ExercisesScheduleId");
-
-                    b.ToTable("ScheduledExercises");
-                });
-
             modelBuilder.Entity("Domain.Entities.Photo", b =>
                 {
                     b.Property<int>("Id")
@@ -729,6 +697,35 @@ namespace Persistence.Migrations
                     b.HasIndex("AppUserId");
 
                     b.ToTable("Photo");
+                });
+
+            modelBuilder.Entity("Domain.Entities.ScheduledExercise", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Day")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ExerciseId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ExercisesScheduleId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExerciseId");
+
+                    b.HasIndex("ExercisesScheduleId");
+
+                    b.ToTable("ScheduledExercises");
                 });
 
             modelBuilder.Entity("Domain.Entities.Trainee", b =>
@@ -1120,10 +1117,119 @@ namespace Persistence.Migrations
                             b1.Navigation("Location");
                         });
 
+                    b.OwnsOne("Domain.ValueObjects.MediaValueObj", "CV", b1 =>
+                        {
+                            b1.Property<int>("CoachId")
+                                .HasColumnType("int");
+
+                            b1.Property<bool>("IsMain")
+                                .HasColumnType("bit");
+
+                            b1.Property<string>("PublicId")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<int>("Type")
+                                .HasColumnType("int");
+
+                            b1.Property<string>("Url")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("CoachId");
+
+                            b1.ToTable("Coaches");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CoachId");
+                        });
+
+                    b.OwnsOne("Domain.ValueObjects.MediaValueObj", "Image", b1 =>
+                        {
+                            b1.Property<int>("CoachId")
+                                .HasColumnType("int");
+
+                            b1.Property<bool>("IsMain")
+                                .HasColumnType("bit");
+
+                            b1.Property<string>("PublicId")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<int>("Type")
+                                .HasColumnType("int");
+
+                            b1.Property<string>("Url")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("CoachId");
+
+                            b1.ToTable("Coaches");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CoachId");
+                        });
+
                     b.Navigation("Address")
                         .IsRequired();
 
                     b.Navigation("AppUser");
+
+                    b.Navigation("CV")
+                        .IsRequired();
+
+                    b.Navigation("Image")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Entities.Domain.Entities.Media", b =>
+                {
+                    b.HasOne("Domain.Entities.Coach", "Coach")
+                        .WithMany()
+                        .HasForeignKey("CoachId");
+
+                    b.HasOne("Domain.Entities.Feature", null)
+                        .WithMany("Images")
+                        .HasForeignKey("FeatureId");
+
+                    b.HasOne("Domain.Entities.Gym", "gym")
+                        .WithMany("Images")
+                        .HasForeignKey("gymId");
+
+                    b.OwnsOne("Domain.ValueObjects.MediaValueObj", "MediaValue", b1 =>
+                        {
+                            b1.Property<int>("MediaId")
+                                .HasColumnType("int");
+
+                            b1.Property<bool>("IsMain")
+                                .HasColumnType("bit");
+
+                            b1.Property<string>("PublicId")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<int>("Type")
+                                .HasColumnType("int");
+
+                            b1.Property<string>("Url")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("MediaId");
+
+                            b1.ToTable("Media");
+
+                            b1.WithOwner()
+                                .HasForeignKey("MediaId");
+                        });
+
+                    b.Navigation("Coach");
+
+                    b.Navigation("MediaValue")
+                        .IsRequired();
+
+                    b.Navigation("gym");
                 });
 
             modelBuilder.Entity("Domain.Entities.Exercise", b =>
@@ -1232,10 +1338,40 @@ namespace Persistence.Migrations
                             b1.Navigation("Location");
                         });
 
+                    b.OwnsOne("Domain.ValueObjects.MediaValueObj", "Media", b1 =>
+                        {
+                            b1.Property<int>("GymId")
+                                .HasColumnType("int");
+
+                            b1.Property<bool>("IsMain")
+                                .HasColumnType("bit");
+
+                            b1.Property<string>("PublicId")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<int>("Type")
+                                .HasColumnType("int");
+
+                            b1.Property<string>("Url")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("GymId");
+
+                            b1.ToTable("Gyms");
+
+                            b1.WithOwner()
+                                .HasForeignKey("GymId");
+                        });
+
                     b.Navigation("Address")
                         .IsRequired();
 
                     b.Navigation("GymOwner");
+
+                    b.Navigation("Media")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Entities.GymCoach", b =>
@@ -1260,7 +1396,7 @@ namespace Persistence.Migrations
             modelBuilder.Entity("Domain.Entities.GymFeature", b =>
                 {
                     b.HasOne("Domain.Entities.Feature", "Feature")
-                        .WithMany()
+                        .WithMany("GymFeatures")
                         .HasForeignKey("FeatureId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1271,9 +1407,39 @@ namespace Persistence.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.OwnsOne("Domain.ValueObjects.MediaValueObj", "Image", b1 =>
+                        {
+                            b1.Property<int>("GymFeatureId")
+                                .HasColumnType("int");
+
+                            b1.Property<bool>("IsMain")
+                                .HasColumnType("bit");
+
+                            b1.Property<string>("PublicId")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<int>("Type")
+                                .HasColumnType("int");
+
+                            b1.Property<string>("Url")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("GymFeatureId");
+
+                            b1.ToTable("GymFeature");
+
+                            b1.WithOwner()
+                                .HasForeignKey("GymFeatureId");
+                        });
+
                     b.Navigation("Feature");
 
                     b.Navigation("Gym");
+
+                    b.Navigation("Image")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Entities.GymOwner", b =>
@@ -1339,13 +1505,6 @@ namespace Persistence.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Domain.Entities.Media", b =>
-                {
-                    b.HasOne("Domain.Entities.Coach", null)
-                        .WithMany("Certificates")
-                        .HasForeignKey("CoachId");
-                });
-
             modelBuilder.Entity("Domain.Entities.Membership", b =>
                 {
                     b.HasOne("Domain.Entities.Gym", "Gym")
@@ -1355,6 +1514,15 @@ namespace Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("Gym");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Photo", b =>
+                {
+                    b.HasOne("Domain.Entities.AppUser", null)
+                        .WithMany("Photos")
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Entities.ScheduledExercise", b =>
@@ -1374,15 +1542,6 @@ namespace Persistence.Migrations
                     b.Navigation("Exercise");
 
                     b.Navigation("ExercisesSchedule");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Photo", b =>
-                {
-                    b.HasOne("Domain.Entities.AppUser", null)
-                        .WithMany("Photos")
-                        .HasForeignKey("AppUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Entities.Trainee", b =>
@@ -1576,8 +1735,6 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Domain.Entities.Coach", b =>
                 {
-                    b.Navigation("Certificates");
-
                     b.Navigation("Classes");
 
                     b.Navigation("ExercisesSchedules");
@@ -1599,6 +1756,13 @@ namespace Persistence.Migrations
                     b.Navigation("ScheduledExercises");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Feature", b =>
+                {
+                    b.Navigation("GymFeatures");
+
+                    b.Navigation("Images");
+                });
+
             modelBuilder.Entity("Domain.Entities.Gym", b =>
                 {
                     b.Navigation("Classes");
@@ -1606,6 +1770,8 @@ namespace Persistence.Migrations
                     b.Navigation("GymCoaches");
 
                     b.Navigation("GymFeatures");
+
+                    b.Navigation("Images");
 
                     b.Navigation("Memberships");
 
