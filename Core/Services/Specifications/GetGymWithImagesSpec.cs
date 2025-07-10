@@ -8,12 +8,11 @@ using System.Threading.Tasks;
 
 namespace Services.Specifications
 {
-    public class WholeFeature : SpecificationBase<GymFeature, int>
+    internal class GetGymWithImagesSpec:SpecificationBase<Gym,int>
     {
-        public WholeFeature(int FeatureId) : base(x => x.Id == FeatureId)
+        public GetGymWithImagesSpec(int GymId):base(g=>g.Id==GymId)
         {
-            AddIncludes(x => x.Feature);
-
+            AddIncludes(g=>g.Images);
         }
     }
 }

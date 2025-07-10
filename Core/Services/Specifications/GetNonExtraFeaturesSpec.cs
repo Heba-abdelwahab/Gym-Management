@@ -8,12 +8,9 @@ using System.Threading.Tasks;
 
 namespace Services.Specifications
 {
-    public class WholeFeature : SpecificationBase<GymFeature, int>
+    internal class GetNonExtraFeaturesSpec:SpecificationBase<Feature,int>
     {
-        public WholeFeature(int FeatureId) : base(x => x.Id == FeatureId)
-        {
-            AddIncludes(x => x.Feature);
-
+        public GetNonExtraFeaturesSpec() :base(f=>!f.IsExtra){ 
         }
     }
 }

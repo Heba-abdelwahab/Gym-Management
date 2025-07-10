@@ -125,7 +125,7 @@ public class Program
 
         #region PipeLines
 
-            app.UseCustomExceptionMiddleware();
+            //app.UseCustomExceptionMiddleware();
 
         if (app.Environment.IsDevelopment())
         {
