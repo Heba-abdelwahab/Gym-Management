@@ -3,6 +3,7 @@ using Domain.Contracts;
 using Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Services.Abstractions;
 using Shared.Cloudinary;
@@ -22,6 +23,9 @@ public class ServiceManager : IServiceManager
     private readonly Lazy<ICoachService> _lazyCoachService;
     private readonly Lazy<ITraineeService> _lazyTraineeService;
     private readonly Lazy<IGymService> _lazyGymService;
+    private readonly Lazy<IPaymentService> _lazyPaymentService;
+
+
 
 
     public ServiceManager(
@@ -30,7 +34,8 @@ public class ServiceManager : IServiceManager
         IUnitOfWork unitOfWork,
         IHttpContextAccessor httpContextAccessor,
         UserManager<AppUser> userManager,
-        IMapper mapper)
+        IMapper mapper,
+        IConfiguration configuration)
     {
 
         _lazyPhotoService = new(() => new PhotoService(config));
@@ -40,7 +45,8 @@ public class ServiceManager : IServiceManager
         _lazyAdminService = new(() => new AdminService(AuthenticationService, unitOfWork, TokenService));
         _lazyClassService = new(() => new ClassService(unitOfWork, mapper));
         _lazyCoachService = new(() => new CoachService(AuthenticationService, unitOfWork, UserServices, mapper, TokenService));
-        _lazyTraineeService = new(() => new TraineeService(AuthenticationService, unitOfWork, UserServices, mapper, TokenService));
+        _lazyPaymentService = new(() => new PaymentService(unitOfWork, configuration));
+        _lazyTraineeService = new(() => new TraineeService(AuthenticationService, unitOfWork, UserServices, mapper, TokenService, PaymentService));
         _lazyGymService = new(() => new GymService(unitOfWork, mapper));
     }
 
@@ -60,4 +66,5 @@ public class ServiceManager : IServiceManager
     public IClassService ClassService => _lazyClassService.Value;
 
     public IGymService GymService => _lazyGymService.Value;
+    public IPaymentService PaymentService => _lazyPaymentService.Value;
 }

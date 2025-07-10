@@ -9,6 +9,7 @@ using Domain.Contracts;
 using Domain.Entities;
 using Domain.Exceptions;
 using Domain.ValueObjects;
+using Microsoft.Extensions.Configuration;
 using Services.Abstractions;
 using Services.Specifications;
 using Shared;
@@ -23,20 +24,21 @@ internal sealed class TraineeService : ITraineeService
     private readonly IUserService _userServices;
     private readonly IMapper _mapper;
     private readonly ITokenService _tokenService;
+    private readonly IPaymentService _paymentService;
 
     public TraineeService(
         IAuthenticationService authenticationService,
         IUnitOfWork unitOfWork,
         IUserService userServices,
         IMapper mapper,
-        ITokenService tokenService)
-    {
+        ITokenService tokenService,
+        IPaymentService paymentService)    {
         _authenticationService = authenticationService;
         _unitOfWork = unitOfWork;
         _userServices = userServices;
         _mapper = mapper;
         _tokenService = tokenService;
-
+        _paymentService = paymentService;
     }
 
     public async Task<bool> AssignCoachToTrainee(AssignCoachToTraineeDto assignCoachToTrainee)
@@ -135,9 +137,9 @@ internal sealed class TraineeService : ITraineeService
     }
 
     // Assign Trainee To Membership
-    public async Task<bool> AssignTraineeToMembership(int membershipId)
+    public async Task<ClientSecretToReturnDto> AssignTraineeToMembership(int membershipId)
     {
-        int? TraineeId = _userServices.Id;
+        int? TraineeId = 1/*_userServices.Id*/;
         var Trainee = await _unitOfWork.GetRepositories<Trainee, int>().GetByIdAsync(TraineeId!.Value);
 
         if (Trainee == null)
@@ -152,12 +154,21 @@ internal sealed class TraineeService : ITraineeService
         if (membership == null)
             throw new MembershipNotFoundException(membershipId);
 
+        // payment for the membership
+        var ClientSecret = await _paymentService.ProcessPaymentAsync(TraineeId.Value, membership.Cost, PayFor.Membership, membershipId);
+
+        if (ClientSecret is null)
+            throw new PaymentFailedException("Payment For The Membership Failed, Please Try Again");
+
         Trainee.MembershipId = membershipId;
         Trainee.MembershipStartDate = DateTime.UtcNow;
         Trainee.MembershipEndDate = DateTime.UtcNow.AddDays(membership.Duration);
         Trainee.GymId = membership.GymId;
 
-        return await _unitOfWork.CompleteSaveAsync();
+        var result = await _unitOfWork.CompleteSaveAsync();
+        if (!result)
+            throw new Exception("An error occurred while assigning the trainee to the membership.");
+        return new ClientSecretToReturnDto { ClientSecret = ClientSecret };
     }
 
     // ================================= Gym Classes ===================================
@@ -173,9 +184,9 @@ internal sealed class TraineeService : ITraineeService
         return classesDto;
     }
 
-    public async Task<bool> JoinClass(int classId)
+    public async Task<ClientSecretToReturnDto> JoinClass(int classId)
     {
-        int? TraineeId = _userServices.Id;
+        int? TraineeId = 1/*_userServices.Id*/;
         var trainee = await _unitOfWork.GetRepositories<Trainee, int>().GetByIdAsync(TraineeId!.Value);
 
         var ClassSpec = new ClassWithTraineesSpec(classId);
@@ -192,9 +203,20 @@ internal sealed class TraineeService : ITraineeService
 
         if (classEntity.Trainees.Count >= classEntity.Capacity)
             throw new ClassFullException(classId);
+
+        // payment for the class
+        var ClientSecret = await _paymentService.ProcessPaymentAsync(TraineeId.Value, classEntity.Cost, PayFor.Class, classId);
+
+        if (ClientSecret is null)
+            throw new PaymentFailedException("Payment For The Class Failed, Please Try Again");
+
         classEntity.Trainees.Add(trainee);
 
-        return await _unitOfWork.CompleteSaveAsync();
+        var result = await _unitOfWork.CompleteSaveAsync();
+        if (!result)
+            throw new Exception("An error occurred while joining the class.");
+
+        return new ClientSecretToReturnDto { ClientSecret = ClientSecret };
     }
 
 
@@ -215,7 +237,7 @@ internal sealed class TraineeService : ITraineeService
     }
 
     // Assign Trainee To Feature
-    public async Task<TraineeFeatureToReturnDto?> AssignTraineeToFeature(int featureId, int count)
+    public async Task<ClientSecretToReturnDto> AssignTraineeToFeature(int featureId, int count)
     {
         int? TraineeId = 1/*_userServices.Id*/;
         var trainee = await _unitOfWork.GetRepositories<Trainee, int>().GetByIdWithSpecAsync(new TraineeWithSelectedFeatures(TraineeId!.Value));
@@ -229,6 +251,11 @@ internal sealed class TraineeService : ITraineeService
         if (Feature == null)
             throw new GymFeatureNotFoundException(featureId);
 
+        // Payment for the feature
+        var ClientSecret = await _paymentService.ProcessPaymentAsync(TraineeId.Value, Feature.Cost * count, PayFor.Feature, featureId);
+        if (ClientSecret is null)
+            throw new PaymentFailedException("Payment For The Feature Failed, Please Try Again");
+
         // Check if the trainee already has this feature selected with its count
         var existingFeature = trainee.TraineeSelectedFeatures.FirstOrDefault(f => f.GymFeatureId == featureId);
         if (existingFeature != null)
@@ -240,16 +267,21 @@ internal sealed class TraineeService : ITraineeService
             _unitOfWork.GetRepositories<TraineeSelectedFeature, int>().Update(existingFeature);
             var Result = await _unitOfWork.CompleteSaveAsync();
 
-            if (Result)
-                return new TraineeFeatureToReturnDto()
-                {
-                    Name = Feature.Feature.Name,
-                    Count = existingFeature.SessionCount,
-                    SessionCost = Feature.Cost,
-                    TotalCost = existingFeature.TotalCost
-                };
-            else
-                return null;
+            ///if (Result)
+            ///    return new TraineeFeatureToReturnDto()
+            ///    {
+            ///        Name = Feature.Feature.Name,
+            ///        Count = existingFeature.SessionCount,
+            ///        SessionCost = Feature.Cost,
+            ///        TotalCost = existingFeature.TotalCost
+            ///    };
+            ///else
+            ///    return null;
+            
+            if (!Result)
+                throw new Exception("An error occurred while assigning the trainee to the feature.");
+
+            return new ClientSecretToReturnDto { ClientSecret = ClientSecret };
         }
 
         trainee.TraineeSelectedFeatures.Add(new TraineeSelectedFeature
@@ -261,17 +293,22 @@ internal sealed class TraineeService : ITraineeService
         });
 
         var result = await _unitOfWork.CompleteSaveAsync();
-        if (result)
-            return new TraineeFeatureToReturnDto()
-            {
-                Name = Feature.Feature.Name,
-                Count = count,
-                SessionCost = Feature.Cost,
-                TotalCost = (double)(Feature.Cost * count)
-            };
+        ///if (result)
+        ///    return new TraineeFeatureToReturnDto()
+        ///    {
+        ///        Name = Feature.Feature.Name,
+        ///        Count = count,
+        ///        SessionCost = Feature.Cost,
+        ///        TotalCost = (double)(Feature.Cost * count)
+        ///    };
+        ///else
+        ///    return null;
+       
+        if (!result)
+            throw new Exception("An error occurred while assigning the trainee to the feature.");
 
-        else
-            return null;
+        return new ClientSecretToReturnDto { ClientSecret = ClientSecret };
+
     }
 
     // ================================= Trainee Subscriptions ===================================

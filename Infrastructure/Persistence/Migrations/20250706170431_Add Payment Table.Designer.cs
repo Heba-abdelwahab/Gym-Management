@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Persistence;
 
@@ -11,9 +12,11 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(GymDbContext))]
-    partial class GymDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250706170431_Add Payment Table")]
+    partial class AddPaymentTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -520,9 +523,6 @@ namespace Persistence.Migrations
 
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("ClientSecret")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");

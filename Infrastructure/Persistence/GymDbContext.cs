@@ -35,8 +35,7 @@ namespace Persistence
         public DbSet<Trainee> Trainees { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<WorkDay> WorkDays { get; set; }
-
-
+        public DbSet<Payments> Payments { get; set; }
     }
    
 }
