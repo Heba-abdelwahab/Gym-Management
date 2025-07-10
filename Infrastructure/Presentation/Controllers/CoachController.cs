@@ -149,6 +149,11 @@ namespace Presentation.Controllers
             return result ? Ok("Exercise schedule deleted successfully.") : BadRequest("Failed to delete schedule.");
         }
         #endregion
-
+        [HttpGet("Dashboard/{coachId:int}")]
+        public async Task<IActionResult> GetCoachDashboard(int coachId)
+        {
+            var result = await _serviceManager.CoachService.GetCoachDashboardAsync(coachId);
+            return Ok(result);
+        }
     }
 }
