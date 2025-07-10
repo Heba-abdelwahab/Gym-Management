@@ -1,12 +1,7 @@
 ﻿using Domain.Contracts;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace Persistence
 {
@@ -21,6 +16,9 @@ namespace Persistence
 
         public async Task InitializeAsync()
         {
+            //await _dbContext.Database.ExecuteSqlAsync($"DELETE FROM  Connections");
+            await _dbContext.Database.ExecuteSqlAsync($"TRUNCATE  TABLE  Connections");
+
             // Apply any pending migrations before seeding
             if ((await _dbContext.Database.GetPendingMigrationsAsync()).Any())
             {

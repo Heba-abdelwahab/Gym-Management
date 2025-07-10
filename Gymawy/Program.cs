@@ -106,22 +106,22 @@ public class Program
 
           });
 
-            builder.Services.AddScoped<IDbInitializer, DbInitializer>();
+        builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 
 
-            #endregion
+        #endregion
 
         var app = builder.Build();
 
-            //using (var scoped = app.Services.CreateScope())
-            //{
-            //    using (var dbContext = scoped.ServiceProvider.GetRequiredService<GymDbContext>())
-            //    {
-            //        if (dbContext.Database.GetPendingMigrations().Any())
-            //            await dbContext.Database.MigrateAsync();
-            //    }
-            //}
-            await app.SeedDbAsync();
+        //using (var scoped = app.Services.CreateScope())
+        //{
+        //    using (var dbContext = scoped.ServiceProvider.GetRequiredService<GymDbContext>())
+        //    {
+        //        if (dbContext.Database.GetPendingMigrations().Any())
+        //            await dbContext.Database.MigrateAsync();
+        //    }
+        //}
+        await app.SeedDbAsync();
 
         #region PipeLines
 
