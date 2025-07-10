@@ -135,7 +135,7 @@ internal sealed class TraineeService : ITraineeService
     // Assign Trainee To Membership
     public async Task<ClientSecretToReturnDto> AssignTraineeToMembership(int membershipId)
     {
-        int? TraineeId = 1/*_userServices.Id*/;
+        int? TraineeId = _userServices.Id;
         var Trainee = await _unitOfWork.GetRepositories<Trainee, int>().GetByIdAsync(TraineeId!.Value);
 
         if (Trainee == null)
@@ -182,7 +182,7 @@ internal sealed class TraineeService : ITraineeService
 
     public async Task<ClientSecretToReturnDto> JoinClass(int classId)
     {
-        int? TraineeId = 1/*_userServices.Id*/;
+        int? TraineeId = _userServices.Id;
         var trainee = await _unitOfWork.GetRepositories<Trainee, int>().GetByIdAsync(TraineeId!.Value);
 
         var ClassSpec = new ClassWithTraineesSpec(classId);
@@ -235,7 +235,7 @@ internal sealed class TraineeService : ITraineeService
     // Assign Trainee To Feature
     public async Task<ClientSecretToReturnDto> AssignTraineeToFeature(int featureId, int count)
     {
-        int? TraineeId = 1/*_userServices.Id*/;
+        int? TraineeId = _userServices.Id;
         var trainee = await _unitOfWork.GetRepositories<Trainee, int>().GetByIdWithSpecAsync(new TraineeWithSelectedFeatures(TraineeId!.Value));
 
         var WholeFeatureSpec = new WholeFeature(featureId);
@@ -311,7 +311,7 @@ internal sealed class TraineeService : ITraineeService
 
     public async Task<TraineeSubscriptionsToReturnDto> TraineeSubscriptions()
     {
-        int? TraineeId = 1 /*_userServices.Id*/;
+        int? TraineeId =  _userServices.Id;
         var TraineeDataSpec = new AllTraineeDataSpec(TraineeId!.Value);
         var Trainee = await _unitOfWork.GetRepositories<Trainee, int>().GetByIdWithSpecAsync(TraineeDataSpec);
 
@@ -320,7 +320,7 @@ internal sealed class TraineeService : ITraineeService
 
         var TraineeMapped = _mapper.Map<TraineeSubscriptionsToReturnDto>(Trainee);
         TraineeMapped.Features = _mapper.Map<IReadOnlyList<TraineeFeatureToReturnDto>>(Trainee.TraineeSelectedFeatures);
-        TraineeMapped.Class = _mapper.Map<IReadOnlyList<ClassTraineeToReturnDto>>(Trainee.Classes);
+        TraineeMapped.Class = _mapper.Map<IReadOnlyList<Shared.TraineeGym.ClassTraineeToReturnDto>>(Trainee.Classes);
         TraineeMapped.GymData = _mapper.Map<GymToReturnDto>(Trainee.Gym);
 
 
@@ -358,7 +358,7 @@ internal sealed class TraineeService : ITraineeService
 
     public async Task<TraineeCoachToReturnDto> GetTraineeCoach()
     {
-        int? TraineeId = 1 /*_userServices.Id*/;
+        int? TraineeId = _userServices.Id;
         var TraineeCoachSpec = new GetTraineeCoach(TraineeId!.Value);
         var TraineeCoach = await _unitOfWork.GetRepositories<Trainee, int>().GetByIdWithSpecAsync(TraineeCoachSpec);
 

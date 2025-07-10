@@ -12,7 +12,7 @@ public interface ITraineeService
     Task<IReadOnlyList<GymMembershipsDto>> GetAllMembershipsForGym(int GymId);
     Task<ClientSecretToReturnDto> AssignTraineeToMembership(int membershipId);
 
-    Task<IReadOnlyList<ClassTraineeToReturnDto>> GetClassesByGym(int GymId);
+    Task<IReadOnlyList<Shared.TraineeGym.ClassTraineeToReturnDto>> GetClassesByGym(int GymId);
     Task<ClientSecretToReturnDto> JoinClass(int classId);
 
     Task<IReadOnlyList<GymFeatureToReturnDto>> GetGymFeatures(int gymId);
