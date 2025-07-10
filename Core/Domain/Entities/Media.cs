@@ -10,9 +10,11 @@ namespace Domain.Entities
         {
             public MediaValueObj MediaValue { get; set; }
             public int? gymId { get; set; }
-            public int? featureId { get; set; }
+            public int? CoachId { get; set; }
+            //public int? featureId { get; set; }
             public Gym? gym { get; set; }
-            public Feature? feature { get; set; }
+            //public Feature? feature { get; set; }
+            public Coach? Coach { get; set; }
 
         }
     }

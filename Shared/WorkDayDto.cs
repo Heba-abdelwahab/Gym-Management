@@ -10,6 +10,6 @@ namespace Shared
     {
         public TimeOnly Start { get; set; }
         public TimeOnly End { get; set; }
-        public DayOfWeek Day { get; set; }
+        public WorkDayDto Day { get; set; }
     }
 }

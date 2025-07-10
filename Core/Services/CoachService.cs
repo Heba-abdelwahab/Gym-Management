@@ -187,10 +187,9 @@ namespace Services
             if (gym == null)
                 throw new GymNotFoundException(gymId);
 
-            IRepository<Coach, int> coachRepo = _unitOfWork.GetRepositories<Coach, int>();
-            IEnumerable<Coach> coachs = await coachRepo.GetAllWithSpecAsync(new GetGymPendingCoachsSpec(gymId));
+            IEnumerable<GymCoach> gymCoachs = await _unitOfWork.GetRepositories<GymCoach, int>().GetAllWithSpecAsync(new GetGymCoachsByGymIdSpec(gymId));
 
-            IEnumerable<CoachPendingDto> coachPendingDtos = _mapper.Map<IEnumerable<CoachPendingDto>>(coachs);
+            IEnumerable<CoachPendingDto> coachPendingDtos = _mapper.Map<IEnumerable<CoachPendingDto>>(gymCoachs);
 
             return coachPendingDtos;
         }

@@ -10,7 +10,6 @@ namespace Domain.Entities
         //public string CV { get; set; }       // file pdf Path
         public CoachSpecialization Specializations { get; set; } = CoachSpecialization.None;
         public string About { get; set; } = string.Empty;
-
         public Address Address { get; set; } = null!;
 
 
@@ -18,13 +17,12 @@ namespace Domain.Entities
         public string? AppUserId { get; set; } = string.Empty;
         public AppUser AppUser { get; set; } = null!;
         public DateOnly? DateOfBirth { get; set; }
-        public string ImageUrl { get; set; } = string.Empty;
+        public MediaValueObj Image { get; set; } 
 
         #endregion
 
-
-        public ICollection<Media>? Certificates { get; set; } = new HashSet<Media>();
-
+        //public ICollection<Media>? Certificates { get; set; } = new HashSet<Media>();
+        public MediaValueObj CV { get; set; }
 
         #region Navigation Property
         public ICollection<GymCoach> GymCoaches { get; set; } = new HashSet<GymCoach>();

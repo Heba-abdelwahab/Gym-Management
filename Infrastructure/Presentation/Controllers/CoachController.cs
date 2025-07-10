@@ -35,7 +35,7 @@ namespace Presentation.Controllers
             
         }
 
-        [HttpGet("PendingCoach/{gymId:int}")]
+        [HttpGet("GymPendingCoach/{gymId:int}")]
         public async Task<ActionResult<CoachPendingDto>> GetGymPendingCoachs(int gymId)
         {
             var coachs = await _serviceManager.CoachService.GetGymPendingCoachs(gymId);
@@ -46,7 +46,7 @@ namespace Presentation.Controllers
         public async Task<ActionResult> HandleCoachJobRequest(int gymId,HandleJobRequestDto jobRequestDto)
         {
             await _serviceManager.CoachService.HandleCoachJobRequest(gymId, jobRequestDto);
-            return Ok("Job Request is Handled");
+            return Ok(jobRequestDto.CoachId);
         }
 
         #region Diet for Trainee
