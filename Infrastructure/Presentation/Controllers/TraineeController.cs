@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Services.Abstractions;
 using Shared;
+using Shared.TraineeGym;
 
 namespace Presentation.Controllers;
 
@@ -165,4 +166,14 @@ public class TraineeController : ApiControllerBase
             return StatusCode(500, "An error occurred when trying to get trainee's coach, Please try again.");
     }
 
+    // ================================= Update Trainee Profile ===================================
+    [HttpPut("update-profile")]
+    public async Task<IActionResult> UpdateTraineeProfile([FromForm] EditTraineeProfileDto editTraineeProfileDto)
+    {
+        var result = await _serviceManager.TraineeService.EditTraineeProfile(editTraineeProfileDto);
+        if (result is not null)
+            return Ok(result);
+        else
+            return StatusCode(500, "An error occurred when trying to update trainee profile, Please try again.");
+    }
 }

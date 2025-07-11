@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class intial : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -236,7 +236,14 @@ namespace Persistence.Migrations
                     Address_Location_Y = table.Column<double>(type: "float", nullable: true),
                     AppUserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     DateOfBirth = table.Column<DateOnly>(type: "date", nullable: true),
-                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Image_Type = table.Column<int>(type: "int", nullable: false),
+                    Image_Url = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Image_PublicId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Image_IsMain = table.Column<bool>(type: "bit", nullable: false),
+                    CV_Type = table.Column<int>(type: "int", nullable: false),
+                    CV_Url = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CV_PublicId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CV_IsMain = table.Column<bool>(type: "bit", nullable: false),
                     CurrentCapcity = table.Column<int>(type: "int", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -444,6 +451,7 @@ namespace Persistence.Migrations
                     Salary = table.Column<double>(type: "float", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
                     Capcity = table.Column<int>(type: "int", nullable: false),
+                    ApplicationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     GymId = table.Column<int>(type: "int", nullable: false),
                     CoachId = table.Column<int>(type: "int", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
@@ -506,8 +514,8 @@ namespace Persistence.Migrations
                     MediaValue_PublicId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     MediaValue_IsMain = table.Column<bool>(type: "bit", nullable: false),
                     gymId = table.Column<int>(type: "int", nullable: true),
-                    featureId = table.Column<int>(type: "int", nullable: true),
                     CoachId = table.Column<int>(type: "int", nullable: true),
+                    FeatureId = table.Column<int>(type: "int", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -519,8 +527,8 @@ namespace Persistence.Migrations
                         principalTable: "Coaches",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Media_Features_featureId",
-                        column: x => x.featureId,
+                        name: "FK_Media_Features_FeatureId",
+                        column: x => x.FeatureId,
                         principalTable: "Features",
                         principalColumn: "Id");
                     table.ForeignKey(
@@ -722,6 +730,31 @@ namespace Persistence.Migrations
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_MealSchedules_Trainees_TraineeId",
+                        column: x => x.TraineeId,
+                        principalTable: "Trainees",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Payments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    PaymentDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    PaymentIntentId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ClientSecret = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PayFor = table.Column<int>(type: "int", nullable: false),
+                    TraineeId = table.Column<int>(type: "int", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Payments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Payments_Trainees_TraineeId",
                         column: x => x.TraineeId,
                         principalTable: "Trainees",
                         principalColumn: "Id",
@@ -948,9 +981,9 @@ namespace Persistence.Migrations
                 column: "CoachId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Media_featureId",
+                name: "IX_Media_FeatureId",
                 table: "Media",
-                column: "featureId");
+                column: "FeatureId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Media_gymId",
@@ -971,6 +1004,11 @@ namespace Persistence.Migrations
                 name: "IX_Messages_SenderId",
                 table: "Messages",
                 column: "SenderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Payments_TraineeId",
+                table: "Payments",
+                column: "TraineeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Photo_AppUserId",
@@ -1061,6 +1099,9 @@ namespace Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "Messages");
+
+            migrationBuilder.DropTable(
+                name: "Payments");
 
             migrationBuilder.DropTable(
                 name: "Photo");

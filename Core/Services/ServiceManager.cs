@@ -35,7 +35,8 @@ public class ServiceManager : IServiceManager
         IHttpContextAccessor httpContextAccessor,
         UserManager<AppUser> userManager,
         IMapper mapper,
-        IConfiguration configuration)
+        IConfiguration configuration
+        )
     {
 
         _lazyPhotoService = new(() => new PhotoService(config));
@@ -46,7 +47,7 @@ public class ServiceManager : IServiceManager
         _lazyClassService = new(() => new ClassService(unitOfWork, mapper));
         _lazyCoachService = new(() => new CoachService(AuthenticationService, unitOfWork, UserServices, mapper, TokenService));
         _lazyPaymentService = new(() => new PaymentService(unitOfWork, configuration));
-        _lazyTraineeService = new(() => new TraineeService(AuthenticationService, unitOfWork, UserServices, mapper, TokenService, PaymentService));
+        _lazyTraineeService = new(() => new TraineeService(AuthenticationService, unitOfWork, UserServices, mapper, TokenService, PaymentService, PhotoService));
   
         _lazyGymService = new(() => new GymService(unitOfWork, mapper,UserServices,PhotoService, config));
     }
