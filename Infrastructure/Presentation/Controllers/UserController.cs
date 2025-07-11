@@ -3,7 +3,6 @@ using Domain.Common;
 using Domain.Contracts;
 using Domain.Entities;
 using Domain.ValueObjects.member;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.Controllers;
@@ -36,7 +35,7 @@ namespace Gymawy.Controllers;
 
 public record MemberUpdateDto();
 
-[Authorize]
+//[Authorize]
 public class UsersController : ApiControllerBase
 {
     private readonly IUserRepository _userRepository;
@@ -172,5 +171,27 @@ public class UsersController : ApiControllerBase
         return BadRequest("Problem setting the main photo ");
 
     }
+
+
+    [HttpPost("add-cv")]
+    public async Task<ActionResult> AddCV(IFormFile file)
+    {
+        var result = await _serviceManager.PhotoService.UploadPdfAsync(file);
+
+        if (result != null)
+        {
+            Console.WriteLine("Uploaded PDF:");
+            Console.WriteLine($"URL: {result.SecureUrl.AbsoluteUri}");
+            Console.WriteLine($"Public ID: {result.PublicId}");
+            Console.WriteLine($"TYpe : {result.Type}");
+        }
+
+        return NoContent();
+
+    }
+
+
+
+
 
 }

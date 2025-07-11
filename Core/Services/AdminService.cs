@@ -2,6 +2,7 @@
 using Domain.Contracts;
 using Domain.Entities;
 using Services.Abstractions;
+using Shared.Auth;
 using Services.Specifications;
 using Shared;
 using System.Linq;

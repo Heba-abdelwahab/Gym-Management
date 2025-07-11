@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
+using Domain.Common;
 using Domain.Entities;
 using Domain.Entities.Chat;
 using Domain.ValueObjects;
 using Domain.ValueObjects.Chat;
 using Domain.ValueObjects.member;
 using Shared;
+using Shared.coach;
+using Shared.Trainee;
 
 namespace Services.MappingProfiles
 {
@@ -102,6 +105,67 @@ namespace Services.MappingProfiles
             //            opt => opt.MapFrom(src => src.DateOfBirth.CalculateAge()));
 
             #endregion
+
+
+            #region coach
+
+            CreateMap<Coach, CoachInfoResultDto>()
+            .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.AppUser.FirstName))
+            .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.AppUser.LastName))
+            .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.AppUser.UserName))
+            .ForMember(dest => dest.Specializations, opt => opt.MapFrom(src => src.Specializations.ToString()))
+            .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.Image.Url))
+            .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address))
+            .ForMember(dest => dest.Age, opt => opt.MapFrom(src =>
+            src.DateOfBirth.HasValue ?
+            (int)((DateTime.Now - src.DateOfBirth.Value.ToDateTime(TimeOnly.MinValue)).TotalDays / 365.25)
+            : 0));
+
+            #endregion
+
+
+            #region Trainee
+
+            CreateMap<Trainee, TraineeInfoResultDto>()
+           .ForMember(dest => dest.FirstName,
+               opt => opt.MapFrom(src => src.AppUser.FirstName))
+
+           .ForMember(dest => dest.LastName,
+               opt => opt.MapFrom(src => src.AppUser.LastName))
+
+           .ForMember(dest => dest.UserName,
+               opt => opt.MapFrom(src => src.AppUser.UserName))
+
+           .ForMember(dest => dest.PhotoUrl,
+               opt => opt.MapFrom(src => src.ImageUrl))
+
+           .ForMember(dest => dest.ReasonForJoining,
+               opt => opt.MapFrom(src => src.ReasonForJoining))
+
+           .ForMember(dest => dest.Weight,
+               opt => opt.MapFrom(src => src.Weight.HasValue ? src.Weight.Value.ToString("F1") + " KG" : "Not Set"))
+
+           .ForMember(dest => dest.Gym,
+               opt => opt.MapFrom(src => src.Gym != null ? src.Gym.Name : "No Gym"))
+
+           .ForMember(dest => dest.Coach,
+               opt => opt.MapFrom(src => src.Coach != null
+                   ? $"{src.Coach.AppUser.FirstName} {src.Coach.AppUser.LastName}"
+                   : "No Coach"))
+
+           .ForMember(dest => dest.Age,
+               opt => opt.MapFrom(src =>
+                   src.DateOfBirth.Value.CalculateAge()))
+
+           .ForMember(dest => dest.MembershipStartDate,
+               opt => opt.MapFrom(src => src.MembershipStartDate))
+
+           .ForMember(dest => dest.Address,
+               opt => opt.MapFrom(src => src.Address));
+
+
+            #endregion
+
         }
     }
 }

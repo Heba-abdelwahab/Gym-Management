@@ -9,6 +9,8 @@ namespace Domain.Entities
         public ICollection<WorkDay> WorkDays { get; set; } = new HashSet<WorkDay>();
         public RequestStatus Status { get; set; } = RequestStatus.Pending;
         public int Capcity { set; get; }
+        public DateTime ApplicationDate { set; get; }
+
 
         #region Navigation Properties
 
