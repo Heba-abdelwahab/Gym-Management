@@ -382,7 +382,7 @@ internal sealed class TraineeService : ITraineeService
     // ========================= Edit Trainee Profile ================================
     public async Task<TraineeDataToReturnDto> EditTraineeProfile(EditTraineeProfileDto editTraineeProfileDto)
     {
-        int? TraineeId = 2/*_userServices.Id*/;
+        int? TraineeId = _userServices.Id;
         var TraineeSpec = new GetTraineeWithAppUserSpec(TraineeId!.Value);
         var Trainee = await _unitOfWork.GetRepositories<Trainee, int>().GetByIdWithSpecAsync(TraineeSpec);
         if (Trainee == null)
