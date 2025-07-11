@@ -39,7 +39,7 @@ public class ServiceManager : IServiceManager
         _lazyTokenService = new(() => new TokenService(jwtOptions));
         _lazyAuthenticationService = new(() => new AuthenticationService(userManager, TokenService, unitOfWork));
         _lazyAdminService = new(() => new AdminService(AuthenticationService, unitOfWork, TokenService));
-        _lazyGymOwnerService = new(() => new GymOwnerService(AuthenticationService, unitOfWork, TokenService));
+        _lazyGymOwnerService = new(() => new GymOwnerService(AuthenticationService, unitOfWork, TokenService, mapper, UserServices));
         _lazyClassService = new(() => new ClassService(unitOfWork, mapper));
         _lazyCoachService = new(() => new CoachService(AuthenticationService, unitOfWork, UserServices, mapper, PhotoService, TokenService));
         _lazyTraineeService = new(() => new TraineeService(AuthenticationService, unitOfWork, UserServices, mapper, TokenService));

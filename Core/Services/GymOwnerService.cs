@@ -1,8 +1,11 @@
-﻿using Domain.Constants;
+﻿using AutoMapper;
+using Domain.Constants;
 using Domain.Contracts;
 using Domain.Entities;
 using Services.Abstractions;
+using Services.Specifications.GymOwnerSpec;
 using Shared.Auth;
+using Shared.GymOwner;
 
 namespace Services;
 
@@ -11,16 +14,21 @@ internal class GymOwnerService : IGymOwnerService
     private readonly IAuthenticationService _authenticationService;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ITokenService _tokenService;
+    private readonly IMapper _mapper;
+    private readonly IUserService _userService;
 
     public GymOwnerService(IAuthenticationService authenticationService,
         IUnitOfWork unitOfWork,
-        ITokenService tokenService
+        ITokenService tokenService,
+        IMapper mapper,
+        IUserService userService
         )
     {
         _authenticationService = authenticationService;
         _unitOfWork = unitOfWork;
         _tokenService = tokenService;
-
+        _mapper = mapper;
+        _userService = userService;
     }
 
 
@@ -62,5 +70,13 @@ internal class GymOwnerService : IGymOwnerService
 
     }
 
+    public async Task<GymOwnerInfoResultDto> GetGymOwnerByUserNameAsync(string username)
+    {
+        var gymOwner = await _unitOfWork.GetRepositories<GymOwner, int>()
+                 .GetByIdWithSpecAsync(new GetGymOwnerByAppUserIdSpec(_userService.AppUserId!));
 
+
+
+        return _mapper.Map<GymOwnerInfoResultDto>(gymOwner);
+    }
 }

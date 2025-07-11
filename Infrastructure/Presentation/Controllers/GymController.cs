@@ -1,15 +1,14 @@
-﻿using Domain.Entities;
-using Domain.Enums;
-using Domain.Exceptions;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.Abstractions;
 using Shared;
+using Shared.Trainee;
 using System.Text.Json;
 
 namespace Presentation.Controllers
 {
-    public class GymController:ApiControllerBase
+    [Authorize]
+    public class GymController : ApiControllerBase
     {
         private readonly IServiceManager serviceManager;
 
@@ -21,14 +20,14 @@ namespace Presentation.Controllers
         [HttpGet("{gymId:int}")]
         public async Task<ActionResult> GetGymById(int gymId)
         {
-            var gymDto= await serviceManager.GymService.GetGymById(gymId);
+            var gymDto = await serviceManager.GymService.GetGymById(gymId);
             return Ok(gymDto);
         }
 
         [HttpPost("RequestAddGym")]
         public async Task<ActionResult> RequestAddGym([FromForm] GymWithFilesDto gymWithFilesDto)
         {
-            var gymDto = JsonSerializer.Deserialize<GymDto>(gymWithFilesDto.gymInfo , new JsonSerializerOptions { PropertyNameCaseInsensitive=true});
+            var gymDto = JsonSerializer.Deserialize<GymDto>(gymWithFilesDto.gymInfo, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
             TryValidateModel(gymDto);
 
@@ -42,7 +41,7 @@ namespace Presentation.Controllers
         [HttpPut("{gymId:int}")]
         public async Task<ActionResult> UpdateGym(int gymId, [FromForm] GymWithFilesUpdate gymWithFilesUpdate)
         {
-            var gymDto = JsonSerializer.Deserialize<GymUpdateDto>(gymWithFilesUpdate.gymInfo , new JsonSerializerOptions { PropertyNameCaseInsensitive=true});
+            var gymDto = JsonSerializer.Deserialize<GymUpdateDto>(gymWithFilesUpdate.gymInfo, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             TryValidateModel(gymDto);
 
             if (!ModelState.IsValid)
@@ -59,7 +58,7 @@ namespace Presentation.Controllers
         }
 
         [HttpGet("GetGymFeatures")]
-        public async Task< ActionResult> GetGymFeatures()
+        public async Task<ActionResult> GetGymFeatures()
         {
             var features = await serviceManager.GymService.GetGymFeatures();
             return Ok(features);
@@ -80,24 +79,24 @@ namespace Presentation.Controllers
         }
 
         [HttpPost("NonExGymFeature/{gymId:int}")]
-        public async Task<ActionResult> AddNonExGymFeature([FromRoute] int gymId,[FromForm] NonExGymFeatureDto NonExGymFeatureDto)
+        public async Task<ActionResult> AddNonExGymFeature([FromRoute] int gymId, [FromForm] NonExGymFeatureDto NonExGymFeatureDto)
         {
-            var featureGymDto= await serviceManager.GymService.AddNonExGymFeature(gymId,NonExGymFeatureDto);
-            return CreatedAtAction(nameof(GetGymFeatureById),new { gymFeatureId  = featureGymDto.Id },featureGymDto);
+            var featureGymDto = await serviceManager.GymService.AddNonExGymFeature(gymId, NonExGymFeatureDto);
+            return CreatedAtAction(nameof(GetGymFeatureById), new { gymFeatureId = featureGymDto.Id }, featureGymDto);
         }
 
         [HttpPost("ExtraGymFeature/{gymId:int}")]
         public async Task<ActionResult> AddExtraGymFeature([FromRoute] int gymId, [FromForm] ExGymFeatureDto gymFeatureDto)
         {
-            var featureGymDto =  await serviceManager.GymService.AddExtraGymFeature(gymId, gymFeatureDto);
+            var featureGymDto = await serviceManager.GymService.AddExtraGymFeature(gymId, gymFeatureDto);
             return CreatedAtAction(nameof(GetGymFeatureById), new { gymFeatureId = featureGymDto.Id }, featureGymDto);
 
         }
 
         [HttpPut("GymFeature/{gymFeatureId:int}")]
-        public async Task<ActionResult>  UpdateGymFeature(int gymFeatureId, [FromForm] GymFeaturePutDto GymFeaturePutDto)
+        public async Task<ActionResult> UpdateGymFeature(int gymFeatureId, [FromForm] GymFeaturePutDto GymFeaturePutDto)
         {
-            var updatedGymFeature= await serviceManager.GymService.UpdateGymFeature(gymFeatureId, GymFeaturePutDto);
+            var updatedGymFeature = await serviceManager.GymService.UpdateGymFeature(gymFeatureId, GymFeaturePutDto);
             return Ok(updatedGymFeature);
         }
 
@@ -107,5 +106,15 @@ namespace Presentation.Controllers
             await serviceManager.GymService.DeleteGymFeature(gymFeatureId);
             return Ok(gymFeatureId);
         }
+
+
+        [HttpGet("{username}")]
+        public async Task<ActionResult<TraineeInfoResultDto>> GetTraineeInfo(string username)
+           => Ok(await serviceManager.GymOwnerService.GetGymOwnerByUserNameAsync(username));
+
+
+
+
+
     }
 }
