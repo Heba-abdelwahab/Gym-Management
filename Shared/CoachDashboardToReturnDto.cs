@@ -20,7 +20,17 @@ namespace Shared
         public string LastName { get; set; }
         public string ImageUrl { get; set; }
     }
-
+    public record TraineeCoachDashboardDetailDto
+    {
+        public int Id { get; init; }
+        public string FirstName { get; init; }
+        public string LastName { get; init; }
+        public string ImageUrl { get; init; }
+        public DateOnly? DateOfBirth { get; init; }
+        public string ReasonForJoining { get; init; }
+        public double? Weight { get; init; }
+        public string GymName { get; init; }
+    }
     public record GymCoachDashboardToReturnDto
     {
         public int Id { get; set; }

@@ -155,5 +155,12 @@ namespace Presentation.Controllers
             var result = await _serviceManager.CoachService.GetCoachDashboardAsync(coachId);
             return Ok(result);
         }
+
+        [HttpGet("Dashboard/traineeDetails/{traineeId:int}")]
+        public async Task<IActionResult> GetTraineeDetails(int traineeId)
+        {
+            var traineeDetails = await _serviceManager.CoachService.GetTraineeDetailsForDashboardAsync(traineeId);
+            return Ok(traineeDetails);
+        }
     }
 }

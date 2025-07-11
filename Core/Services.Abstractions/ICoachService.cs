@@ -42,4 +42,5 @@ public interface ICoachService
     #endregion
 
     Task<CoachDashboardToReturnDto> GetCoachDashboardAsync(int coachId);
+    Task<TraineeCoachDashboardDetailDto> GetTraineeDetailsForDashboardAsync(int traineeId);
 }

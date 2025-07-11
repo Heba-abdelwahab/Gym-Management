@@ -213,7 +213,7 @@ namespace Services
         //CREATE
         public async Task<bool> CreateExerciseScheduleAsync(int traineeId, ExerciseScheduleDto exerciseScheduleDto)
         {
-           // var coachId = _userServices.Id;
+            // var coachId = _userServices.Id;
 
             var trainee = await _unitOfWork.GetRepositories<Trainee, int>().GetByIdAsync(traineeId);
             if (trainee is null)
@@ -279,7 +279,7 @@ namespace Services
         // --- DELETE ---
         public async Task<bool> DeleteExerciseScheduleAsync(int scheduleId)
         {
-           // var coachId = _userServices.Id;
+            // var coachId = _userServices.Id;
 
             var scheduleToDelete = await _unitOfWork.GetRepositories<ExercisesSchedule, int>().GetByIdAsync(scheduleId);
             if (scheduleToDelete is null)
@@ -295,7 +295,7 @@ namespace Services
             _unitOfWork.GetRepositories<ExercisesSchedule, int>().Delete(scheduleToDelete);
             return await _unitOfWork.CompleteSaveAsync();
         }
-
+        #endregion
 
         public async Task<bool> IsCoachAuthorizedToAccessTraineeAsync(int coachId, Trainee trainee)
         {
@@ -325,14 +325,28 @@ namespace Services
 
             if (coach == null)
             {
-                throw new CoeachesNotFoundException(coachId); 
+                throw new CoeachesNotFoundException(coachId);
             }
 
             var result = _mapper.Map<CoachDashboardToReturnDto>(coach);
 
             return result;
-           
+
         }
-        #endregion
+
+        public async Task<TraineeCoachDashboardDetailDto> GetTraineeDetailsForDashboardAsync(int traineeId)
+        {
+            var spec = new GetTraineeByIdSpec(traineeId);
+            var trainee = await _unitOfWork.GetRepositories<Trainee, int>().GetByIdWithSpecAsync(spec);
+
+            if (trainee == null)
+            {
+                throw new TraineeNotFoundException(traineeId); 
+            }
+
+            var traineeDto = _mapper.Map<TraineeCoachDashboardDetailDto>(trainee);
+
+            return traineeDto;
+        }
     }
 }

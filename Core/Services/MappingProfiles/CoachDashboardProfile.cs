@@ -27,7 +27,10 @@ namespace Services.MappingProfiles
                 .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.AppUser.LastName))
                 .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.ImageUrl));
 
-
+            CreateMap<Trainee, TraineeCoachDashboardDetailDto>()
+                .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.AppUser.FirstName))
+                .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.AppUser.LastName))
+                .ForMember(dest => dest.GymName, opt => opt.MapFrom(src => src.Gym.Name));
             CreateMap<Coach, CoachDashboardToReturnDto>()
                 .ForMember(dest => dest.Gyms, opt => opt.MapFrom(src =>
                     src.GymCoaches.Where(gc => gc.Status == RequestStatus.Accepted)))
