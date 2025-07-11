@@ -6,6 +6,7 @@ namespace Domain.Entities
     {
         public required Address Address { get; set; }
         public string ImageUrl { get; set; } = string.Empty;
+        
         public DateTime? MembershipStartDate { get; set; }
         public DateTime? MembershipEndDate { get; set; }
 

@@ -98,8 +98,8 @@ namespace Services.MappingProfiles
                 .ForMember(des => des.GymImagesUrl, opt=>opt.MapFrom(src=>src.Images.Select(img=>img.MediaValue.Url).ToList()))
                 .ForMember(des=>des.GymTypeValue, opt => opt.MapFrom(src => Enum.GetName(typeof(GymType), src.GymType) ));
             CreateMap<GymUpdateDto, Gym>();
-                
-            CreateMap<Address, AddressToReturnDto>();
+
+            CreateMap<Address, AddressToReturnDto>().ReverseMap();
             CreateMap<Gym, GymToReturnDto>()
                 .ForMember(dest => dest.Logo, opt => opt.MapFrom(src => src.Media));
 

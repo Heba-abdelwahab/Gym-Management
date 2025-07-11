@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using CloudinaryDotNet;
 using Domain.Constants;
 using Domain.Contracts;
 using Domain.Entities;
 using Domain.Exceptions;
 using Domain.ValueObjects;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Services.Abstractions;
 using Services.Specifications;
@@ -23,6 +25,7 @@ internal sealed class TraineeService : ITraineeService
     private readonly IMapper _mapper;
     private readonly ITokenService _tokenService;
     private readonly IPaymentService _paymentService;
+    private readonly IPhotoService _photoService;
 
     public TraineeService(
         IAuthenticationService authenticationService,
@@ -30,13 +33,16 @@ internal sealed class TraineeService : ITraineeService
         IUserService userServices,
         IMapper mapper,
         ITokenService tokenService,
-        IPaymentService paymentService)    {
+        IPaymentService paymentService,
+        IPhotoService photoService
+        )    {
         _authenticationService = authenticationService;
         _unitOfWork = unitOfWork;
         _userServices = userServices;
         _mapper = mapper;
         _tokenService = tokenService;
         _paymentService = paymentService;
+        _photoService = photoService;
     }
 
     public async Task<bool> AssignCoachToTrainee(AssignCoachToTraineeDto assignCoachToTrainee)
@@ -373,6 +379,46 @@ internal sealed class TraineeService : ITraineeService
 
     }
 
+    // ========================= Edit Trainee Profile ================================
+    public async Task<TraineeDataToReturnDto> EditTraineeProfile(EditTraineeProfileDto editTraineeProfileDto)
+    {
+        int? TraineeId = 2/*_userServices.Id*/;
+        var TraineeSpec = new GetTraineeWithAppUserSpec(TraineeId!.Value);
+        var Trainee = await _unitOfWork.GetRepositories<Trainee, int>().GetByIdWithSpecAsync(TraineeSpec);
+        if (Trainee == null)
+            throw new TraineeNotFoundException(TraineeId.Value);
+        Trainee.AppUser.FirstName = editTraineeProfileDto.FirstName;
+        Trainee.AppUser.LastName = editTraineeProfileDto.LastName;
+        Trainee.Address = _mapper.Map<Address>(editTraineeProfileDto.Address);
+        Trainee.DateOfBirth = editTraineeProfileDto.DateOfBirth;
+        Trainee.Weight = editTraineeProfileDto.Weight;
+
+        if (editTraineeProfileDto.Image != null)
+        {
+
+            var photoResult = await _photoService.AddPhotoFullPathAsync(editTraineeProfileDto.Image);
+            Trainee.ImageUrl = photoResult.SecureUrl.AbsoluteUri;
+
+            var photo = new Photo
+            {
+                Url = photoResult.SecureUrl.AbsoluteUri,
+                PublicId = photoResult.PublicId
+            };
+            if (Trainee.AppUser.Photos.Count == 0)
+                photo.IsMain = true;
+
+            Trainee.AppUser.Photos.Add(photo);
+        }
+
+        _unitOfWork.GetRepositories<Trainee, int>().Update(Trainee);
+
+        if (await _unitOfWork.CompleteSaveAsync())
+        {
+            return _mapper.Map<TraineeDataToReturnDto>(Trainee);
+        }
+        throw new Exception("An error occurred while updating the trainee profile.");
+    }
+
     public async Task<TraineeInfoResultDto> GetTraineeByUserName(string username)
     {
         var trainee = await _unitOfWork.GetRepositories<Trainee, int>()
@@ -381,5 +427,6 @@ internal sealed class TraineeService : ITraineeService
 
 
         return _mapper.Map<TraineeInfoResultDto>(trainee);
+
     }
 }
