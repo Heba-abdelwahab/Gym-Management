@@ -6,7 +6,10 @@ using Domain.Exceptions;
 using Domain.ValueObjects;
 using Services.Abstractions;
 using Services.Specifications;
+using Services.Specifications.TraineeSpec;
 using Shared;
+using Shared.Auth;
+using Shared.Trainee;
 using Shared.TraineeGym;
 
 namespace Services;
@@ -276,5 +279,15 @@ internal sealed class TraineeService : ITraineeService
             throw new GymNotFoundException(0); // Assuming 0 is an invalid gym ID
         var gymsMapped = _mapper.Map<GymToReturnDto>(gyms);
         return gymsMapped;
+    }
+
+    public async Task<TraineeInfoResultDto> GetTraineeByUserName(string username)
+    {
+        var trainee = await _unitOfWork.GetRepositories<Trainee, int>()
+               .GetByIdWithSpecAsync(new GetTraineeByAppUserIdSpec(_userServices.AppUserId!));
+
+
+
+        return _mapper.Map<TraineeInfoResultDto>(trainee);
     }
 }

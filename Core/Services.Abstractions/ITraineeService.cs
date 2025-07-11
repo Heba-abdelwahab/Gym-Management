@@ -1,6 +1,7 @@
 ﻿using Shared;
+using Shared.Auth;
+using Shared.Trainee;
 using Shared.TraineeGym;
-using System.Collections.Generic;
 
 namespace Services.Abstractions;
 
@@ -19,4 +20,9 @@ public interface ITraineeService
     Task<TraineeSubscriptionsToReturnDto> TraineeSubscriptions();
     Task<IReadOnlyList<GymToReturnDto>> AllGyms();
     Task<GymToReturnDto> GetGymById(int gymId);
+
+
+    Task<TraineeInfoResultDto> GetTraineeByUserName(string username);
+
+
 }

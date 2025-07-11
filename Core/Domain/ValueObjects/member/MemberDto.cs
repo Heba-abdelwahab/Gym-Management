@@ -7,6 +7,8 @@ public class MemberDto
 
     public string PhotoUrl { get; set; } = string.Empty;
 
+    public int Age { get; set; }
+
     public string KnownAs { get; set; } = string.Empty;
     public DateTime LastActive { get; set; }
 

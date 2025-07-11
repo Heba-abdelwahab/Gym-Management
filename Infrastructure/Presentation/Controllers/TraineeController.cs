@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Services.Abstractions;
 using Shared;
+using Shared.Trainee;
 
 namespace Presentation.Controllers;
 
+[Authorize]
 public class TraineeController : ApiControllerBase
 {
 
@@ -125,7 +128,7 @@ public class TraineeController : ApiControllerBase
     public async Task<IActionResult> GetAllGymsData()
     {
         var GymsData = await _serviceManager.TraineeService.AllGyms();
-        if(GymsData is not null)
+        if (GymsData is not null)
             return Ok(GymsData);
         else
             return StatusCode(500, "An error occurred when trying to get Gyms, Please try again.");
@@ -140,4 +143,13 @@ public class TraineeController : ApiControllerBase
         else
             return StatusCode(500, "An error occurred when trying to get gym, Please try again.");
     }
+
+
+
+    [HttpGet("{username}")]
+    public async Task<ActionResult<TraineeInfoResultDto>> GetTraineeInfo(string username)
+    => Ok(await _serviceManager.TraineeService.GetTraineeByUserName(username));
+
+
+
 }

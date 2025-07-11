@@ -17,7 +17,6 @@ namespace Persistence
         public async Task InitializeAsync()
         {
             //await _dbContext.Database.ExecuteSqlAsync($"DELETE FROM  Connections");
-            await _dbContext.Database.ExecuteSqlAsync($"TRUNCATE  TABLE  Connections");
 
             // Apply any pending migrations before seeding
             if ((await _dbContext.Database.GetPendingMigrationsAsync()).Any())
@@ -105,6 +104,9 @@ namespace Persistence
                     throw;
                 }
             }
+
+            await _dbContext.Database.ExecuteSqlAsync($"TRUNCATE  TABLE  Connections");
+
         }
     }
 }
