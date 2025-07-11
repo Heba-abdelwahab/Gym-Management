@@ -15,7 +15,7 @@ namespace Services.Specifications
             AddIncludes(T=>T.Gym);
             AddIncludes("Membership.Features.Feature");
             AddIncludes("TraineeSelectedFeatures.GymFeature.Feature");
-            AddIncludes(T=>T.Classes);
+            AddIncludes("Classes.Trainees");
         }
     }
 }

@@ -31,6 +31,9 @@ namespace Persistence
         // public DbSet<Muscle> Muscles { get; set; }
         //public DbSet<MuscleExerices> MuscleExercises { get; set; }
         public DbSet<WorkDay> WorkDays { get; set; }
+        
+        public DbSet<Payments> Payments { get; set; }
+
         public DbSet<Exercise> Exercises { get; set; }
 
 

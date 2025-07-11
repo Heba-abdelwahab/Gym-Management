@@ -60,10 +60,10 @@ public class TraineeController : ApiControllerBase
     public async Task<IActionResult> AssignTraineeToMembership(int membershipId)
     {
         var result = await _serviceManager.TraineeService.AssignTraineeToMembership(membershipId);
-        if (result)
-            return Ok("success");
+        if (result is not null)
+            return Ok(result);
         else
-            return StatusCode(500, "An error occurred when trying to assign trainee to membership, Please try again.");
+            return StatusCode(500, "An error occurred when trying to assign trainee to membership OR you have this active membership before, Please try again.");
     }
 
     // Classes For Trainee
@@ -82,8 +82,8 @@ public class TraineeController : ApiControllerBase
     public async Task<IActionResult> JoinClass(int classId)
     {
         var result = await _serviceManager.TraineeService.JoinClass(classId);
-        if (result)
-            return Ok("success");
+        if (result is not null)
+            return Ok(result);
         else
             return StatusCode(500, "An error occurred when trying to join class, Please try again.");
     }
@@ -143,6 +143,31 @@ public class TraineeController : ApiControllerBase
         else
             return StatusCode(500, "An error occurred when trying to get gym, Please try again.");
     }
+
+    // =========================== get all classes ===========================
+    [HttpGet("classes")]
+    public async Task<IActionResult> GetAllClasses()
+    {
+        var classes = await _serviceManager.TraineeService.GetAllClasses();
+        if (classes is not null)
+            return Ok(classes);
+        else
+            return StatusCode(500, "An error occurred when trying to get classes, Please try again.");
+    }
+
+
+
+    //get trainee's coach
+    [HttpGet("coach")]
+    public async Task<IActionResult> GetTraineeCoach()
+    {
+        var coach = await _serviceManager.TraineeService.GetTraineeCoach();
+        if (coach is not null)
+            return Ok(coach);
+        else
+            return StatusCode(500, "An error occurred when trying to get trainee's coach, Please try again.");
+    }
+
 
 
 
