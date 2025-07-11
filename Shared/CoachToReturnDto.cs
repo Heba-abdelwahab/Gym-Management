@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Shared
+﻿namespace Shared
 {
-    public record CoachToReturnDto(   string FirstName ,
-     string LastName ,
-        string ImageUrl,
-    int Id);
+    public record CoachToReturnDto(
+     string FirstName,
+     string LastName,
+     string ImageUrl,
+    int Id
+        );
 }

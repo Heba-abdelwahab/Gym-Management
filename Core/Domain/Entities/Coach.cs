@@ -1,5 +1,4 @@
 ﻿using Domain.Common;
-using Domain.Entities.Domain.Entities;
 using Domain.Enums;
 using Domain.ValueObjects;
 
@@ -8,7 +7,7 @@ namespace Domain.Entities
     public class Coach : EntityBase<int>
     {
         //public string CV { get; set; }       // file pdf Path
-        public CoachSpecialization Specializations { get; set; } = CoachSpecialization.None;
+        public CoachSpecialization Specializations { get; set; } = CoachSpecialization.None; // select list 
         public string About { get; set; } = string.Empty;
         public Address Address { get; set; } = null!;
 
@@ -17,12 +16,29 @@ namespace Domain.Entities
         public string? AppUserId { get; set; } = string.Empty;
         public AppUser AppUser { get; set; } = null!;
         public DateOnly? DateOfBirth { get; set; }
-        public MediaValueObj Image { get; set; } 
+
+
+        #region upload image 
+        public MediaValueObj Image { get; set; } // upload when register   
+        #endregion
+
+        #region CV
+        /// <summary>
+        /// save into server , path in url of media 
+        /// </summary>
+
+        public MediaValueObj CV { get; set; }
+        #endregion
+
 
         #endregion
 
         //public ICollection<Media>? Certificates { get; set; } = new HashSet<Media>();
-        public MediaValueObj CV { get; set; }
+
+
+
+
+
 
         #region Navigation Property
         public ICollection<GymCoach> GymCoaches { get; set; } = new HashSet<GymCoach>();

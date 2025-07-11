@@ -2,7 +2,7 @@
 using Domain.Contracts;
 using Domain.Entities;
 using Services.Abstractions;
-using Shared;
+using Shared.Auth;
 
 namespace Services;
 
