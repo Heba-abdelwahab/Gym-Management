@@ -10,7 +10,7 @@ namespace Shared
 {
     public record MealResultDto
     {
-        public int Id { get; init; }
+        public int? Id { get; init; }
         [Required]
         public string Description { get; init; }
         [Required]

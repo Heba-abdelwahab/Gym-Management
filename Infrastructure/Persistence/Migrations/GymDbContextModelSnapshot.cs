@@ -728,6 +728,42 @@ namespace Persistence.Migrations
                     b.ToTable("ScheduledExercises");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Payments", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("ClientSecret")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("PayFor")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("PaymentDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PaymentIntentId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TraineeId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TraineeId");
+
+                    b.ToTable("Payments");
+                });
+
             modelBuilder.Entity("Domain.Entities.Trainee", b =>
                 {
                     b.Property<int>("Id")
@@ -1542,6 +1578,17 @@ namespace Persistence.Migrations
                     b.Navigation("Exercise");
 
                     b.Navigation("ExercisesSchedule");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Payments", b =>
+                {
+                    b.HasOne("Domain.Entities.Trainee", "Trainee")
+                        .WithMany()
+                        .HasForeignKey("TraineeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Trainee");
                 });
 
             modelBuilder.Entity("Domain.Entities.Trainee", b =>

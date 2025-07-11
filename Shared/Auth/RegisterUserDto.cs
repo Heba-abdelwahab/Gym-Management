@@ -1,4 +1,4 @@
-﻿namespace Shared;
+﻿namespace Shared.Auth;
 
 public record RegisterUserDto(
     string FirstName,

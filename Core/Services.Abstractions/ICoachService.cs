@@ -1,5 +1,7 @@
 ﻿using Domain.Entities;
 using Shared;
+using Shared.Auth;
+using Shared.coach;
 
 namespace Services.Abstractions;
 
@@ -8,6 +10,7 @@ public interface ICoachService
     // Request into gym to become a coach
     Task<bool> RequestToBecomeCoachAsync(CoachRequestGymDto coachRequest);
     Task<List<CoachToReturnDto>> GetCoachesbyGym(int gymId);
+    Task<CoachInfoResultDto> GetCoachbyUserName(string username);
 
     #region Diet for trainee
     Task<bool> CreateDietAsync(int traineeId, MealScheduleDto dietDto);
@@ -40,4 +43,7 @@ public interface ICoachService
     // AUTHORIZATION
     Task<bool> IsCoachAuthorizedToAccessTraineeAsync(int coachId, Trainee trainee);
     #endregion
+
+    Task<CoachDashboardToReturnDto> GetCoachDashboardAsync(int coachId);
+    Task<TraineeCoachDashboardDetailDto> GetTraineeDetailsForDashboardAsync(int traineeId);
 }
