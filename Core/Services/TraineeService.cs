@@ -37,36 +37,54 @@ internal sealed class TraineeService : ITraineeService
         _tokenService = tokenService;
 
     }
-
     public async Task<bool> AssignCoachToTrainee(AssignCoachToTraineeDto assignCoachToTrainee)
     {
-        Trainee trainee = await _unitOfWork.GetRepositories<Trainee, int>().GetByIdAsync(assignCoachToTrainee.TraineeId);
-        Coach coach = await _unitOfWork.GetRepositories<Coach, int>().GetByIdAsync(assignCoachToTrainee.CoachId);
-        GymCoach gymCoach = await _unitOfWork.GetRepositories<GymCoach, int>().GetByIdWithSpecAsync(new GymCoachesSpec(assignCoachToTrainee.CoachId));
+        // Get the trainee
+        Trainee trainee = await _unitOfWork.GetRepositories<Trainee, int>()
+            .GetByIdAsync(assignCoachToTrainee.TraineeId);
+
         if (trainee == null)
-        {
             throw new TraineeNotFoundException(assignCoachToTrainee.TraineeId);
-        }
-        if (coach == null)
-        {
+
+        // Get the new coach and gym coach
+        Coach coach = await _unitOfWork.GetRepositories<Coach, int>()
+            .GetByIdAsync(assignCoachToTrainee.CoachId);
+
+        GymCoach gymCoach = await _unitOfWork.GetRepositories<GymCoach, int>()
+            .GetByIdWithSpecAsync(new GymCoachesSpec(assignCoachToTrainee.CoachId));
+
+        if (coach == null || gymCoach == null)
             throw new CoeachesNotFoundException(assignCoachToTrainee.CoachId);
+
+        // Only proceed if this is a different coach assignment
+        if (!trainee.CoachId.HasValue || trainee.CoachId.Value != assignCoachToTrainee.CoachId)
+        {
+            // Get the old gym coach if exists
+            GymCoach oldGymCoach = null;
+            if (trainee.CoachId.HasValue)
+            {
+                oldGymCoach = await _unitOfWork.GetRepositories<GymCoach, int>()
+                    .GetByIdWithSpecAsync(new GymCoachesSpec(trainee.CoachId.Value));
+            }
+
+            // Update capacities only if this is a new assignment
+            if (oldGymCoach != null&&oldGymCoach.CurrentCapcity>=0)
+            {
+                oldGymCoach.CurrentCapcity--;
+                _unitOfWork.GetRepositories<GymCoach, int>().Update(oldGymCoach);
+            }
+
+            gymCoach.CurrentCapcity++;
+            _unitOfWork.GetRepositories<GymCoach, int>().Update(gymCoach);
         }
-        if (coach.CurrentCapcity < gymCoach.Capcity) { 
+
+        // Update trainee's coach
         trainee.CoachId = assignCoachToTrainee.CoachId;
-         coach.CurrentCapcity++;
-
         _unitOfWork.GetRepositories<Trainee, int>().Update(trainee);
-            _unitOfWork.GetRepositories<Coach, int>().Update(coach);
 
-       }
-        var result = await _unitOfWork.CompleteSaveAsync();
-
-        return result;
-        
-
-
+        // Save changes
+        return await _unitOfWork.CompleteSaveAsync();
     }
-
     public async Task<AuthTraineeResultDto> CreateTraineeAsync(RegisterTraineeDto request)
     {
         var registerUser = new RegisterUserDto

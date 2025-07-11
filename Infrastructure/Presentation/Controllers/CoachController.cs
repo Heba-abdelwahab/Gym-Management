@@ -62,7 +62,7 @@ namespace Presentation.Controllers
             return BadRequest("Failed to create diet.");
         }
 
-        [HttpGet("{id:int}")]
+        [HttpGet("GetCoachesBygem/{id:int}")]
         public async Task<IActionResult> GetCoachesBygem(int id)
         {
 

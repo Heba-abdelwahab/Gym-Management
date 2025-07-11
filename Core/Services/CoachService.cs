@@ -65,7 +65,7 @@ namespace Services
             {
                 throw new GymNotFoundException(gymId);
             }
-            var result = _mapper.Map<List<CoachToReturnDto>>(coaches);
+            var result = _mapper.Map<List<CoachToReturnDto>>(coaches, opt => opt.Items["gymid"]=gymId);
 
             return result;
         }

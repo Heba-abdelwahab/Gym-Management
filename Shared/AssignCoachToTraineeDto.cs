@@ -12,7 +12,7 @@ namespace Shared
        
             public int CoachId { get; set; }
             public int TraineeId { get; set; }
-        
+            public int OldCoachId { get; set; } 
 
     }
 }

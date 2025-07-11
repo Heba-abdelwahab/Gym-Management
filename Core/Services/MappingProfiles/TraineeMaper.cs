@@ -18,7 +18,8 @@ namespace Services.MappingProfiles
 
             .ForMember(dest => dest.Name, opt => 
             opt.MapFrom(src => $"{src.AppUser.FirstName} {src.AppUser.LastName}"))
-.ForMember(dest => dest.MemberShipName, opt => opt.MapFrom(src => src.Membership.Name));
+.ForMember(dest => dest.MemberShipName, opt => opt.MapFrom(src => src.Membership.Name))
+            .ForMember(dest => dest.CoachName, opt => opt.MapFrom(src => $"{src.Coach!.AppUser.FirstName} {src.Coach.AppUser.LastName}"));
 
         }
     }

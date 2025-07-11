@@ -31,14 +31,14 @@ public class TraineeController : ApiControllerBase
 
 
 
-    [HttpPost]
+    [HttpPost("AssignCoachToTrainee")]
     public async Task<IActionResult> AssignCoachToTrainee(AssignCoachToTraineeDto assignCoachToTrainee)
     {
      var t= await _serviceManager.TraineeService.AssignCoachToTrainee(assignCoachToTrainee);
         if(t)
-        return Ok("success");
+        return Ok(new {message= "success" });
         else
-            return StatusCode(500, "An error occurred when Assigning coach to trainee, Please try again.");
+            return BadRequest(new { message="An error occurred when Assigning coach to trainee, Please try again." });
 
 
     }

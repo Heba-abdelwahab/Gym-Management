@@ -9,7 +9,7 @@ namespace Domain.Entities
         public ICollection<WorkDay> WorkDays { get; set; } = new HashSet<WorkDay>();
         public RequestStatus Status { get; set; } = RequestStatus.Pending;
         public int Capcity { set; get; }
-
+        public int CurrentCapcity { set; get; }
         #region Navigation Properties
 
         public int GymId { get; set; }

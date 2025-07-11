@@ -8,5 +8,5 @@ namespace Shared
 {
     public record CoachToReturnDto(   string FirstName ,
      string LastName ,
-    int Id);
+    int Id,int CurrentCapcity,string Specializations);
 }

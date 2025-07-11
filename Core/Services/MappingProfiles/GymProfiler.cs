@@ -52,11 +52,20 @@ namespace Services.MappingProfiles
 
 
 
+
             CreateMap<AddressDto, Address>().ReverseMap();
             CreateMap<GymExtraFeatureDto, GymFeature>()
            .ForMember(des=>des.Feature, opt => opt.MapFrom(src => new Feature() { Name = src.Name, IsExtra = true }));
-           
-           
+
+            CreateMap<GymFeature, GymFeatureReturnDto>().ForMember(des => des.FeatureName, opt =>
+            opt.MapFrom(src => src.Feature.Name));
+                
+
+            CreateMap<MemberShipReturnDto, Membership>()
+    .ForMember(dest => dest.Features, opt => opt.Ignore());
+
+            CreateMap<Membership, MemberShipDto>()
+                .ForMember(dest => dest.Features, opt => opt.MapFrom(src => src.Features));
         }
     }
 }
