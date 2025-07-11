@@ -198,8 +198,6 @@ namespace Services
 
         public async Task HandleCoachJobRequest(int gymId, HandleJobRequestDto jobRequestDto)
         {
-
-
             var gymCoach = await _unitOfWork.GetRepositories<GymCoach, int>().GetByIdWithSpecAsync(new GetGymCoachSpec(gymId, jobRequestDto.CoachId));
             if (gymCoach == null)
                 throw new GymCoachNotFoundException(gymId, jobRequestDto.CoachId);

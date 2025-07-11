@@ -24,5 +24,14 @@ namespace Presentation.Controllers
 
             return Ok(gyms);
         }
+
+
+        [HttpGet("{id:int}/Info")]
+        public async Task<IActionResult> GetGymOwnerInfo(int id)
+        {
+            var gymOwner = await _serviceManager.GymOwnerService.GetGymOwnerInfo(id);
+
+            return Ok(gymOwner);
+        }
     }
 }
