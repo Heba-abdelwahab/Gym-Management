@@ -7,8 +7,10 @@ using Domain.Exceptions;
 using Domain.ValueObjects;
 using Services.Abstractions;
 using Services.Specifications;
+using Services.Specifications.CoachSpec;
 using Shared;
-using Shared.TraineeGym;
+using Shared.Auth;
+using Shared.coach;
 namespace Services
 {
     public class CoachService : ICoachService
@@ -17,6 +19,7 @@ namespace Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IUserService _userServices;
         private readonly IMapper _mapper;
+        private readonly IPhotoService _photoService;
         private readonly ITokenService _tokenService;
 
 
@@ -25,12 +28,14 @@ namespace Services
             IUnitOfWork unitOfWork,
             IUserService userServices,
             IMapper mapper,
+            IPhotoService photoService,
             ITokenService tokenService)
         {
             _authenticationService = authenticationService;
             _unitOfWork = unitOfWork;
             _userServices = userServices;
             _mapper = mapper;
+            _photoService = photoService;
             _tokenService = tokenService;
 
         }
@@ -58,13 +63,14 @@ namespace Services
 
         public async Task<List<CoachToReturnDto>> GetCoachesbyGym(int gymId)
         {
-
-            var coaches = await _unitOfWork.GetRepositories<Coach, int>()
-                                           .GetAllWithSpecAsync(new GetCoaches(gymId));
-            if (!coaches.Any())
+            var gym = await _unitOfWork.GetRepositories<Gym, int>().GetByIdAsync(gymId);
+            if (gym is null)
             {
                 throw new GymNotFoundException(gymId);
             }
+
+            var coaches = await _unitOfWork.GetRepositories<Coach, int>()
+                                           .GetAllWithSpecAsync(new GetCoaches(gymId));
             var result = _mapper.Map<List<CoachToReturnDto>>(coaches);
 
             return result;
@@ -152,18 +158,66 @@ namespace Services
            (request.FirstName, request.LastName, request.UserName,
            request.Email, request.Password, request.PhoneNumber, Roles.Coach);
 
+
+            var coach = new Coach();
+            var photo = new Photo();
+            #region upload CV & Image 
+            var CvUploadedResult = await _photoService.UploadPdfAsync(request.CV);
+
+
+
+            if (CvUploadedResult != null)
+            {
+                coach.CV = new MediaValueObj
+                {
+                    Url = CvUploadedResult.SecureUrl.AbsoluteUri,
+                    PublicId = CvUploadedResult.PublicId,
+                    Type = MediaType.PDF,
+                };
+
+
+
+            }
+
+            var ImageUploadResult = await _photoService.AddPhotoFullPathAsync(request.Photo);
+
+            if (ImageUploadResult is not null)
+            {
+                coach.Image = new MediaValueObj
+                {
+                    Url = ImageUploadResult.SecureUrl.AbsoluteUri,
+                    PublicId = ImageUploadResult.PublicId,
+                    Type = MediaType.Image,
+                };
+
+                photo = new Photo
+                {
+                    Url = ImageUploadResult.SecureUrl.AbsoluteUri,
+                    PublicId = ImageUploadResult.PublicId,
+                    IsMain = true
+                };
+
+
+
+            }
+
+
+
+            #endregion
+
+
             var authResult = await _authenticationService.RegisterUserAsync(registerUser);
 
 
-            var coach = new Coach
-            {
-                AppUserId = authResult.AppUserId,
-                Address = _mapper.Map<Address>(request.Address),
-                DateOfBirth = request?.DateOfBirth
+            coach.AppUserId = authResult.AppUserId;
+            coach.Address = _mapper.Map<Address>(request.Address);
+            coach.DateOfBirth = request?.DateOfBirth;
+            coach.Specializations = request!.Specializations;
+            photo.AppUserId = authResult.AppUserId;
 
-            };
 
             _unitOfWork.GetRepositories<Coach, int>().Insert(coach);
+            _unitOfWork.GetRepositories<Photo, int>().Insert(photo);
 
 
             if (await _unitOfWork.CompleteSaveAsync())
@@ -197,8 +251,6 @@ namespace Services
 
         public async Task HandleCoachJobRequest(int gymId, HandleJobRequestDto jobRequestDto)
         {
-
-
             var gymCoach = await _unitOfWork.GetRepositories<GymCoach, int>().GetByIdWithSpecAsync(new GetGymCoachSpec(gymId, jobRequestDto.CoachId));
             if (gymCoach == null)
                 throw new GymCoachNotFoundException(gymId, jobRequestDto.CoachId);
@@ -213,7 +265,7 @@ namespace Services
         //CREATE
         public async Task<bool> CreateExerciseScheduleAsync(int traineeId, ExerciseScheduleDto exerciseScheduleDto)
         {
-           // var coachId = _userServices.Id;
+            // var coachId = _userServices.Id;
 
             var trainee = await _unitOfWork.GetRepositories<Trainee, int>().GetByIdAsync(traineeId);
             if (trainee is null)
@@ -279,7 +331,7 @@ namespace Services
         // --- DELETE ---
         public async Task<bool> DeleteExerciseScheduleAsync(int scheduleId)
         {
-           // var coachId = _userServices.Id;
+            // var coachId = _userServices.Id;
 
             var scheduleToDelete = await _unitOfWork.GetRepositories<ExercisesSchedule, int>().GetByIdAsync(scheduleId);
             if (scheduleToDelete is null)
@@ -295,7 +347,7 @@ namespace Services
             _unitOfWork.GetRepositories<ExercisesSchedule, int>().Delete(scheduleToDelete);
             return await _unitOfWork.CompleteSaveAsync();
         }
-
+        #endregion
 
         public async Task<bool> IsCoachAuthorizedToAccessTraineeAsync(int coachId, Trainee trainee)
         {
@@ -325,14 +377,39 @@ namespace Services
 
             if (coach == null)
             {
-                throw new CoeachesNotFoundException(coachId); 
+                throw new CoeachesNotFoundException(coachId);
             }
 
             var result = _mapper.Map<CoachDashboardToReturnDto>(coach);
 
             return result;
-           
+
         }
-        #endregion
+
+        public async Task<TraineeCoachDashboardDetailDto> GetTraineeDetailsForDashboardAsync(int traineeId)
+        {
+            var spec = new GetTraineeByIdSpec(traineeId);
+            var trainee = await _unitOfWork.GetRepositories<Trainee, int>().GetByIdWithSpecAsync(spec);
+
+            if (trainee == null)
+            {
+                throw new TraineeNotFoundException(traineeId); 
+            }
+
+            var traineeDto = _mapper.Map<TraineeCoachDashboardDetailDto>(trainee);
+
+            return traineeDto;
+        }
+
+        public async Task<CoachInfoResultDto> GetCoachbyUserName(string username)
+        {
+            var coach = await _unitOfWork.GetRepositories<Coach, int>()
+                .GetByIdWithSpecAsync(new GetCoachByAppUserIdSpec(_userServices.AppUserId!));
+
+
+
+            return _mapper.Map<CoachInfoResultDto>(coach);
+
+        }
     }
 }

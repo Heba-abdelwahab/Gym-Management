@@ -25,6 +25,13 @@ namespace Presentation.Controllers
             return Ok(gymDto);
         }
 
+        [HttpGet("GymWithFeatures/{gymId:int}")]
+        public async Task<ActionResult> GetGymWithFeaturesById(int gymId)
+        {
+            var gymGetDto = await serviceManager.GymService.GetGymWithFeaturesById(gymId);
+            return Ok(gymGetDto);
+        }
+
         [HttpPost("RequestAddGym")]
         public async Task<ActionResult> RequestAddGym([FromForm] GymWithFilesDto gymWithFilesDto)
         {
@@ -107,5 +114,20 @@ namespace Presentation.Controllers
             await serviceManager.GymService.DeleteGymFeature(gymFeatureId);
             return Ok(gymFeatureId);
         }
+
+        [HttpGet("PendingGyms")]
+        public async Task<ActionResult> GetPendingGyms()
+        {
+            var pendingGymsDto = await serviceManager.GymService.GetPendingGyms();
+            return Ok(pendingGymsDto);
+        }
+
+        [HttpGet("HandleGymAddRequest/{gymId:int}")]
+        public async Task<ActionResult> HandleGymAddRequest(int gymId, bool IsAccepted)
+        {
+            await serviceManager.GymService.HandleGymAddRequest(gymId, IsAccepted);
+            return Ok(gymId);
+        }
+
     }
 }

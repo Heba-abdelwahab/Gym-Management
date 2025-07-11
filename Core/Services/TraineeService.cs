@@ -9,7 +9,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Services.Abstractions;
 using Services.Specifications;
+using Services.Specifications.TraineeSpec;
 using Shared;
+using Shared.Auth;
+using Shared.Trainee;
 using Shared.TraineeGym;
 
 namespace Services;
@@ -414,5 +417,16 @@ internal sealed class TraineeService : ITraineeService
             return _mapper.Map<TraineeDataToReturnDto>(Trainee);
         }
         throw new Exception("An error occurred while updating the trainee profile.");
+    }
+
+    public async Task<TraineeInfoResultDto> GetTraineeByUserName(string username)
+    {
+        var trainee = await _unitOfWork.GetRepositories<Trainee, int>()
+               .GetByIdWithSpecAsync(new GetTraineeByAppUserIdSpec(_userServices.AppUserId!));
+
+
+
+        return _mapper.Map<TraineeInfoResultDto>(trainee);
+
     }
 }

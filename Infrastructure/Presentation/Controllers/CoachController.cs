@@ -1,159 +1,167 @@
-﻿using Domain.Entities;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.Abstractions;
 using Shared;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
+using Shared.coach;
 
-namespace Presentation.Controllers
+namespace Presentation.Controllers;
+
+[Authorize]
+public class CoachController : ApiControllerBase
 {
-    public class CoachController : ApiControllerBase
+    private readonly IServiceManager _serviceManager;
+
+    public CoachController(IServiceManager serviceManager)
     {
-        private readonly IServiceManager _serviceManager;
 
-        public CoachController(IServiceManager serviceManager)
+        _serviceManager = serviceManager;
+    }
+
+    [HttpPost("request-gym")]
+    public async Task<IActionResult> RequestToBecomeCoachAsync(CoachRequestGymDto request)
+    {
+
+        var result = await _serviceManager.CoachService.RequestToBecomeCoachAsync(request);
+
+        if (result)
+            return Ok("Request to become a coach has been successfully submitted.");
+
+        else
+            return StatusCode(500, "An error occurred while processing your request, Please try again.");
+
+    }
+
+    [HttpGet("GymPendingCoach/{gymId:int}")]
+    public async Task<ActionResult<CoachPendingDto>> GetGymPendingCoachs(int gymId)
+    {
+        var coachs = await _serviceManager.CoachService.GetGymPendingCoachs(gymId);
+        return Ok(coachs);
+    }
+
+    [HttpPost("HandleCoachJobRequest/{gymId:int}")]
+    public async Task<ActionResult> HandleCoachJobRequest(int gymId, HandleJobRequestDto jobRequestDto)
+    {
+        await _serviceManager.CoachService.HandleCoachJobRequest(gymId, jobRequestDto);
+        return Ok(jobRequestDto.CoachId);
+    }
+
+    #region Diet for Trainee
+    [HttpPost("diet/{traineeId:int}")]
+    public async Task<IActionResult> CreateDietForTrainee(int traineeId, MealScheduleDto dietDto)
+    {
+        var result = await _serviceManager.CoachService.CreateDietAsync(traineeId, dietDto);
+
+        if (result)
         {
-        
-            _serviceManager = serviceManager;
+            return Ok("Diet created successfully.");
         }
 
-        [HttpPost("request-gym")]
-        public async Task<IActionResult> RequestToBecomeCoachAsync(CoachRequestGymDto request)
-        {
-           
-            var result = await _serviceManager.CoachService.RequestToBecomeCoachAsync(request);
+        return BadRequest("Failed to create diet.");
+    }
 
-            if (result)
-                return Ok("Request to become a coach has been successfully submitted.");
-            
-            else
-                return StatusCode(500, "An error occurred while processing your request, Please try again.");
-            
+    [HttpGet("diet/{dietId}")]
+    public async Task<IActionResult> GetDietById(int dietId)
+    {
+        var diet = await _serviceManager.CoachService.GetDietByIdAsync(dietId);
+        return diet is null ? NotFound() : Ok(diet);
+    }
+
+    [HttpGet("diets/{traineeId}")]
+    public async Task<IActionResult> GetAllDietsForTrainee(int traineeId)
+    {
+        var diets = await _serviceManager.CoachService.GetDietsForTraineeAsync(traineeId);
+        return Ok(diets);
+    }
+
+    [HttpPut("diet/{dietId}")]
+    public async Task<IActionResult> UpdateDietById(int dietId, MealScheduleUpdateDto dto)
+    {
+        var result = await _serviceManager.CoachService.UpdateDietAsync(dietId, dto);
+        return result ? Ok("Diet updated successfully.") : BadRequest("Failed to update diet.");
+    }
+
+    [HttpDelete("diet/{dietId}")]
+    public async Task<IActionResult> DeleteDietById(int dietId)
+    {
+        var result = await _serviceManager.CoachService.DeleteDietAsync(dietId);
+        return result ? Ok("Diet deleted successfully.") : BadRequest("Failed to delete diet.");
+    }
+    #endregion
+
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> GetCoachesBygem(int id)
+    {
+
+        var Coaches = await _serviceManager.CoachService.GetCoachesbyGym(id);
+        if (Coaches.Any())
+            return Ok(Coaches);
+
+        else
+            return StatusCode(500, "An error occurred, Please try again.");
+
+    }
+
+    #region Excercise Schdule for Trainee
+    [HttpPost("exercise-schedule/{traineeId:int}")]
+    public async Task<IActionResult> CreateExerciseScheduleForTrainee(int traineeId, ExerciseScheduleDto exerciseScheduleDto)
+    {
+        var result = await _serviceManager.CoachService.CreateExerciseScheduleAsync(traineeId, exerciseScheduleDto);
+
+        if (result)
+        {
+            return Ok(new { Message = "Exercise schedule created successfully." });
         }
 
-        [HttpGet("GymPendingCoach/{gymId:int}")]
-        public async Task<ActionResult<CoachPendingDto>> GetGymPendingCoachs(int gymId)
-        {
-            var coachs = await _serviceManager.CoachService.GetGymPendingCoachs(gymId);
-            return Ok(coachs);
-        }
+        return BadRequest("Failed to create exercise schedule.");
+    }
 
-        [HttpPost("HandleCoachJobRequest/{gymId:int}")]
-        public async Task<ActionResult> HandleCoachJobRequest(int gymId,HandleJobRequestDto jobRequestDto)
-        {
-            await _serviceManager.CoachService.HandleCoachJobRequest(gymId, jobRequestDto);
-            return Ok(jobRequestDto.CoachId);
-        }
+    [HttpGet("exercise-schedule/{scheduleId:int}")]
+    public async Task<IActionResult> GetExerciseScheduleById(int scheduleId)
+    {
+        var schedule = await _serviceManager.CoachService.GetExerciseScheduleByIdAsync(scheduleId);
+        return schedule is null ? NotFound() : Ok(schedule);
+    }
 
-        #region Diet for Trainee
-        [HttpPost("diet/{traineeId:int}")]
-        public async Task<IActionResult> CreateDietForTrainee( int traineeId, MealScheduleDto dietDto)
-        {
-            var result = await _serviceManager.CoachService.CreateDietAsync(traineeId, dietDto);
+    [HttpGet("exercise-schedules/{traineeId:int}")]
+    public async Task<IActionResult> GetExerciseSchedulesForTrainee(int traineeId)
+    {
+        var schedules = await _serviceManager.CoachService.GetExerciseSchedulesForTraineeAsync(traineeId);
+        return Ok(schedules);
+    }
 
-            if (result)
-            {
-                return Ok( "Diet created successfully.");
-            }
+   [HttpPut("exercise-schedule/{scheduleId:int}")]
+      public async Task<IActionResult> UpdateExerciseScheduleById(int scheduleId, ExerciseScheduleUpdateDto dto)
+      {
 
-            return BadRequest("Failed to create diet.");
-        }
+          var result = await _serviceManager.CoachService.UpdateExerciseScheduleAsync(scheduleId, dto);
+          return result ? Ok("Exercise schedule updated successfully.") : BadRequest("Failed to update schedule.");
+      }
 
-        [HttpGet("diet/{dietId}")]
-        public async Task<IActionResult> GetDietById(int dietId)
-        {
-            var diet = await _serviceManager.CoachService.GetDietByIdAsync(dietId);
-            return diet is null ? NotFound() : Ok(diet);
-        }
+   [HttpDelete("exercise-schedule/{scheduleId:int}")]
+      public async Task<IActionResult> DeleteExerciseScheduleById(int scheduleId)
+      {
 
-        [HttpGet("diets/{traineeId}")]
-        public async Task<IActionResult> GetAllDietsForTrainee(int traineeId)
-        {
-            var diets = await _serviceManager.CoachService.GetDietsForTraineeAsync(traineeId);
-            return Ok(diets);
-        }
+          var result = await _serviceManager.CoachService.DeleteExerciseScheduleAsync(scheduleId);
+          return result ? Ok("Exercise schedule deleted successfully.") : BadRequest("Failed to delete schedule.");
+      }
+      #endregion
 
-        [HttpPut("diet/{dietId}")]
-        public async Task<IActionResult> UpdateDietById(int dietId,  MealScheduleUpdateDto dto)
-        {
-            var result = await _serviceManager.CoachService.UpdateDietAsync(dietId, dto);
-            return result ? Ok("Diet updated successfully.") : BadRequest("Failed to update diet.");
-        }
-
-        [HttpDelete("diet/{dietId}")]
-        public async Task<IActionResult> DeleteDietById(int dietId)
-        {
-            var result = await _serviceManager.CoachService.DeleteDietAsync(dietId);
-            return result ? Ok("Diet deleted successfully.") : BadRequest("Failed to delete diet.");
-        }
-        #endregion
-
-        [HttpGet("{id:int}")]
-        public async Task<IActionResult> GetCoachesBygem(int id)
-        {
-
-            var Coaches=await _serviceManager.CoachService.GetCoachesbyGym(id);
-            if (Coaches.Any())
-                return Ok(Coaches);
-
-            else
-                return StatusCode(500, "An error occurred, Please try again.");
-
-        }
-
-        #region Excercise Schdule for Trainee
-        [HttpPost("exercise-schedule/{traineeId:int}")]
-        public async Task<IActionResult> CreateExerciseScheduleForTrainee(int traineeId, ExerciseScheduleDto exerciseScheduleDto)
-        {
-            var result = await _serviceManager.CoachService.CreateExerciseScheduleAsync(traineeId, exerciseScheduleDto);
-
-            if (result)
-            {
-                return Ok(new { Message = "Exercise schedule created successfully." });
-            }
-
-            return BadRequest("Failed to create exercise schedule.");
-        }
-
-        [HttpGet("exercise-schedule/{scheduleId:int}")]
-        public async Task<IActionResult> GetExerciseScheduleById(int scheduleId)
-        {
-            var schedule = await _serviceManager.CoachService.GetExerciseScheduleByIdAsync(scheduleId);
-            return schedule is null ? NotFound() : Ok(schedule);
-        }
-
-        [HttpGet("exercise-schedules/{traineeId:int}")]
-        public async Task<IActionResult> GetExerciseSchedulesForTrainee(int traineeId)
-        {
-            var schedules = await _serviceManager.CoachService.GetExerciseSchedulesForTraineeAsync(traineeId);
-            return Ok(schedules);
-        }
-
-        [HttpPut("exercise-schedule/{scheduleId:int}")]
-        public async Task<IActionResult> UpdateExerciseScheduleById(int scheduleId, ExerciseScheduleUpdateDto dto)
-        {
-
-            var result = await _serviceManager.CoachService.UpdateExerciseScheduleAsync(scheduleId, dto);
-            return result ? Ok("Exercise schedule updated successfully.") : BadRequest("Failed to update schedule.");
-        }
-
-        [HttpDelete("exercise-schedule/{scheduleId:int}")]
-        public async Task<IActionResult> DeleteExerciseScheduleById(int scheduleId)
-        {
-
-            var result = await _serviceManager.CoachService.DeleteExerciseScheduleAsync(scheduleId);
-            return result ? Ok("Exercise schedule deleted successfully.") : BadRequest("Failed to delete schedule.");
-        }
-        #endregion
         [HttpGet("Dashboard/{coachId:int}")]
         public async Task<IActionResult> GetCoachDashboard(int coachId)
         {
             var result = await _serviceManager.CoachService.GetCoachDashboardAsync(coachId);
             return Ok(result);
         }
-    }
+
+        [HttpGet("Dashboard/traineeDetails/{traineeId:int}")]
+        public async Task<IActionResult> GetTraineeDetails(int traineeId)
+        {
+            var traineeDetails = await _serviceManager.CoachService.GetTraineeDetailsForDashboardAsync(traineeId);
+            return Ok(traineeDetails);
+        }
+
+    [HttpGet("{username}")]
+    public async Task<ActionResult<CoachInfoResultDto>> GetCoachInfo(string username)
+    => Ok(await _serviceManager.CoachService.GetCoachbyUserName(username));
+
 }

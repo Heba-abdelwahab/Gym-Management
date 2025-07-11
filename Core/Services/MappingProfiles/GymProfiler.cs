@@ -95,7 +95,8 @@ namespace Services.MappingProfiles
                 .ForMember(des=>des.Image,opt=>opt.Ignore());
             CreateMap<Gym, GymGetDto>()
                 .ForMember(des=>des.MediaUrl,opt=>opt.MapFrom(src=>src.Media.Url))
-                .ForMember(des => des.GymImagesUrl, opt=>opt.MapFrom(src=>src.Images.Select(img=>img.MediaValue.Url).ToList()));
+                .ForMember(des => des.GymImagesUrl, opt=>opt.MapFrom(src=>src.Images.Select(img=>img.MediaValue.Url).ToList()))
+                .ForMember(des=>des.GymTypeValue, opt => opt.MapFrom(src => Enum.GetName(typeof(GymType), src.GymType) ));
             CreateMap<GymUpdateDto, Gym>();
 
             CreateMap<Address, AddressToReturnDto>().ReverseMap();
@@ -103,6 +104,10 @@ namespace Services.MappingProfiles
                 .ForMember(dest => dest.Logo, opt => opt.MapFrom(src => src.Media));
 
             CreateMap<Feature, ItemDto > ();
+
+            CreateMap<Gym, PendingGymDto>()
+                .ForMember(des => des.GymId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(des=>des.GymType, opt=>opt.MapFrom(src=>Enum.GetName(typeof(GymType),src.GymType)));
            
         }
     }

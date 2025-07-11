@@ -24,6 +24,7 @@ public class ServiceManager : IServiceManager
     private readonly Lazy<ITraineeService> _lazyTraineeService;
     private readonly Lazy<IGymService> _lazyGymService;
     private readonly Lazy<IPaymentService> _lazyPaymentService;
+    private readonly Lazy<IGymOwnerService> _lazyGymOwnerService;
 
 
 
@@ -45,11 +46,13 @@ public class ServiceManager : IServiceManager
         _lazyAuthenticationService = new(() => new AuthenticationService(userManager, TokenService, unitOfWork));
         _lazyAdminService = new(() => new AdminService(AuthenticationService, unitOfWork, TokenService));
         _lazyClassService = new(() => new ClassService(unitOfWork, mapper));
-        _lazyCoachService = new(() => new CoachService(AuthenticationService, unitOfWork, UserServices, mapper, TokenService));
+        _lazyGymOwnerService = new(() => new GymOwnerService(unitOfWork, mapper));
         _lazyPaymentService = new(() => new PaymentService(unitOfWork, configuration));
         _lazyTraineeService = new(() => new TraineeService(AuthenticationService, unitOfWork, UserServices, mapper, TokenService, PaymentService, PhotoService));
-  
+ 
         _lazyGymService = new(() => new GymService(unitOfWork, mapper,UserServices,PhotoService, config));
+        _lazyCoachService = new(() => new CoachService(AuthenticationService, unitOfWork, UserServices, mapper, PhotoService, TokenService));
+        _lazyGymService = new(() => new GymService(unitOfWork, mapper, UserServices, PhotoService, config));
     }
 
     public IPhotoService PhotoService => _lazyPhotoService.Value;
@@ -66,6 +69,7 @@ public class ServiceManager : IServiceManager
 
     public ITraineeService TraineeService => _lazyTraineeService.Value;
     public IClassService ClassService => _lazyClassService.Value;
+    public IGymOwnerService GymOwnerService => _lazyGymOwnerService.Value;
 
     public IGymService GymService => _lazyGymService.Value;
     public IPaymentService PaymentService => _lazyPaymentService.Value;

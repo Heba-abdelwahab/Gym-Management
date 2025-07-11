@@ -1,6 +1,7 @@
 ﻿using Shared;
+using Shared.Auth;
+using Shared.Trainee;
 using Shared.TraineeGym;
-using System.Collections.Generic;
 
 namespace Services.Abstractions;
 
@@ -24,5 +25,10 @@ public interface ITraineeService
     Task<IReadOnlyList<ClassGymWithCoachToReturnDto>> GetAllClasses();
     Task<TraineeCoachToReturnDto> GetTraineeCoach();
     Task<TraineeDataToReturnDto> EditTraineeProfile(EditTraineeProfileDto editTraineeProfileDto);
+
+
+
+    Task<TraineeInfoResultDto> GetTraineeByUserName(string username);
+
 
 }

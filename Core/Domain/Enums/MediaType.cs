@@ -3,5 +3,6 @@
 public enum MediaType
 {
     Image,
-    Video
+    Video,
+    PDF
 }
