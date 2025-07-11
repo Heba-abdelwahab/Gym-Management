@@ -24,6 +24,8 @@ namespace Services.MappingProfiles
             CreateMap<Class, Shared.TraineeGym.ClassTraineeToReturnDto>()
                 .ForMember(dest => dest.CurrentCapacity, opt => opt.MapFrom(src => src.Trainees.Count));
 
+            CreateMap<Class, ClassGymWithCoachToReturnDto>();
+
 
         }
 

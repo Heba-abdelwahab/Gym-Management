@@ -2,7 +2,10 @@
 using Domain.Contracts;
 using Domain.Entities;
 using Services.Abstractions;
+using Shared.Auth;
+using Services.Specifications;
 using Shared;
+using System.Linq;
 
 namespace Services;
 
@@ -88,9 +91,6 @@ public class AdminService : IAdminService
 
     }
 
-
-
-
     public async Task<AuthAdminResultDto> CreateAdminAsync(RegisterUserDto request)
     {
 
@@ -126,5 +126,45 @@ public class AdminService : IAdminService
         return null!;
 
 
+    }
+
+    public async Task<AdminDashboardDto> GetDashboardInfoAsync()
+    {
+        var Gyms = await _unitOfWork.GetRepositories<Gym, int>().GetAllAsync();
+        var numGyms = Gyms.Count();
+
+        var PendingGyms = await _unitOfWork.GetRepositories<Gym, int>().GetAllWithSpecAsync(new GetPendingGymsSpec());
+        var numPendingGyms = PendingGyms.Count();
+
+        var Coaches = await _unitOfWork.GetRepositories<Coach, int>().GetAllAsync();
+        var numCoaches = Coaches.Count();
+
+        var Trainees = await _unitOfWork.GetRepositories<Trainee, int>().GetAllAsync();
+        var numTrainees = Trainees.Count();
+
+        var GymOwners = await _unitOfWork.GetRepositories<GymOwner, int>().GetAllWithSpecAsync(new GetAllGymOwnersSpec());
+        var numGymOwners = GymOwners.Count();
+
+        var gymOwnersStats = new List<GymOwnerStatDto>();
+        foreach(var owner in GymOwners)
+        {
+            var gyms = owner.Gyms;
+            int trainees = 0, classes = 0, memberships = 0;
+            double profit = 0;
+            foreach(var g in gyms)
+            {
+                classes += g.Classes.Count();
+                memberships += g.Memberships.Count();
+                trainees += g.Trainees.Count();
+                foreach(var t in g.Trainees)
+                {
+                    profit += ((double)t.Membership.Cost) + t.TraineeSelectedFeatures.Sum(f => f.TotalCost);
+                }
+            }
+            var stat = new GymOwnerStatDto(owner.AppUser.FirstName, owner.AppUser.LastName, owner.AppUser.UserName, gyms.Count(), trainees, classes, memberships, profit);
+            gymOwnersStats.Add(stat);
+        }
+
+        return new AdminDashboardDto(numGyms, numGymOwners,numCoaches, numTrainees, numPendingGyms, gymOwnersStats);
     }
 }

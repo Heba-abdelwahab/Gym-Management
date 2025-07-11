@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Services.Abstractions;
 using Shared;
+using Shared.Auth;
 using System.Security.Claims;
 
 namespace Services;
@@ -118,7 +119,8 @@ internal sealed class AuthenticationService : IAuthenticationService
           UserName: user.UserName,
           Token: _tokenService.GenerateAccessToken(authClaims),
           PhotoUrl: user.Photos.FirstOrDefault(p => p.IsMain)?.Url!,
-          KnownAs: $"{user.FirstName} {user.LastName}"
+          KnownAs: $"{user.FirstName} {user.LastName}",
+          Role: roleValue
           );
     }
 
@@ -130,7 +132,6 @@ internal sealed class AuthenticationService : IAuthenticationService
 
         return user != null;
     }
-
 
 
 
