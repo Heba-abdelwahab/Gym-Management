@@ -8,6 +8,7 @@ public interface IServiceManager
     public ITokenService TokenService { get; }
     public IAuthenticationService AuthenticationService { get; }
     public IAdminService AdminService { get; }
+    public IGymOwnerService GymOwnerService { get; }
     public ICoachService CoachService { get; }
     public ITraineeService TraineeService { get; }
     public IClassService ClassService { get; }

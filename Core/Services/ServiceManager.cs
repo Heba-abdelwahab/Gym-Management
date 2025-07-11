@@ -18,6 +18,7 @@ public class ServiceManager : IServiceManager
     private readonly Lazy<ITokenService> _lazyTokenService;
     private readonly Lazy<IAuthenticationService> _lazyAuthenticationService;
     private readonly Lazy<IAdminService> _lazyAdminService;
+    private readonly Lazy<IGymOwnerService> _lazyGymOwnerService;
     private readonly Lazy<IClassService> _lazyClassService;
     private readonly Lazy<ICoachService> _lazyCoachService;
     private readonly Lazy<ITraineeService> _lazyTraineeService;
@@ -38,6 +39,7 @@ public class ServiceManager : IServiceManager
         _lazyTokenService = new(() => new TokenService(jwtOptions));
         _lazyAuthenticationService = new(() => new AuthenticationService(userManager, TokenService, unitOfWork));
         _lazyAdminService = new(() => new AdminService(AuthenticationService, unitOfWork, TokenService));
+        _lazyGymOwnerService = new(() => new GymOwnerService(AuthenticationService, unitOfWork, TokenService));
         _lazyClassService = new(() => new ClassService(unitOfWork, mapper));
         _lazyCoachService = new(() => new CoachService(AuthenticationService, unitOfWork, UserServices, mapper, PhotoService, TokenService));
         _lazyTraineeService = new(() => new TraineeService(AuthenticationService, unitOfWork, UserServices, mapper, TokenService));
@@ -53,6 +55,7 @@ public class ServiceManager : IServiceManager
     public IAuthenticationService AuthenticationService => _lazyAuthenticationService.Value;
 
     public IAdminService AdminService => _lazyAdminService.Value;
+    public IGymOwnerService GymOwnerService => _lazyGymOwnerService.Value;
 
     public ICoachService CoachService => _lazyCoachService.Value;
 

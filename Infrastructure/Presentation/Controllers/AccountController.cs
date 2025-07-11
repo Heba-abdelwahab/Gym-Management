@@ -17,11 +17,20 @@ public class AccountController : ApiControllerBase
     }
 
 
+    ////RegisterAdmin
+
+    //[HttpPost("register/admin")]
+    //public async Task<ActionResult<AuthAdminResultDto>> RegisterAdmin(RegisterUserDto registerAdmin)
+    // => Ok(await _serviceManager.AdminService.CreateAdminAsync(registerAdmin));
+
+
+
+
     //RegisterAdmin
 
-    [HttpPost("register/admin")]
-    public async Task<ActionResult<AuthAdminResultDto>> RegisterAdmin(RegisterUserDto registerAdmin)
-     => Ok(await _serviceManager.AdminService.CreateAdminAsync(registerAdmin));
+    [HttpPost("register/gymowner")]
+    public async Task<ActionResult<AuthAdminResultDto>> RegisterAdmin(RegisterUserDto registerGymOwner)
+     => Ok(await _serviceManager.GymOwnerService.CreateGymOwnerAsync(registerGymOwner));
 
 
     //RegisterCoach
