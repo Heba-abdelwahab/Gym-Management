@@ -1,4 +1,5 @@
-﻿using Shared.Auth;
+﻿using Shared;
+using Shared.Auth;
 
 namespace Services.Abstractions;
 
