@@ -10,6 +10,7 @@ namespace Services.Specifications
             : base(t => t.Id == id)
         {
             AddIncludes(t => t.AppUser);
+            AddIncludes(t => t.Gym);
         }
     }
 }

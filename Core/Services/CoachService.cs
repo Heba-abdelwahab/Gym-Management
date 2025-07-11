@@ -348,7 +348,7 @@ namespace Services
             _unitOfWork.GetRepositories<ExercisesSchedule, int>().Delete(scheduleToDelete);
             return await _unitOfWork.CompleteSaveAsync();
         }
-
+        #endregion
 
         public async Task<bool> IsCoachAuthorizedToAccessTraineeAsync(int coachId, Trainee trainee)
         {
@@ -387,6 +387,21 @@ namespace Services
 
         }
 
+        public async Task<TraineeCoachDashboardDetailDto> GetTraineeDetailsForDashboardAsync(int traineeId)
+        {
+            var spec = new GetTraineeByIdSpec(traineeId);
+            var trainee = await _unitOfWork.GetRepositories<Trainee, int>().GetByIdWithSpecAsync(spec);
+
+            if (trainee == null)
+            {
+                throw new TraineeNotFoundException(traineeId); 
+            }
+
+            var traineeDto = _mapper.Map<TraineeCoachDashboardDetailDto>(trainee);
+
+            return traineeDto;
+        }
+
         public async Task<CoachInfoResultDto> GetCoachbyUserName(string username)
         {
             var coach = await _unitOfWork.GetRepositories<Coach, int>()
@@ -397,6 +412,5 @@ namespace Services
             return _mapper.Map<CoachInfoResultDto>(coach);
 
         }
-        #endregion
     }
 }

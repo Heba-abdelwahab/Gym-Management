@@ -129,38 +129,39 @@ public class CoachController : ApiControllerBase
         return Ok(schedules);
     }
 
-    [HttpPut("exercise-schedule/{scheduleId:int}")]
-    public async Task<IActionResult> UpdateExerciseScheduleById(int scheduleId, ExerciseScheduleUpdateDto dto)
-    {
+   [HttpPut("exercise-schedule/{scheduleId:int}")]
+      public async Task<IActionResult> UpdateExerciseScheduleById(int scheduleId, ExerciseScheduleUpdateDto dto)
+      {
 
-        var result = await _serviceManager.CoachService.UpdateExerciseScheduleAsync(scheduleId, dto);
-        return result ? Ok("Exercise schedule updated successfully.") : BadRequest("Failed to update schedule.");
-    }
+          var result = await _serviceManager.CoachService.UpdateExerciseScheduleAsync(scheduleId, dto);
+          return result ? Ok("Exercise schedule updated successfully.") : BadRequest("Failed to update schedule.");
+      }
 
-    [HttpDelete("exercise-schedule/{scheduleId:int}")]
-    public async Task<IActionResult> DeleteExerciseScheduleById(int scheduleId)
-    {
+   [HttpDelete("exercise-schedule/{scheduleId:int}")]
+      public async Task<IActionResult> DeleteExerciseScheduleById(int scheduleId)
+      {
 
-        var result = await _serviceManager.CoachService.DeleteExerciseScheduleAsync(scheduleId);
-        return result ? Ok("Exercise schedule deleted successfully.") : BadRequest("Failed to delete schedule.");
-    }
-    #endregion
-    [HttpGet("Dashboard/{coachId:int}")]
-    public async Task<IActionResult> GetCoachDashboard(int coachId)
-    {
-        var result = await _serviceManager.CoachService.GetCoachDashboardAsync(coachId);
-        return Ok(result);
-    }
+          var result = await _serviceManager.CoachService.DeleteExerciseScheduleAsync(scheduleId);
+          return result ? Ok("Exercise schedule deleted successfully.") : BadRequest("Failed to delete schedule.");
+      }
+      #endregion
 
+        [HttpGet("Dashboard/{coachId:int}")]
+        public async Task<IActionResult> GetCoachDashboard(int coachId)
+        {
+            var result = await _serviceManager.CoachService.GetCoachDashboardAsync(coachId);
+            return Ok(result);
+        }
 
+        [HttpGet("Dashboard/traineeDetails/{traineeId:int}")]
+        public async Task<IActionResult> GetTraineeDetails(int traineeId)
+        {
+            var traineeDetails = await _serviceManager.CoachService.GetTraineeDetailsForDashboardAsync(traineeId);
+            return Ok(traineeDetails);
+        }
 
     [HttpGet("{username}")]
     public async Task<ActionResult<CoachInfoResultDto>> GetCoachInfo(string username)
     => Ok(await _serviceManager.CoachService.GetCoachbyUserName(username));
-
-
-
-
-
 
 }
