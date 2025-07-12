@@ -7,8 +7,8 @@ namespace Services.Abstractions
 {
     public interface IGymOwnerService
     {
-        Task<IReadOnlyList<GymToReturnDto>> GetGymsForOwnerAsync(int ownerId);
-        Task<GymOwnerToReturnDto> GetGymOwnerInfo(int ownerId);
+        Task<IReadOnlyList<GymToReturnDto>> GetGymsForOwnerAsync();
+        Task<GymOwnerToReturnDto> GetGymOwnerInfo();
 
         Task<GymOwnerInfoResultDto> GetGymOwnerByUserNameAsync(string username);
 

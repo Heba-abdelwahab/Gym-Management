@@ -39,9 +39,9 @@ namespace Services
             _authenticationService = authenticationService;
         }
 
-        public async Task<GymOwnerToReturnDto> GetGymOwnerInfo(int ownerId=0)
+        public async Task<GymOwnerToReturnDto> GetGymOwnerInfo()
         {
-            ownerId = _userService.Id.Value;
+            int ownerId = _userService.Id.Value;
             var gymOwner = await _ownerRepo.GetByIdWithSpecAsync(new GetGymOwnerInfoSpecification(ownerId));
             if (gymOwner == null)
             {
@@ -60,7 +60,7 @@ namespace Services
             return mappedOwner;
         }
 
-        public async Task<IReadOnlyList<GymToReturnDto>> GetGymsForOwnerAsync(int ownerId2=0)
+        public async Task<IReadOnlyList<GymToReturnDto>> GetGymsForOwnerAsync()
         {
             int ownerId = _userService.Id.Value;
             var gymOwner = await _ownerRepo.GetByIdAsync(ownerId);

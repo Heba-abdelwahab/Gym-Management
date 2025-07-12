@@ -16,19 +16,20 @@ namespace Presentation.Controllers
         }
 
         // [HttpGet("{id:int}/Gyms")]
-        [HttpGet("/Gyms")]
-        public async Task<IActionResult> GetGymsForOwner(int id)
+        [HttpGet("Gyms")]
+        public async Task<IActionResult> GetGymsForOwner()
         {
-            var gyms = await _serviceManager.GymOwnerService.GetGymsForOwnerAsync(id);
+            var gyms = await _serviceManager.GymOwnerService.GetGymsForOwnerAsync();
 
             return Ok(gyms);
         }
 
 
-        [HttpGet("{id:int}/Info")]
-        public async Task<IActionResult> GetGymOwnerInfo(int id)
+        //[HttpGet("{id:int}/Info")]
+        [HttpGet("Info")]
+        public async Task<IActionResult> GetGymOwnerInfo()
         {
-            var gymOwner = await _serviceManager.GymOwnerService.GetGymOwnerInfo(id);
+            var gymOwner = await _serviceManager.GymOwnerService.GetGymOwnerInfo();
 
             return Ok(gymOwner);
         }
