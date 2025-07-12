@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Services.Abstractions;
 using Shared.GymOwner;
 
 namespace Presentation.Controllers
 {
+    [Authorize]
     public class GymOwnerController : ApiControllerBase
     {
         private IServiceManager _serviceManager;
@@ -13,7 +15,8 @@ namespace Presentation.Controllers
             _serviceManager = serviceManager;
         }
 
-        [HttpGet("{id:int}/Gyms")]
+        // [HttpGet("{id:int}/Gyms")]
+        [HttpGet("/Gyms")]
         public async Task<IActionResult> GetGymsForOwner(int id)
         {
             var gyms = await _serviceManager.GymOwnerService.GetGymsForOwnerAsync(id);

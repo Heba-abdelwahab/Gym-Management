@@ -1,9 +1,13 @@
-﻿using Domain.Contracts;
+﻿using Domain.Constants;
+using Domain.Contracts;
 using Domain.Entities;
 using Domain.Exceptions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Services.Abstractions;
+using Services.Specifications.CoachSpec;
+using Services.Specifications.GymOwnerSpec;
+using Services.Specifications.TraineeSpec;
 using Shared;
 using Shared.Auth;
 using System.Security.Claims;
@@ -99,18 +103,39 @@ internal sealed class AuthenticationService : IAuthenticationService
         var roleValue = claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
 
 
-
+        GymOwner owner = null;
+        Trainee trainee = null;
+        Coach coach = null;
+        Admin admin = null;
+        int id = 0;
         #region need it later 
-        //if (roleValue is Roles.Trainee)
-        //{
-        //    var traineeRepo = _unitOfWork.GetRepositories<Trainee, int>();
+        if (roleValue is Roles.Owner)
+        {
+            owner = await _unitOfWork.GetRepositories<GymOwner, int>().GetByIdWithSpecAsync(new GetGymOwnerByAppUserIdSpec(user.Id));
+            id = owner.Id;
 
-        //} 
+        }
+        if (roleValue is Roles.Trainee)
+        {
+            trainee = await _unitOfWork.GetRepositories<Trainee, int>().GetByIdWithSpecAsync(new GetTraineeByAppUserIdSpec(user.Id));
+            id = trainee.Id;
+
+        }
+        if (roleValue is Roles.Coach)
+        {
+            coach = await _unitOfWork.GetRepositories<Coach, int>().GetByIdWithSpecAsync(new GetCoachByAppUserIdSpec(user.Id));
+            id = coach.Id;
+        }
+        //if (roleValue is Roles.Owner)
+        //{
+        //    admin = await _unitOfWork.GetRepositories<GymOwner, int>().GetByIdWithSpecAsync(new GetGymOwnerByAppUserIdSpec(user.Id));
+
+        //}
         #endregion
 
 
         var authClaims = _tokenService.GenerateAuthClaims(
-                    user.Id, user.Id, user.UserName,
+                    id, user.Id, user.UserName,
                      user.Email, roleValue);
 
 

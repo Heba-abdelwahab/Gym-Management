@@ -11,7 +11,8 @@ namespace Services.MappingProfiles
         {
             CreateMap<Coach, TraineeCoachToReturnDto>()
            .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.AppUser.FirstName))
-           .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.AppUser.LastName));
+           .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.AppUser.LastName))
+           .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.AppUser.UserName));
 
             CreateMap<WorkDay, WorkDayPendingCoachDto>()
                 .ForMember(des=>des.Day , opt=>opt.MapFrom(src=>Enum.GetName(typeof(DayOfWeek), src.Day) ))
