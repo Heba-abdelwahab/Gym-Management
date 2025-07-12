@@ -447,19 +447,19 @@ internal sealed class TraineeService : ITraineeService
 
     }
 
-    public async Task<ExerciseScheduleResultDto> GetExerciseScheduleAsync()
+    public async Task<IReadOnlyList<ExerciseScheduleResultDto>> GetExerciseScheduleAsync()
     {
-        var traineeId = _userServices.Id;
-     
-        var schedule = await _unitOfWork.GetRepositories<ExercisesSchedule, int>().GetByIdWithSpecAsync(new GetExerciseSchedulesForTraineeSpec(traineeId!.Value));
-        return _mapper.Map<ExerciseScheduleResultDto>(schedule);
+        int? traineeId = _userServices.Id;
+
+        var schedule = await _unitOfWork.GetRepositories<ExercisesSchedule, int>().GetAllWithSpecAsync(new GetExerciseSchedulesForTraineeSpec(traineeId!.Value));
+        return _mapper.Map<IReadOnlyList<ExerciseScheduleResultDto>>(schedule);
     }
 
-    public async Task<MealScheduleResultDto> GetDietAsync()
+    public async Task<IReadOnlyList<MealScheduleResultDto>> GetDietAsync()
     {
-        var traineeId = _userServices.Id;
+        int? traineeId = _userServices.Id;
 
-        var diet = await _unitOfWork.GetRepositories<MealSchedule, int>().GetByIdWithSpecAsync(new GetDietsForTraineeSpec(traineeId!.Value));
-        return _mapper.Map<MealScheduleResultDto>(diet);
+        var diet = await _unitOfWork.GetRepositories<MealSchedule, int>().GetAllWithSpecAsync(new GetDietsForTraineeSpec(traineeId!.Value));
+        return _mapper.Map<IReadOnlyList<MealScheduleResultDto>>(diet);
     }
 }
