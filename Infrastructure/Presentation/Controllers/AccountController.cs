@@ -24,6 +24,12 @@ public class AccountController : ApiControllerBase
      => Ok(await _serviceManager.AdminService.CreateAdminAsync(registerAdmin));
 
 
+    [HttpPost("register/gymowner")]
+    public async Task<ActionResult<AuthAdminResultDto>> RegisterGymOwner(RegisterUserDto registerGymOwner)
+    => Ok(await _serviceManager.GymOwnerService.CreateGymOwnerAsync(registerGymOwner));
+
+
+
     //RegisterCoach
     [HttpPost("register/coach")]
     //public async Task<ActionResult<AuthCoachResultDto>> RegisterCoach(RegisterCoachDto registerCoach)
