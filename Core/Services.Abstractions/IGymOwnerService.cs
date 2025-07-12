@@ -1,13 +1,21 @@
 ﻿using Shared;
+using Shared.Auth;
+using Shared.GymOwner;
 using Shared.TraineeGym;
 
 namespace Services.Abstractions
 {
     public interface IGymOwnerService
     {
-        Task<IReadOnlyList<GymToReturnDto>> GetGymsForOwnerAsync(int ownerId);
+        Task<IReadOnlyList<GymToReturnDto>> GetGymsForOwnerAsync();
+        Task<GymOwnerToReturnDto> GetGymOwnerInfo();
+
+        Task<GymOwnerInfoResultDto> GetGymOwnerByUserNameAsync(string username);
+
+        Task<AuthAdminResultDto> CreateGymOwnerAsync(RegisterUserDto request);
+
+
         Task<List<GymOwnerDataDto>> GetAllDataForGymOwner(int ownerId);
         Task<List<OwnerMembershipdto>> GetGymownerMemberships(int ownerId);
-        Task<GymOwnerToReturnDto> GetGymOwnerInfo(int ownerId);
     }
 }

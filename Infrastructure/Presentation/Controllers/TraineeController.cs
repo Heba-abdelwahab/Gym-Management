@@ -48,6 +48,7 @@ public class TraineeController : ApiControllerBase
 
     }
 
+    [AllowAnonymous]
     [HttpGet("get-memberships/{id:int}")]
     public async Task<IActionResult> GetAllMembershipsForGym(int id)
     {
@@ -69,6 +70,7 @@ public class TraineeController : ApiControllerBase
     }
 
     // Classes For Trainee
+    [AllowAnonymous]
     [HttpGet("classes/{gymId:int}")]
     public async Task<IActionResult> GetClassesByGym(int gymId)
     {
@@ -92,6 +94,8 @@ public class TraineeController : ApiControllerBase
 
     // Show Gym Features
     [HttpGet("features/{gymId:int}")]
+    [AllowAnonymous]
+
     public async Task<IActionResult> GetGymFeatures(int gymId)
     {
         var features = await _serviceManager.TraineeService.GetGymFeatures(gymId);
@@ -127,6 +131,7 @@ public class TraineeController : ApiControllerBase
 
     // =================================== Trainee Gym ==============================================
     [HttpGet("all-gyms")]
+    [AllowAnonymous]
     public async Task<IActionResult> GetAllGymsData()
     {
         var GymsData = await _serviceManager.TraineeService.AllGyms();
@@ -136,6 +141,7 @@ public class TraineeController : ApiControllerBase
             return StatusCode(500, "An error occurred when trying to get Gyms, Please try again.");
     }
 
+    [AllowAnonymous]
     [HttpGet("gym/{gymId:int}")]
     public async Task<IActionResult> GetGymById(int gymId)
     {
@@ -147,6 +153,7 @@ public class TraineeController : ApiControllerBase
     }
 
     // =========================== get all classes ===========================
+    [AllowAnonymous]
     [HttpGet("classes")]
     public async Task<IActionResult> GetAllClasses()
     {
@@ -189,4 +196,24 @@ public class TraineeController : ApiControllerBase
     => Ok(await _serviceManager.TraineeService.GetTraineeByUserName(username));
 
 
+
+    [HttpGet("diet")]
+    public async Task<ActionResult<IReadOnlyList<MealScheduleResultDto>>> GetDiet()
+    {
+        var diet = await _serviceManager.TraineeService.GetDietAsync();
+        if (diet is not null)
+            return Ok(diet);
+        else
+            return StatusCode(500, "An error occurred when trying to get diet, Please try again.");
+    }
+
+    [HttpGet("exercise-schedule")]
+    public async Task<ActionResult<IReadOnlyList<ExerciseScheduleResultDto>>> GetExerciseSchedule()
+    {
+        var exerciseSchedule = await _serviceManager.TraineeService.GetExerciseScheduleAsync();
+        if (exerciseSchedule is not null)
+            return Ok(exerciseSchedule);
+        else
+            return StatusCode(500, "An error occurred when trying to get exercise schedule, Please try again.");
+    }
 }

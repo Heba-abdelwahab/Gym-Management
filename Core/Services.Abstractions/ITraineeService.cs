@@ -30,5 +30,6 @@ public interface ITraineeService
 
     Task<TraineeInfoResultDto> GetTraineeByUserName(string username);
 
-
+    Task<IReadOnlyList<ExerciseScheduleResultDto>> GetExerciseScheduleAsync();
+    Task<IReadOnlyList<MealScheduleResultDto>> GetDietAsync();
 }

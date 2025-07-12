@@ -15,7 +15,7 @@ public interface ICoachService
     #region Diet for trainee
     Task<bool> CreateDietAsync(int traineeId, MealScheduleDto dietDto);
     Task<MealScheduleResultDto?> GetDietByIdAsync(int dietId);
-    Task<IEnumerable<MealScheduleResultDto>> GetDietsForTraineeAsync(int traineeId);
+    Task<MealScheduleResultDto> GetDietForTraineeAsync(int traineeId);
     Task<bool> UpdateDietAsync(int dietId, MealScheduleUpdateDto dto);
     Task<bool> DeleteDietAsync(int dietId);
     #endregion
@@ -32,7 +32,7 @@ public interface ICoachService
 
     // READ
     Task<ExerciseScheduleResultDto?> GetExerciseScheduleByIdAsync(int scheduleId);
-    Task<IEnumerable<ExerciseScheduleResultDto>> GetExerciseSchedulesForTraineeAsync(int traineeId);
+    Task<ExerciseScheduleResultDto> GetExerciseScheduleForTraineeAsync(int traineeId);
 
     // UPDATE
     Task<bool> UpdateExerciseScheduleAsync(int scheduleId, ExerciseScheduleUpdateDto dto);
@@ -46,4 +46,6 @@ public interface ICoachService
 
     Task<CoachDashboardToReturnDto> GetCoachDashboardAsync(int coachId);
     Task<TraineeCoachDashboardDetailDto> GetTraineeDetailsForDashboardAsync(int traineeId);
+
+    Task<IEnumerable<MuscleDto>> GetAllMusclesWithExercisesAsync();
 }
