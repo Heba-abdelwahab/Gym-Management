@@ -108,7 +108,7 @@ namespace Services
             return diet is null ? null : _mapper.Map<MealScheduleResultDto>(diet);
         }
 
-        public async Task<IEnumerable<MealScheduleResultDto>> GetDietsForTraineeAsync(int traineeId)
+        public async Task<MealScheduleResultDto> GetDietForTraineeAsync(int traineeId)
         {
             var trainee = await _unitOfWork.GetRepositories<Trainee, int>().GetByIdAsync(traineeId);
             if (trainee is null)
@@ -116,8 +116,8 @@ namespace Services
                 throw new TraineeNotFoundException(traineeId);
             }
 
-            var diets = await _unitOfWork.GetRepositories<MealSchedule, int>().GetAllWithSpecAsync(new GetDietsForTraineeSpec(traineeId));
-            return _mapper.Map<IEnumerable<MealScheduleResultDto>>(diets);
+            var diet = await _unitOfWork.GetRepositories<MealSchedule, int>().GetByIdWithSpecAsync(new GetDietsForTraineeSpec(traineeId));
+            return _mapper.Map<MealScheduleResultDto>(diet);
         }
 
         public async Task<bool> UpdateDietAsync(int dietId, MealScheduleUpdateDto dto)
