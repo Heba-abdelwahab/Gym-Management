@@ -6,5 +6,12 @@ using System.Threading.Tasks;
 
 namespace Shared
 {
-    public record GymOwnerToReturnDto(string UserName, string Email, string PhoneNumber);
+    public class GymOwnerToReturnDto
+    {
+        public string FirstName { get; init; }
+        public string LastName { get; init; }
+        public string UserName { get; init; }
+        public string Email { get; init; }
+        public string PhoneNumber { get; init; }
+    }
 }
