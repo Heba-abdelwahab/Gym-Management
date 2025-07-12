@@ -446,4 +446,20 @@ internal sealed class TraineeService : ITraineeService
         return _mapper.Map<TraineeInfoResultDto>(trainee);
 
     }
+
+    public async Task<ExerciseScheduleResultDto> GetExerciseScheduleAsync()
+    {
+        var traineeId = _userServices.Id;
+     
+        var schedule = await _unitOfWork.GetRepositories<ExercisesSchedule, int>().GetByIdWithSpecAsync(new GetExerciseSchedulesForTraineeSpec(traineeId!.Value));
+        return _mapper.Map<ExerciseScheduleResultDto>(schedule);
+    }
+
+    public async Task<MealScheduleResultDto> GetDietAsync()
+    {
+        var traineeId = _userServices.Id;
+
+        var diet = await _unitOfWork.GetRepositories<MealSchedule, int>().GetByIdWithSpecAsync(new GetDietsForTraineeSpec(traineeId!.Value));
+        return _mapper.Map<MealScheduleResultDto>(diet);
+    }
 }
