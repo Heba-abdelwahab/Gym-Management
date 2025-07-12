@@ -32,7 +32,7 @@ public interface ICoachService
 
     // READ
     Task<ExerciseScheduleResultDto?> GetExerciseScheduleByIdAsync(int scheduleId);
-    Task<ExerciseScheduleResultDto> GetExerciseSchedulesForTraineeAsync(int traineeId);
+    Task<ExerciseScheduleResultDto> GetExerciseScheduleForTraineeAsync(int traineeId);
 
     // UPDATE
     Task<bool> UpdateExerciseScheduleAsync(int scheduleId, ExerciseScheduleUpdateDto dto);
