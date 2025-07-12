@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.AspNetCore.Http;
 using Shared;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,22 @@ namespace Services.Abstractions
 
 
         public Task<List<MemberShipDto>> GetGymMemberShips(int GymID);
+
+        Task RequestAddGym(GymWithFilesDto gymWithFilesDto, GymDto gymDto);
+        IEnumerable<ItemDto> GetGymTypes();
+        Task<IEnumerable<ItemDto>> GetGymFeatures();
+        Task UpdateGym(int gymId, GymWithFilesUpdate gymWithFilesUpdate, GymUpdateDto gymUpdateDto);
+        Task<GymGetDto> GetGymById(int gymId);
+        Task <IEnumerable<GymFeatureDto>> GetFeaturesByGymId (int gymId);
+        Task<GymFeatureDto> GetGymFeatureById(int gymFeatureId);
+        Task<GymFeatureDto> AddNonExGymFeature(int gymId , NonExGymFeatureDto NonExGymFeatureDto);
+        Task<GymFeatureDto> AddExtraGymFeature(int gymId, ExGymFeatureDto ExGymFeature);
+        Task<GymFeatureDto> UpdateGymFeature(int gymFeatureId , GymFeaturePutDto GymFeaturePutDto);
+        Task DeleteGymFeature(int gymFeatureId);
+        Task<IEnumerable<PendingGymDto>> GetPendingGyms();
+        Task<int> HandleGymAddRequest(int gymId, bool IsAccepted);
+        Task<GymGetDto> GetGymWithFeaturesById(int gymId);
+
 
     }
 }

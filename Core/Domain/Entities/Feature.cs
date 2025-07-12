@@ -1,4 +1,5 @@
 ﻿using Domain.Common;
+using Domain.Entities.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,9 @@ namespace Domain.Entities
     {
         public string Name { get; set; }
         public bool IsExtra { get; set; }
-        ICollection<GymFeature> GymFeatures { get; set; } = new List<GymFeature>();  //common+extra
-        ICollection<TraineeSelectedFeature> TraineeSelectedFeatures { get; set; } = new List<TraineeSelectedFeature>();
+        public ICollection<GymFeature> GymFeatures { get; set; } = new List<GymFeature>();  //common+extra
+        //ICollection<TraineeSelectedFeature> TraineeSelectedFeatures { get; set; } = new List<TraineeSelectedFeature>();
+        public ICollection<Media>Images { get; set; }
+
     }
 }

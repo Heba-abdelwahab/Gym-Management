@@ -20,6 +20,10 @@ namespace Persistence.Configurations
                     location.Property(location => location.Y).HasColumnType("float");
                 });
             });
+
+            builder.OwnsOne(c => c.CV);
+            builder.OwnsOne(c => c.Image);
+
             //builder.HasOne(c => c.AppUser)
             //    .WithOne()
             //    .HasForeignKey<Coach>(c => c.Id);

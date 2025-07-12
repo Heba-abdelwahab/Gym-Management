@@ -68,6 +68,48 @@ internal sealed class PhotoService : IPhotoService
 
     }
 
+
+    public async Task<ImageUploadResult> AddPhotoFullPathAsync(IFormFile file, string folderName = "GymGym")
+    {
+        var uploadResult = new ImageUploadResult();
+
+        if (file?.Length > 0)
+        {
+            using var stream = file.OpenReadStream();
+
+            var uploadParams = new ImageUploadParams
+            {
+                File = new FileDescription(file.FileName, stream),
+                Transformation = new Transformation()
+                                    .Height(500).Width(500),
+                Folder = folderName
+            };
+
+            uploadResult = await _cloudinary.UploadAsync(uploadParams);
+        }
+
+        if (uploadResult.Error is not null)
+            return null!;
+
+        return uploadResult;
+
+
+    }
+
+    public async Task<bool> DeletePdfAsync(string publicId)
+    {
+        var deletionParams = new DeletionParams(publicId)
+        {
+            ResourceType = ResourceType.Raw
+        };
+
+        var result = await _cloudinary.DestroyAsync(deletionParams);
+        if (result.Error is not null)
+            return false;
+
+        return true;
+    }
+
     public async Task<bool> DeletePhotoAsync(string publicId)
     {
         var deleteParams = new DeletionParams(publicId);
@@ -79,4 +121,32 @@ internal sealed class PhotoService : IPhotoService
 
         return true;
     }
+
+    public async Task<RawUploadResult> UploadPdfAsync(IFormFile file, string folderName = "GymGym")
+    {
+        var uploadResult = new RawUploadResult();
+
+        if (!file.FileName.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase))
+            return null!;
+
+
+        if (file?.Length > 0)
+        {
+            using var stream = file.OpenReadStream();
+
+            var uploadParams = new RawUploadParams
+            {
+                File = new FileDescription(file.FileName, stream),
+                Folder = folderName,
+            };
+
+            uploadResult = await _cloudinary.UploadAsync(uploadParams);
+        }
+
+        if (uploadResult.Error is not null)
+            return null!;
+
+        return uploadResult;
+    }
+
 }

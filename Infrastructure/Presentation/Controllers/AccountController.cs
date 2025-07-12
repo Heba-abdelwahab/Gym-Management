@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Domain.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.Abstractions;
 using Shared;
+using Shared.Auth;
 
 namespace Presentation.Controllers;
 
@@ -24,7 +26,8 @@ public class AccountController : ApiControllerBase
 
     //RegisterCoach
     [HttpPost("register/coach")]
-    public async Task<ActionResult<AuthCoachResultDto>> RegisterCoach(RegisterCoachDto registerCoach)
+    //public async Task<ActionResult<AuthCoachResultDto>> RegisterCoach(RegisterCoachDto registerCoach)
+    public async Task<ActionResult<AuthCoachResultDto>> RegisterCoach([FromForm] RegisterCoachDto registerCoach)
     => Ok(await _serviceManager.CoachService.CreateCoachAsync(registerCoach));
 
 
@@ -45,9 +48,26 @@ public class AccountController : ApiControllerBase
     }
     #endregion
 
-
-
-
     //login 
+    [HttpPost("login")]
+    public async Task<ActionResult<AuthUserLoginResultDto>> RegisterTrainee(LoginUserDto login)
+         => Ok(await _serviceManager.AuthenticationService.LoginUserAsync(login));
+
+
+    [HttpGet("specializations")]
+    public IActionResult GetSpecializations()
+    {
+        var list = Enum.GetValues(typeof(CoachSpecialization))
+        .Cast<CoachSpecialization>()
+        .Where(e => e != CoachSpecialization.None)
+        .Select(e => new
+        {
+            name = e.ToString(),
+            value = (int)e
+        }).ToList();
+        return Ok(list);
+    }
+
+
 
 }

@@ -8,7 +8,7 @@ namespace Domain.Exceptions
 {
     public class GymFeatureNotFoundException : NotFoundException
     {
-        public GymFeatureNotFoundException(int  gemid) : base($"Gym With {gemid} Do Not Have Features")
+        public GymFeatureNotFoundException(int gymFeatureId) : base($"Gym feature with ID {gymFeatureId} not found.")
         {
         }
     }

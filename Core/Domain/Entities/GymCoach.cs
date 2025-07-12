@@ -10,6 +10,9 @@ namespace Domain.Entities
         public RequestStatus Status { get; set; } = RequestStatus.Pending;
         public int Capcity { set; get; }
         public int CurrentCapcity { set; get; }
+        public DateTime ApplicationDate { set; get; }
+
+
         #region Navigation Properties
 
         public int GymId { get; set; }
