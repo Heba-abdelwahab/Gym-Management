@@ -41,6 +41,7 @@ namespace Services
 
         public async Task<GymOwnerToReturnDto> GetGymOwnerInfo(int ownerId)
         {
+
             var gymOwner = await _ownerRepo.GetByIdWithSpecAsync(new GetGymOwnerInfoSpecification(ownerId));
             if (gymOwner == null)
             {
