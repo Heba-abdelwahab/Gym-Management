@@ -9,7 +9,7 @@ public interface ICoachService
 {
     // Request into gym to become a coach
     Task<bool> RequestToBecomeCoachAsync(CoachRequestGymDto coachRequest);
-    Task<List<CoachToReturnDto>> GetCoachesbyGym(int gymId);
+    Task<List<CoachReturnDto>> GetCoachesbyGym(int gymId);
     Task<CoachInfoResultDto> GetCoachbyUserName(string username);
 
     #region Diet for trainee

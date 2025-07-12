@@ -11,7 +11,6 @@ namespace Services.Abstractions
 {
     public interface IGymService
     {
-        Task RequestAddGym(GymDto gymDto);
         Task<List<GymFeatureReturnDto>> GetGymFeatures(int GymId);
         public Task<bool> GymMemberShip(MemberShipReturnDto memberShip);
         public Task<bool> UpdateGymMemberShip(int MemberID, MemberShipReturnDto memberShip);

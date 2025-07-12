@@ -61,7 +61,7 @@ namespace Services
 
         }
 
-        public async Task<List<CoachToReturnDto>> GetCoachesbyGym(int gymId)
+        public async Task<List<CoachReturnDto>> GetCoachesbyGym(int gymId)
         {
             var gym = await _unitOfWork.GetRepositories<Gym, int>().GetByIdAsync(gymId);
             if (gym is null)
@@ -72,7 +72,7 @@ namespace Services
             var coaches = await _unitOfWork.GetRepositories<Coach, int>()
                                            .GetAllWithSpecAsync(new GetCoaches(gymId));
             
-            var result = _mapper.Map<List<CoachToReturnDto>>(coaches, opt => opt.Items["gymid"]=gymId);
+            var result = _mapper.Map<List<CoachReturnDto>>(coaches, opt => opt.Items["gymid"]=gymId);
 
             return result;
         }

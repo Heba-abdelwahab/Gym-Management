@@ -2,7 +2,6 @@
 using AutoMapper.Execution;
 using Domain.Contracts;
 using Domain.Entities;
-using Domain.Entities.Domain.Entities;
 using Domain.Enums;
 using Domain.Exceptions;
 using Domain.ValueObjects;
@@ -25,6 +24,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using static System.Net.Mime.MediaTypeNames;
+using Domain.Entities.Domain.Entities;
 
 namespace Services
 {
@@ -49,7 +49,7 @@ namespace Services
         {
 
             var membership = await unitOfWork.GetRepositories<Membership, int>().GetByIdWithSpecAsync(new GetMemberShipSpec(membershipID));
-            if (membership == null) throw  new MemberShipNotFoundException(membershipID);
+            if (membership == null) throw  new MembershipNotFoundException(membershipID);
              unitOfWork.GetRepositories<Membership,int>().Delete(membership);
             var result=await unitOfWork.CompleteSaveAsync();
             if (result)
@@ -65,7 +65,7 @@ namespace Services
                 .GetAllWithSpecAsync(new GetGymFeatureSpec(GymId));
             if (!Features.Any())
             {
-                throw new GymFeatureNotFoundException(GymId);
+                throw new FeaturesInGymNotFound(GymId);
             }
             var result= mapper.Map<List<GymFeatureReturnDto>>(Features);
 
@@ -78,7 +78,7 @@ namespace Services
             var MemberShip =await unitOfWork.GetRepositories<Membership, int>().GetByIdWithSpecAsync(new GetMemberShipSpec(MemberiId));
             if (MemberShip == null)
             {
-                throw new MemberShipNotFoundException(MemberiId);
+                throw new MembershipNotFoundException(MemberiId);
             }
 
             var Mapping = mapper.Map<MemberShipDto>(MemberShip);
@@ -122,11 +122,7 @@ namespace Services
 
         }
 
-        public async Task RequestAddGym (GymDto gymDto)
-        {
-            Gym gym =  mapper.Map<Gym>(gymDto);
-            gym.Media = "f";
-            unitOfWork.GetRepositories<Gym,int>().Insert(gym);
+        
 
         public async Task<GymGetDto> GetGymById(int gymId)
         {
@@ -441,7 +437,7 @@ namespace Services
             MapingMemberShip.Cost = memberShip.Cost;
             MapingMemberShip.Description = memberShip.Description;
             MapingMemberShip.Duration = memberShip.Duration;
-            MapingMemberShip.Count = memberShip.Count;
+            MapingMemberShip.Count= memberShip.Count;
            MapingMemberShip.Features.Clear();
 
             foreach (var featureId in memberShip.GymFeaturesId)

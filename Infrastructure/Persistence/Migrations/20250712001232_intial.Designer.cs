@@ -12,8 +12,8 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(GymDbContext))]
-    [Migration("20250710165737_Init")]
-    partial class Init
+    [Migration("20250712001232_intial")]
+    partial class intial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -281,9 +281,6 @@ namespace Persistence.Migrations
                     b.Property<string>("AppUserId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("CurrentCapcity")
-                        .HasColumnType("int");
-
                     b.Property<DateOnly?>("DateOfBirth")
                         .HasColumnType("date");
 
@@ -478,6 +475,9 @@ namespace Persistence.Migrations
                     b.Property<int>("CoachId")
                         .HasColumnType("int");
 
+                    b.Property<int>("CurrentCapcity")
+                        .HasColumnType("int");
+
                     b.Property<int>("GymId")
                         .HasColumnType("int");
 
@@ -621,6 +621,9 @@ namespace Persistence.Migrations
 
                     b.Property<decimal>("Cost")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Count")
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .IsRequired()

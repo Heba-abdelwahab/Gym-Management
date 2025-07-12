@@ -19,7 +19,7 @@ namespace Services.MappingProfiles
             CreateMap<WorkDayDto, WorkDay>().ReverseMap();
 
             // Coach mappings
-            CreateMap<Coach, CoachToReturnDto>()
+            CreateMap<Coach, CoachReturnDto>()
                 .ForCtorParam("FirstName", opt => opt.MapFrom(src => src.AppUser.FirstName))
                 .ForCtorParam("LastName", opt => opt.MapFrom(src => src.AppUser.LastName))
                 .ForCtorParam("Id", opt => opt.MapFrom(src => src.Id)) // You were missing this

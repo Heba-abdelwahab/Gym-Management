@@ -34,7 +34,7 @@ namespace Persistence.Migrations
 
                     b.HasIndex("TraineesId");
 
-                    b.ToTable("ClassTrainee", (string)null);
+                    b.ToTable("ClassTrainee");
                 });
 
             modelBuilder.Entity("Domain.Entities.Admin", b =>
@@ -60,7 +60,7 @@ namespace Persistence.Migrations
 
                     b.HasIndex("AppUserId");
 
-                    b.ToTable("Admins", (string)null);
+                    b.ToTable("Admins");
                 });
 
             modelBuilder.Entity("Domain.Entities.AppUser", b =>
@@ -155,7 +155,7 @@ namespace Persistence.Migrations
 
                     b.HasIndex("GroupName");
 
-                    b.ToTable("Connections", (string)null);
+                    b.ToTable("Connections");
                 });
 
             modelBuilder.Entity("Domain.Entities.Chat.Group", b =>
@@ -165,7 +165,7 @@ namespace Persistence.Migrations
 
                     b.HasKey("Name");
 
-                    b.ToTable("Groups", (string)null);
+                    b.ToTable("Groups");
                 });
 
             modelBuilder.Entity("Domain.Entities.Chat.Message", b =>
@@ -214,7 +214,7 @@ namespace Persistence.Migrations
 
                     b.HasIndex("SenderId");
 
-                    b.ToTable("Messages", (string)null);
+                    b.ToTable("Messages");
                 });
 
             modelBuilder.Entity("Domain.Entities.Class", b =>
@@ -260,7 +260,7 @@ namespace Persistence.Migrations
 
                     b.HasIndex("GymId");
 
-                    b.ToTable("Classes", (string)null);
+                    b.ToTable("Classes");
                 });
 
             modelBuilder.Entity("Domain.Entities.Coach", b =>
@@ -291,7 +291,7 @@ namespace Persistence.Migrations
 
                     b.HasIndex("AppUserId");
 
-                    b.ToTable("Coaches", (string)null);
+                    b.ToTable("Coaches");
                 });
 
             modelBuilder.Entity("Domain.Entities.Domain.Entities.Media", b =>
@@ -322,7 +322,7 @@ namespace Persistence.Migrations
 
                     b.HasIndex("gymId");
 
-                    b.ToTable("Media", (string)null);
+                    b.ToTable("Media");
                 });
 
             modelBuilder.Entity("Domain.Entities.Exercise", b =>
@@ -361,7 +361,7 @@ namespace Persistence.Migrations
 
                     b.HasIndex("TargetMuscleId");
 
-                    b.ToTable("Exercises", (string)null);
+                    b.ToTable("Exercises");
                 });
 
             modelBuilder.Entity("Domain.Entities.ExercisesSchedule", b =>
@@ -387,7 +387,7 @@ namespace Persistence.Migrations
 
                     b.HasIndex("TraineeId");
 
-                    b.ToTable("ExercisesSchedules", (string)null);
+                    b.ToTable("ExercisesSchedules");
                 });
 
             modelBuilder.Entity("Domain.Entities.Feature", b =>
@@ -410,7 +410,7 @@ namespace Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Features", (string)null);
+                    b.ToTable("Features");
                 });
 
             modelBuilder.Entity("Domain.Entities.Gym", b =>
@@ -452,7 +452,7 @@ namespace Persistence.Migrations
 
                     b.HasIndex("GymOwnerId");
 
-                    b.ToTable("Gyms", (string)null);
+                    b.ToTable("Gyms");
                 });
 
             modelBuilder.Entity("Domain.Entities.GymCoach", b =>
@@ -493,7 +493,7 @@ namespace Persistence.Migrations
 
                     b.HasIndex("GymId");
 
-                    b.ToTable("GymCoach", (string)null);
+                    b.ToTable("GymCoach");
                 });
 
             modelBuilder.Entity("Domain.Entities.GymFeature", b =>
@@ -526,7 +526,7 @@ namespace Persistence.Migrations
 
                     b.HasIndex("GymId");
 
-                    b.ToTable("GymFeature", (string)null);
+                    b.ToTable("GymFeature");
                 });
 
             modelBuilder.Entity("Domain.Entities.GymOwner", b =>
@@ -548,7 +548,7 @@ namespace Persistence.Migrations
 
                     b.HasIndex("AppUserId");
 
-                    b.ToTable("GymOwners", (string)null);
+                    b.ToTable("GymOwners");
                 });
 
             modelBuilder.Entity("Domain.Entities.Meal", b =>
@@ -579,7 +579,7 @@ namespace Persistence.Migrations
 
                     b.HasIndex("MealScheduleId");
 
-                    b.ToTable("Meals", (string)null);
+                    b.ToTable("Meals");
                 });
 
             modelBuilder.Entity("Domain.Entities.MealSchedule", b =>
@@ -605,7 +605,7 @@ namespace Persistence.Migrations
 
                     b.HasIndex("TraineeId");
 
-                    b.ToTable("MealSchedules", (string)null);
+                    b.ToTable("MealSchedules");
                 });
 
             modelBuilder.Entity("Domain.Entities.Membership", b =>
@@ -618,6 +618,9 @@ namespace Persistence.Migrations
 
                     b.Property<decimal>("Cost")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Count")
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -640,7 +643,7 @@ namespace Persistence.Migrations
 
                     b.HasIndex("GymId");
 
-                    b.ToTable("Memberships", (string)null);
+                    b.ToTable("Memberships");
                 });
 
             modelBuilder.Entity("Domain.Entities.Muscle", b =>
@@ -663,7 +666,7 @@ namespace Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Muscles", (string)null);
+                    b.ToTable("Muscles");
                 });
 
             modelBuilder.Entity("Domain.Entities.Payments", b =>
@@ -699,7 +702,7 @@ namespace Persistence.Migrations
 
                     b.HasIndex("TraineeId");
 
-                    b.ToTable("Payments", (string)null);
+                    b.ToTable("Payments");
                 });
 
             modelBuilder.Entity("Domain.Entities.Photo", b =>
@@ -732,7 +735,7 @@ namespace Persistence.Migrations
 
                     b.HasIndex("AppUserId");
 
-                    b.ToTable("Photo", (string)null);
+                    b.ToTable("Photo");
                 });
 
             modelBuilder.Entity("Domain.Entities.ScheduledExercise", b =>
@@ -761,7 +764,7 @@ namespace Persistence.Migrations
 
                     b.HasIndex("ExercisesScheduleId");
 
-                    b.ToTable("ScheduledExercises", (string)null);
+                    b.ToTable("ScheduledExercises");
                 });
 
             modelBuilder.Entity("Domain.Entities.Trainee", b =>
@@ -817,7 +820,7 @@ namespace Persistence.Migrations
 
                     b.HasIndex("MembershipId");
 
-                    b.ToTable("Trainees", (string)null);
+                    b.ToTable("Trainees");
                 });
 
             modelBuilder.Entity("Domain.Entities.TraineeSelectedFeature", b =>
@@ -849,7 +852,7 @@ namespace Persistence.Migrations
 
                     b.HasIndex("TraineeId");
 
-                    b.ToTable("TraineeSelectedFeature", (string)null);
+                    b.ToTable("TraineeSelectedFeature");
                 });
 
             modelBuilder.Entity("Domain.Entities.WorkDay", b =>
@@ -880,7 +883,7 @@ namespace Persistence.Migrations
 
                     b.HasIndex("GymCoachId");
 
-                    b.ToTable("WorkDays", (string)null);
+                    b.ToTable("WorkDays");
                 });
 
             modelBuilder.Entity("GymFeatureMembership", b =>
@@ -895,7 +898,7 @@ namespace Persistence.Migrations
 
                     b.HasIndex("MembershipsId");
 
-                    b.ToTable("GymFeatureMembership", (string)null);
+                    b.ToTable("GymFeatureMembership");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -1126,7 +1129,7 @@ namespace Persistence.Migrations
 
                             b1.HasKey("CoachId");
 
-                            b1.ToTable("Coaches", (string)null);
+                            b1.ToTable("Coaches");
 
                             b1.WithOwner()
                                 .HasForeignKey("CoachId");
@@ -1144,7 +1147,7 @@ namespace Persistence.Migrations
 
                                     b2.HasKey("AddressCoachId");
 
-                                    b2.ToTable("Coaches", (string)null);
+                                    b2.ToTable("Coaches");
 
                                     b2.WithOwner()
                                         .HasForeignKey("AddressCoachId");
@@ -1174,7 +1177,7 @@ namespace Persistence.Migrations
 
                             b1.HasKey("CoachId");
 
-                            b1.ToTable("Coaches", (string)null);
+                            b1.ToTable("Coaches");
 
                             b1.WithOwner()
                                 .HasForeignKey("CoachId");
@@ -1201,7 +1204,7 @@ namespace Persistence.Migrations
 
                             b1.HasKey("CoachId");
 
-                            b1.ToTable("Coaches", (string)null);
+                            b1.ToTable("Coaches");
 
                             b1.WithOwner()
                                 .HasForeignKey("CoachId");
@@ -1254,7 +1257,7 @@ namespace Persistence.Migrations
 
                             b1.HasKey("MediaId");
 
-                            b1.ToTable("Media", (string)null);
+                            b1.ToTable("Media");
 
                             b1.WithOwner()
                                 .HasForeignKey("MediaId");
@@ -1306,7 +1309,7 @@ namespace Persistence.Migrations
 
                             b1.HasKey("ExercisesScheduleId");
 
-                            b1.ToTable("ExercisesSchedules", (string)null);
+                            b1.ToTable("ExercisesSchedules");
 
                             b1.WithOwner()
                                 .HasForeignKey("ExercisesScheduleId");
@@ -1347,7 +1350,7 @@ namespace Persistence.Migrations
 
                             b1.HasKey("GymId");
 
-                            b1.ToTable("Gyms", (string)null);
+                            b1.ToTable("Gyms");
 
                             b1.WithOwner()
                                 .HasForeignKey("GymId");
@@ -1365,7 +1368,7 @@ namespace Persistence.Migrations
 
                                     b2.HasKey("AddressGymId");
 
-                                    b2.ToTable("Gyms", (string)null);
+                                    b2.ToTable("Gyms");
 
                                     b2.WithOwner()
                                         .HasForeignKey("AddressGymId");
@@ -1395,7 +1398,7 @@ namespace Persistence.Migrations
 
                             b1.HasKey("GymId");
 
-                            b1.ToTable("Gyms", (string)null);
+                            b1.ToTable("Gyms");
 
                             b1.WithOwner()
                                 .HasForeignKey("GymId");
@@ -1464,7 +1467,7 @@ namespace Persistence.Migrations
 
                             b1.HasKey("GymFeatureId");
 
-                            b1.ToTable("GymFeature", (string)null);
+                            b1.ToTable("GymFeature");
 
                             b1.WithOwner()
                                 .HasForeignKey("GymFeatureId");
@@ -1527,7 +1530,7 @@ namespace Persistence.Migrations
 
                             b1.HasKey("MealScheduleId");
 
-                            b1.ToTable("MealSchedules", (string)null);
+                            b1.ToTable("MealSchedules");
 
                             b1.WithOwner()
                                 .HasForeignKey("MealScheduleId");
@@ -1631,7 +1634,7 @@ namespace Persistence.Migrations
 
                             b1.HasKey("TraineeId");
 
-                            b1.ToTable("Trainees", (string)null);
+                            b1.ToTable("Trainees");
 
                             b1.WithOwner()
                                 .HasForeignKey("TraineeId");
@@ -1649,7 +1652,7 @@ namespace Persistence.Migrations
 
                                     b2.HasKey("AddressTraineeId");
 
-                                    b2.ToTable("Trainees", (string)null);
+                                    b2.ToTable("Trainees");
 
                                     b2.WithOwner()
                                         .HasForeignKey("AddressTraineeId");

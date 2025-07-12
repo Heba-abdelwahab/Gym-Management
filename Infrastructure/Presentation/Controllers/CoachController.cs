@@ -59,9 +59,18 @@ public class CoachController : ApiControllerBase
         return BadRequest("Failed to create diet.");
     }
 
-        [HttpGet("GetCoachesBygem/{id:int}")]
-        public async Task<IActionResult> GetCoachesBygem(int id)
-        {
+    [HttpGet("GetCoachesBygem/{id:int}")]
+    public async Task<IActionResult> GetCoachesBygem(int id)
+    {
+
+        var Coaches = await _serviceManager.CoachService.GetCoachesbyGym(id);
+        if (Coaches.Any())
+            return Ok(Coaches);
+
+        else
+            return StatusCode(500, "An error occurred, Please try again.");
+    }
+
     [HttpGet("diet/{dietId}")]
     public async Task<IActionResult> GetDietById(int dietId)
     {
@@ -91,18 +100,7 @@ public class CoachController : ApiControllerBase
     }
     #endregion
 
-    [HttpGet("{id:int}")]
-    public async Task<IActionResult> GetCoachesBygem(int id)
-    {
-
-        var Coaches = await _serviceManager.CoachService.GetCoachesbyGym(id);
-        if (Coaches.Any())
-            return Ok(Coaches);
-
-        else
-            return StatusCode(500, "An error occurred, Please try again.");
-
-    }
+   
 
     #region Excercise Schdule for Trainee
     [HttpPost("exercise-schedule/{traineeId:int}")]
@@ -132,36 +130,36 @@ public class CoachController : ApiControllerBase
         return Ok(schedules);
     }
 
-   [HttpPut("exercise-schedule/{scheduleId:int}")]
-      public async Task<IActionResult> UpdateExerciseScheduleById(int scheduleId, ExerciseScheduleUpdateDto dto)
-      {
+    [HttpPut("exercise-schedule/{scheduleId:int}")]
+    public async Task<IActionResult> UpdateExerciseScheduleById(int scheduleId, ExerciseScheduleUpdateDto dto)
+    {
 
-          var result = await _serviceManager.CoachService.UpdateExerciseScheduleAsync(scheduleId, dto);
-          return result ? Ok("Exercise schedule updated successfully.") : BadRequest("Failed to update schedule.");
-      }
+        var result = await _serviceManager.CoachService.UpdateExerciseScheduleAsync(scheduleId, dto);
+        return result ? Ok("Exercise schedule updated successfully.") : BadRequest("Failed to update schedule.");
+    }
 
-   [HttpDelete("exercise-schedule/{scheduleId:int}")]
-      public async Task<IActionResult> DeleteExerciseScheduleById(int scheduleId)
-      {
+    [HttpDelete("exercise-schedule/{scheduleId:int}")]
+    public async Task<IActionResult> DeleteExerciseScheduleById(int scheduleId)
+    {
 
-          var result = await _serviceManager.CoachService.DeleteExerciseScheduleAsync(scheduleId);
-          return result ? Ok("Exercise schedule deleted successfully.") : BadRequest("Failed to delete schedule.");
-      }
-      #endregion
+        var result = await _serviceManager.CoachService.DeleteExerciseScheduleAsync(scheduleId);
+        return result ? Ok("Exercise schedule deleted successfully.") : BadRequest("Failed to delete schedule.");
+    }
+    #endregion
 
-        [HttpGet("Dashboard/{coachId:int}")]
-        public async Task<IActionResult> GetCoachDashboard(int coachId)
-        {
-            var result = await _serviceManager.CoachService.GetCoachDashboardAsync(coachId);
-            return Ok(result);
-        }
+    [HttpGet("Dashboard/{coachId:int}")]
+    public async Task<IActionResult> GetCoachDashboard(int coachId)
+    {
+        var result = await _serviceManager.CoachService.GetCoachDashboardAsync(coachId);
+        return Ok(result);
+    }
 
-        [HttpGet("Dashboard/traineeDetails/{traineeId:int}")]
-        public async Task<IActionResult> GetTraineeDetails(int traineeId)
-        {
-            var traineeDetails = await _serviceManager.CoachService.GetTraineeDetailsForDashboardAsync(traineeId);
-            return Ok(traineeDetails);
-        }
+    [HttpGet("Dashboard/traineeDetails/{traineeId:int}")]
+    public async Task<IActionResult> GetTraineeDetails(int traineeId)
+    {
+        var traineeDetails = await _serviceManager.CoachService.GetTraineeDetailsForDashboardAsync(traineeId);
+        return Ok(traineeDetails);
+    }
 
     [HttpGet("{username}")]
     public async Task<ActionResult<CoachInfoResultDto>> GetCoachInfo(string username)
