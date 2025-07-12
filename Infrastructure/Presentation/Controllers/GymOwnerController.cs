@@ -1,14 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Services.Abstractions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Shared.GymOwner;
 
 namespace Presentation.Controllers
 {
-    public class GymOwnerController: ApiControllerBase
+    public class GymOwnerController : ApiControllerBase
     {
         private IServiceManager _serviceManager;
 
@@ -33,5 +29,12 @@ namespace Presentation.Controllers
 
             return Ok(gymOwner);
         }
+
+
+
+        [HttpGet("{username}")]
+        public async Task<ActionResult<GymOwnerInfoResultDto>> GetGymOwnerInfo(string username)
+          => Ok(await _serviceManager.GymOwnerService.GetGymOwnerByUserNameAsync(username));
+
     }
 }

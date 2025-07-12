@@ -299,15 +299,15 @@ namespace Services
             return schedule is null ? null : _mapper.Map<ExerciseScheduleResultDto>(schedule);
         }
 
-        public async Task<IEnumerable<ExerciseScheduleResultDto>> GetExerciseSchedulesForTraineeAsync(int traineeId)
+        public async Task<ExerciseScheduleResultDto> GetExerciseScheduleForTraineeAsync(int traineeId)
         {
             var trainee = await _unitOfWork.GetRepositories<Trainee, int>().GetByIdAsync(traineeId);
             if (trainee is null)
             {
                 throw new TraineeNotFoundException(traineeId);
             }
-            var schedules = await _unitOfWork.GetRepositories<ExercisesSchedule, int>().GetAllWithSpecAsync(new GetExerciseSchedulesForTraineeSpec(traineeId));
-            return _mapper.Map<IEnumerable<ExerciseScheduleResultDto>>(schedules);
+            var schedule = await _unitOfWork.GetRepositories<ExercisesSchedule, int>().GetByIdWithSpecAsync(new GetExerciseSchedulesForTraineeSpec(traineeId));
+            return _mapper.Map<ExerciseScheduleResultDto>(schedule);
         }
 
         // --- UPDATE ---
@@ -416,5 +416,19 @@ namespace Services
             return _mapper.Map<CoachInfoResultDto>(coach);
 
         }
+
+        public Task<MealScheduleResultDto> GetDietForTraineeAsync(int traineeId)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public async Task<IEnumerable<MuscleDto>> GetAllMusclesWithExercisesAsync()
+        {
+            var muscles = _unitOfWork.GetRepositories<Muscle, int>().GetAllWithSpecAsync(new GetAllMusclesSpec());
+            return _mapper.Map<IEnumerable<MuscleDto>>(muscles);
+        }
+
+       
     }
 }
