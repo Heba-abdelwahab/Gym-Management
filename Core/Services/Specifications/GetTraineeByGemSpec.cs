@@ -15,6 +15,9 @@ namespace Services.Specifications
         {
             AddIncludes(t => t.AppUser);
             AddIncludes(t=>t.Membership);
+            AddIncludes("Coach.AppUser");
+          
+            
         }
     }
 }

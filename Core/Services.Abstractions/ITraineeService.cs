@@ -24,6 +24,8 @@ public interface ITraineeService
     Task<GymToReturnDto> GetGymById(int gymId);
     Task<IReadOnlyList<ClassGymWithCoachToReturnDto>> GetAllClasses();
     Task<TraineeCoachToReturnDto> GetTraineeCoach();
+    Task<TraineeDataToReturnDto> EditTraineeProfile(EditTraineeProfileDto editTraineeProfileDto);
+
 
 
     Task<TraineeInfoResultDto> GetTraineeByUserName(string username);

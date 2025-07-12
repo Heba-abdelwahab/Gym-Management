@@ -13,6 +13,9 @@ namespace Shared
         public string MemberShipName { get; set; }
         public DateTime MembershipStartDate { get; set; }
         public DateTime MembershipEndDate { get; set; }
+        public String CoachName { get; set; }
+        public int CoachId { get; set; }
+
     }
 
 

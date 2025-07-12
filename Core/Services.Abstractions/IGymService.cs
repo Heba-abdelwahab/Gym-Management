@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.AspNetCore.Http;
 using Shared;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,16 @@ namespace Services.Abstractions
 {
     public interface IGymService
     {
+        Task<List<GymFeatureReturnDto>> GetGymFeatures(int GymId);
+        public Task<bool> GymMemberShip(MemberShipReturnDto memberShip);
+        public Task<bool> UpdateGymMemberShip(int MemberID, MemberShipReturnDto memberShip);
+        public Task<bool> DeleteGymMemberShip(int membershipID);
+
+        public Task<MemberShipDto> GetGymMemberShipById(int MemberiId);
+
+
+        public Task<List<MemberShipDto>> GetGymMemberShips(int GymID);
+
         Task RequestAddGym(GymWithFilesDto gymWithFilesDto, GymDto gymDto);
         IEnumerable<ItemDto> GetGymTypes();
         Task<IEnumerable<ItemDto>> GetGymFeatures();

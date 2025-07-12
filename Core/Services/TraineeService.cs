@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using CloudinaryDotNet;
 using Domain.Constants;
 using Domain.Contracts;
 using Domain.Entities;
 using Domain.Exceptions;
 using Domain.ValueObjects;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Services.Abstractions;
 using Services.Specifications;
@@ -23,6 +25,7 @@ internal sealed class TraineeService : ITraineeService
     private readonly IMapper _mapper;
     private readonly ITokenService _tokenService;
     private readonly IPaymentService _paymentService;
+    private readonly IPhotoService _photoService;
 
     public TraineeService(
         IAuthenticationService authenticationService,
@@ -30,45 +33,65 @@ internal sealed class TraineeService : ITraineeService
         IUserService userServices,
         IMapper mapper,
         ITokenService tokenService,
-        IPaymentService paymentService)    {
+        IPaymentService paymentService,
+        IPhotoService photoService
+        )    {
         _authenticationService = authenticationService;
         _unitOfWork = unitOfWork;
         _userServices = userServices;
         _mapper = mapper;
         _tokenService = tokenService;
         _paymentService = paymentService;
+        _photoService = photoService;
     }
-
     public async Task<bool> AssignCoachToTrainee(AssignCoachToTraineeDto assignCoachToTrainee)
     {
-        Trainee trainee = await _unitOfWork.GetRepositories<Trainee, int>().GetByIdAsync(assignCoachToTrainee.TraineeId);
-        Coach coach = await _unitOfWork.GetRepositories<Coach, int>().GetByIdAsync(assignCoachToTrainee.CoachId);
-        GymCoach gymCoach = await _unitOfWork.GetRepositories<GymCoach, int>().GetByIdWithSpecAsync(new GymCoachesSpec(assignCoachToTrainee.CoachId));
+        // Get the trainee
+        Trainee trainee = await _unitOfWork.GetRepositories<Trainee, int>()
+            .GetByIdAsync(assignCoachToTrainee.TraineeId);
+
         if (trainee == null)
-        {
             throw new TraineeNotFoundException(assignCoachToTrainee.TraineeId);
-        }
-        if (coach == null)
-        {
+
+        // Get the new coach and gym coach
+        Coach coach = await _unitOfWork.GetRepositories<Coach, int>()
+            .GetByIdAsync(assignCoachToTrainee.CoachId);
+
+        GymCoach gymCoach = await _unitOfWork.GetRepositories<GymCoach, int>()
+            .GetByIdWithSpecAsync(new GymCoachesSpec(assignCoachToTrainee.CoachId));
+
+        if (coach == null || gymCoach == null)
             throw new CoeachesNotFoundException(assignCoachToTrainee.CoachId);
-        }
-        if (coach.CurrentCapcity < gymCoach.Capcity)
+
+        // Only proceed if this is a different coach assignment
+        if (!trainee.CoachId.HasValue || trainee.CoachId.Value != assignCoachToTrainee.CoachId)
         {
-            trainee.CoachId = assignCoachToTrainee.CoachId;
-            coach.CurrentCapcity++;
+            // Get the old gym coach if exists
+            GymCoach oldGymCoach = null;
+            if (trainee.CoachId.HasValue)
+            {
+                oldGymCoach = await _unitOfWork.GetRepositories<GymCoach, int>()
+                    .GetByIdWithSpecAsync(new GymCoachesSpec(trainee.CoachId.Value));
+            }
 
-            _unitOfWork.GetRepositories<Trainee, int>().Update(trainee);
-            _unitOfWork.GetRepositories<Coach, int>().Update(coach);
+            // Update capacities only if this is a new assignment
+            if (oldGymCoach != null&&oldGymCoach.CurrentCapcity>=0)
+            {
+                oldGymCoach.CurrentCapcity--;
+                _unitOfWork.GetRepositories<GymCoach, int>().Update(oldGymCoach);
+            }
 
+            gymCoach.CurrentCapcity++;
+            _unitOfWork.GetRepositories<GymCoach, int>().Update(gymCoach);
         }
-        var result = await _unitOfWork.CompleteSaveAsync();
 
-        return result;
+        // Update trainee's coach
+        trainee.CoachId = assignCoachToTrainee.CoachId;
+        _unitOfWork.GetRepositories<Trainee, int>().Update(trainee);
 
-
-
+        // Save changes
+        return await _unitOfWork.CompleteSaveAsync();
     }
-
     public async Task<AuthTraineeResultDto> CreateTraineeAsync(RegisterTraineeDto request)
     {
         var registerUser = new RegisterUserDto
@@ -373,6 +396,46 @@ internal sealed class TraineeService : ITraineeService
 
     }
 
+    // ========================= Edit Trainee Profile ================================
+    public async Task<TraineeDataToReturnDto> EditTraineeProfile(EditTraineeProfileDto editTraineeProfileDto)
+    {
+        int? TraineeId = _userServices.Id;
+        var TraineeSpec = new GetTraineeWithAppUserSpec(TraineeId!.Value);
+        var Trainee = await _unitOfWork.GetRepositories<Trainee, int>().GetByIdWithSpecAsync(TraineeSpec);
+        if (Trainee == null)
+            throw new TraineeNotFoundException(TraineeId.Value);
+        Trainee.AppUser.FirstName = editTraineeProfileDto.FirstName;
+        Trainee.AppUser.LastName = editTraineeProfileDto.LastName;
+        Trainee.Address = _mapper.Map<Address>(editTraineeProfileDto.Address);
+        Trainee.DateOfBirth = editTraineeProfileDto.DateOfBirth;
+        Trainee.Weight = editTraineeProfileDto.Weight;
+
+        if (editTraineeProfileDto.Image != null)
+        {
+
+            var photoResult = await _photoService.AddPhotoFullPathAsync(editTraineeProfileDto.Image);
+            Trainee.ImageUrl = photoResult.SecureUrl.AbsoluteUri;
+
+            var photo = new Photo
+            {
+                Url = photoResult.SecureUrl.AbsoluteUri,
+                PublicId = photoResult.PublicId
+            };
+            if (Trainee.AppUser.Photos.Count == 0)
+                photo.IsMain = true;
+
+            Trainee.AppUser.Photos.Add(photo);
+        }
+
+        _unitOfWork.GetRepositories<Trainee, int>().Update(Trainee);
+
+        if (await _unitOfWork.CompleteSaveAsync())
+        {
+            return _mapper.Map<TraineeDataToReturnDto>(Trainee);
+        }
+        throw new Exception("An error occurred while updating the trainee profile.");
+    }
+
     public async Task<TraineeInfoResultDto> GetTraineeByUserName(string username)
     {
         var trainee = await _unitOfWork.GetRepositories<Trainee, int>()
@@ -381,5 +444,6 @@ internal sealed class TraineeService : ITraineeService
 
 
         return _mapper.Map<TraineeInfoResultDto>(trainee);
+
     }
 }

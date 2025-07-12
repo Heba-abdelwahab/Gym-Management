@@ -15,16 +15,25 @@ namespace Services.MappingProfiles
     {
         public Mapper()
         {
+            // WorkDay mappings
             CreateMap<WorkDayDto, WorkDay>().ReverseMap();
-            CreateMap<Coach, CoachToReturnDto>()
-                .ForCtorParam("FirstName", x => x.MapFrom(src => src.AppUser.FirstName))
-                .ForCtorParam("LastName", x => x.MapFrom(src => src.AppUser.LastName));
+
+            // Coach mappings
+            CreateMap<Coach, CoachReturnDto>()
+                .ForCtorParam("FirstName", opt => opt.MapFrom(src => src.AppUser.FirstName))
+                .ForCtorParam("LastName", opt => opt.MapFrom(src => src.AppUser.LastName))
+                .ForCtorParam("Id", opt => opt.MapFrom(src => src.Id)) // You were missing this
+                .ForCtorParam("CurrentCapcity", opt => opt.MapFrom((src, ctx) =>
+                    src.GymCoaches?.FirstOrDefault(g => g.GymId == (int)ctx.Items["gymid"])?.CurrentCapcity ?? 0))
+                .ForCtorParam("Specializations", opt => opt.MapFrom(src =>
+                    src.Specializations.ToString()));
 
             #region Diet
             // From DTO to Entity
             CreateMap<MealDto, Meal>().ReverseMap();
             CreateMap<MealResultDto, Meal>().ReverseMap();
 
+            // MealSchedule mappings
             CreateMap<MealScheduleDto, MealSchedule>()
                 .ForMember(dest => dest.schedule, opt => opt.MapFrom(src => new Schedule { StartDay = src.StartDate, EndDay = src.EndDate }));
 
@@ -166,6 +175,11 @@ namespace Services.MappingProfiles
 
             #endregion
 
+            #region Muscles
+            CreateMap<Exercise, ExerciseDto>()
+               .ForMember(dest => dest.MuscleId, opt => opt.MapFrom(src => src.TargetMuscleId));
+            CreateMap<Muscle, MuscleDto>();
+            #endregion
         }
     }
 }

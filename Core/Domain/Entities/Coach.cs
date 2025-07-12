@@ -45,7 +45,7 @@ namespace Domain.Entities
         public ICollection<ExercisesSchedule> ExercisesSchedules { get; set; } = new HashSet<ExercisesSchedule>();
         public ICollection<MealSchedule> MealSchedules { get; set; } = new HashSet<MealSchedule>();
 
-        public int CurrentCapcity { set; get; }
+        
         public ICollection<Trainee> Trainees { get; set; } = new HashSet<Trainee>();
         public ICollection<Class> Classes { get; set; } = new HashSet<Class>();
         #endregion
