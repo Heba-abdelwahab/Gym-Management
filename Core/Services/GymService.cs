@@ -92,10 +92,10 @@ namespace Services
             var memerships =await unitOfWork.GetRepositories<Membership, int>()
                 .GetAllWithSpecAsync(new GetMemberShipsByGymDtoSpec(GymID));
           var  mappingList=mapper.Map <List<MemberShipDto>> (memerships);
-            if(!mappingList.Any())
-                throw new MemberShipInGymNotFoundException(GymID);
+            //if(!mappingList.Any())
+            //    throw new MemberShipInGymNotFoundException(GymID);
 
-            else
+            //else
                 return mappingList;
         }
 

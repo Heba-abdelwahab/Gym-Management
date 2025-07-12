@@ -13,7 +13,12 @@ namespace Services.MappingProfiles
     {
         public GymOwnerProfile()
         {
-            CreateMap<GymOwner, GymOwnerToReturnDto>();
+            CreateMap<GymOwner, GymOwnerToReturnDto>()
+           .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.AppUser.FirstName))
+           .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.AppUser.LastName))
+           .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.AppUser.UserName))
+           .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.AppUser.Email))
+           .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.AppUser.PhoneNumber));
         }
     }
 }

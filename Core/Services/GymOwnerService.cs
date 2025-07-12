@@ -47,7 +47,15 @@ namespace Services
                 throw new GymOwnerNotFoundException(ownerId);
             }
 
-            var mappedOwner = _mapper.Map<GymOwnerToReturnDto>(gymOwner);
+            var mappedOwner = new GymOwnerToReturnDto()
+            {
+                FirstName = gymOwner.AppUser.FirstName,
+                LastName = gymOwner.AppUser.LastName,
+                UserName = gymOwner.AppUser.UserName,
+                PhoneNumber = gymOwner.AppUser.PhoneNumber,
+                Email = gymOwner.AppUser.Email
+            };
+           
             return mappedOwner;
         }
 
