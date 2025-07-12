@@ -22,6 +22,19 @@ namespace Services
             _ownerRepo = _unitOfWork.GetRepositories<GymOwner, int>();
         }
 
+        public async Task<List<GymOwnerDataDto>> GetAllDataForGymOwner(int ownerId)
+        {
+           var gymowner=await _ownerRepo.GetByIdWithSpecAsync(new GymOwnerDataSpec(ownerId));
+            if (gymowner == null)
+            {
+                throw new GymOwnerNotFoundException(ownerId);
+            }
+           var mappedOwner = _mapper.Map<List<GymOwnerDataDto>>(gymowner);
+            return mappedOwner;
+        }
+
+      
+
         public async Task<GymOwnerToReturnDto> GetGymOwnerInfo(int ownerId)
         {
             var gymOwner = await _ownerRepo.GetByIdWithSpecAsync(new GetGymOwnerInfoSpecification(ownerId));
@@ -31,6 +44,18 @@ namespace Services
             }
 
             var mappedOwner = _mapper.Map<GymOwnerToReturnDto>(gymOwner);
+            return mappedOwner;
+        }
+
+        public async Task<List<OwnerMembershipdto>> GetGymownerMemberships(int ownerId)
+        {
+            var gymOwner = await _ownerRepo.GetByIdWithSpecAsync(new GymOwnerDataSpec(ownerId));
+            if (gymOwner == null)
+            {
+                throw new GymOwnerNotFoundException(ownerId);
+            }
+
+            var mappedOwner = _mapper.Map<List<OwnerMembershipdto>>(gymOwner);
             return mappedOwner;
         }
 

@@ -6,7 +6,7 @@ using Shared.coach;
 
 namespace Presentation.Controllers;
 
-[Authorize]
+
 public class CoachController : ApiControllerBase
 {
     private readonly IServiceManager _serviceManager;

@@ -57,7 +57,7 @@ namespace Presentation.Controllers
             await serviceManager.GymService.UpdateGym(gymId, gymWithFilesUpdate, gymDto);
             return Ok();
         }
-        [HttpGet("{GymID:int}")]
+        [HttpGet("GetGymFeature2/{GymID:int}")]
 
         public async Task<ActionResult> GetGymFeature(int GymID)
         {
