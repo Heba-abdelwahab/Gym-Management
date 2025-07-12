@@ -189,5 +189,23 @@ public class TraineeController : ApiControllerBase
     public async Task<ActionResult<TraineeInfoResultDto>> GetTraineeInfo(string username)
     => Ok(await _serviceManager.TraineeService.GetTraineeByUserName(username));
 
+    [HttpGet("diet")]
+    public async Task<ActionResult<MealScheduleResultDto>> GetDiet()
+    {
+        var diet = await _serviceManager.TraineeService.GetDietAsync();
+        if (diet is not null)
+            return Ok(diet);
+        else
+            return StatusCode(500, "An error occurred when trying to get diet, Please try again.");
+    }
 
+    [HttpGet("exercise-schedule")]
+    public async Task<ActionResult<MealScheduleResultDto>> GetExerciseSchedule()
+    {
+        var exerciseSchedule = await _serviceManager.TraineeService.GetExerciseScheduleAsync();
+        if (exerciseSchedule is not null)
+            return Ok(exerciseSchedule);
+        else
+            return StatusCode(500, "An error occurred when trying to get exercise schedule, Please try again.");
+    }
 }

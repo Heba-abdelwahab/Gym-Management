@@ -417,6 +417,9 @@ namespace Services
 
         }
 
+  
+
+
         public async Task<IEnumerable<MuscleDto>> GetAllMusclesWithExercisesAsync()
         {
             var muscles = _unitOfWork.GetRepositories<Muscle, int>().GetAllWithSpecAsync(new GetAllMusclesSpec());
