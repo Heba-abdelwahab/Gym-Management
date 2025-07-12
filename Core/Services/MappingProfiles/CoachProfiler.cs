@@ -10,12 +10,12 @@ namespace Services.MappingProfiles
         public CoachProfiler()
         {
 
-            CreateMap<Coach, CoachPendingDto>()
-           .ForCtorParam("FirstName", opt => opt.MapFrom(src => src.AppUser.FirstName))
-           .ForCtorParam("LastName", opt => opt.MapFrom(src => src.AppUser.LastName))
-           .ForCtorParam("Specializations", opt => opt.MapFrom(src => src.Specializations.ToString()))
-           .ForCtorParam("Id", opt => opt.MapFrom(src => src.Id))
-           .ReverseMap();
+           // CreateMap<Coach, CoachPendingDto>()
+           //.ForCtorParam("FirstName", opt => opt.MapFrom(src => src.AppUser.FirstName))
+           //.ForCtorParam("LastName", opt => opt.MapFrom(src => src.AppUser.LastName))
+           //.ForCtorParam("Specializations", opt => opt.MapFrom(src => src.Specializations.ToString()))
+           //.ForCtorParam("Id", opt => opt.MapFrom(src => src.Id))
+           //.ReverseMap();
 
             CreateMap<Coach, TraineeCoachToReturnDto>()
            .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.AppUser.FirstName))

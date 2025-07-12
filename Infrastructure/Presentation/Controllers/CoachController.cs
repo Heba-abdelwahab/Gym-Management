@@ -6,7 +6,7 @@ using Shared.coach;
 
 namespace Presentation.Controllers;
 
-[Authorize]
+//[Authorize]
 public class CoachController : ApiControllerBase
 {
     private readonly IServiceManager _serviceManager;
@@ -53,10 +53,10 @@ public class CoachController : ApiControllerBase
 
         if (result)
         {
-            return Ok("Diet created successfully.");
+            return StatusCode(201, "Diet created successfully.");
         }
 
-        return BadRequest("Failed to create diet.");
+        return StatusCode(500, "An error occurred while processing your request, Please try again.");
     }
 
     [HttpGet("diet/{dietId}")]
@@ -69,22 +69,22 @@ public class CoachController : ApiControllerBase
     [HttpGet("diets/{traineeId}")]
     public async Task<IActionResult> GetAllDietsForTrainee(int traineeId)
     {
-        var diets = await _serviceManager.CoachService.GetDietsForTraineeAsync(traineeId);
-        return Ok(diets);
+        var diet = await _serviceManager.CoachService.GetDietForTraineeAsync(traineeId);
+        return Ok(diet);
     }
 
     [HttpPut("diet/{dietId}")]
     public async Task<IActionResult> UpdateDietById(int dietId, MealScheduleUpdateDto dto)
     {
         var result = await _serviceManager.CoachService.UpdateDietAsync(dietId, dto);
-        return result ? Ok("Diet updated successfully.") : BadRequest("Failed to update diet.");
+        return result ? StatusCode(202, "Diet updated successfully.") : StatusCode(500, "An error occurred while processing your request, Please try again."); ;
     }
 
     [HttpDelete("diet/{dietId}")]
     public async Task<IActionResult> DeleteDietById(int dietId)
     {
         var result = await _serviceManager.CoachService.DeleteDietAsync(dietId);
-        return result ? Ok("Diet deleted successfully.") : BadRequest("Failed to delete diet.");
+        return result ? StatusCode(204, "Diet deleted successfully.") : StatusCode(500, "An error occurred while processing your request, Please try again."); ;
     }
     #endregion
 
@@ -125,8 +125,8 @@ public class CoachController : ApiControllerBase
     [HttpGet("exercise-schedules/{traineeId:int}")]
     public async Task<IActionResult> GetExerciseSchedulesForTrainee(int traineeId)
     {
-        var schedules = await _serviceManager.CoachService.GetExerciseSchedulesForTraineeAsync(traineeId);
-        return Ok(schedules);
+        var schedule = await _serviceManager.CoachService.GetExerciseSchedulesForTraineeAsync(traineeId);
+        return Ok(schedule);
     }
 
    [HttpPut("exercise-schedule/{scheduleId:int}")]
@@ -164,4 +164,10 @@ public class CoachController : ApiControllerBase
     public async Task<ActionResult<CoachInfoResultDto>> GetCoachInfo(string username)
     => Ok(await _serviceManager.CoachService.GetCoachbyUserName(username));
 
+    [HttpGet("muscles")]
+    public async Task<IActionResult> GetAllMusclesWithExercises()
+    {
+        var muscles = await _serviceManager.CoachService.GetAllMusclesWithExercisesAsync();
+        return Ok(muscles);
+    }
 }
