@@ -200,7 +200,7 @@ public class TraineeController : ApiControllerBase
     }
 
     [HttpGet("exercise-schedule")]
-    public async Task<ActionResult<ExerciseScheduleResultDto>> GetExerciseSchedule()
+    public async Task<ActionResult<MealScheduleResultDto>> GetExerciseSchedule()
     {
         var exerciseSchedule = await _serviceManager.TraineeService.GetExerciseScheduleAsync();
         if (exerciseSchedule is not null)
