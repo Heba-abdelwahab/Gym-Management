@@ -126,7 +126,7 @@ public class CoachController : ApiControllerBase
     [HttpGet("exercise-schedules/{traineeId:int}")]
     public async Task<IActionResult> GetExerciseSchedulesForTrainee(int traineeId)
     {
-        var schedule = await _serviceManager.CoachService.GetExerciseSchedulesForTraineeAsync(traineeId);
+        var schedule = await _serviceManager.CoachService.GetExerciseScheduleForTraineeAsync(traineeId);
         return Ok(schedule);
     }
 

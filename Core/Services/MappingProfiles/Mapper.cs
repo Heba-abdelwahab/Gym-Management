@@ -7,6 +7,7 @@ using Domain.ValueObjects.Chat;
 using Domain.ValueObjects.member;
 using Shared;
 using Shared.coach;
+using Shared.GymOwner;
 using Shared.Trainee;
 
 namespace Services.MappingProfiles
@@ -172,6 +173,23 @@ namespace Services.MappingProfiles
            .ForMember(dest => dest.Address,
                opt => opt.MapFrom(src => src.Address));
 
+
+            #endregion
+
+            #region GymOwner
+
+            CreateMap<GymOwner, GymOwnerInfoResultDto>()
+            .ForMember(dest => dest.FirstName,
+                opt => opt.MapFrom(src => src.AppUser!.FirstName))
+
+            .ForMember(dest => dest.LastName,
+                opt => opt.MapFrom(src => src.AppUser!.LastName))
+
+            .ForMember(dest => dest.UserName,
+                opt => opt.MapFrom(src => src.AppUser!.UserName))
+
+            .ForMember(dest => dest.PhoneNumber,
+                opt => opt.MapFrom(src => src.AppUser!.PhoneNumber));
 
             #endregion
 
