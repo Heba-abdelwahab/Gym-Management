@@ -15,5 +15,7 @@ namespace Services.Abstractions
         Task<AuthAdminResultDto> CreateGymOwnerAsync(RegisterUserDto request);
 
 
+        Task<List<GymOwnerDataDto>> GetAllDataForGymOwner(int ownerId);
+        Task<List<OwnerMembershipdto>> GetGymownerMemberships(int ownerId);
     }
 }

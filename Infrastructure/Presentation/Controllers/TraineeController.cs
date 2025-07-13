@@ -9,7 +9,6 @@ using Shared.Trainee;
 
 namespace Presentation.Controllers;
 
-[Authorize]
 public class TraineeController : ApiControllerBase
 {
 
