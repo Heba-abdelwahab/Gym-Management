@@ -21,6 +21,7 @@ public interface ICoachService
     #endregion
     Task<AuthCoachResultDto> CreateCoachAsync(RegisterCoachDto request);
 
+    Task<List<CoachsForClassDto>> GetCoachesForClassbyGym(int gymId);
 
 
     Task<IEnumerable<CoachPendingDto>> GetGymPendingCoachs(int gymId);

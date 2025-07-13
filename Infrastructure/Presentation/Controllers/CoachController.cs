@@ -6,7 +6,7 @@ using Shared.coach;
 
 namespace Presentation.Controllers;
 
-[Authorize]
+//[Authorize]
 public class CoachController : ApiControllerBase
 {
     private readonly IServiceManager _serviceManager;
@@ -69,6 +69,15 @@ public class CoachController : ApiControllerBase
 
         else
             return StatusCode(500, "An error occurred, Please try again.");
+    }
+
+
+    [HttpGet("GetCoachesForClassbyGym/{id:int}")]
+    public async Task<IActionResult> GetCoachesForClassbyGym(int id)
+    {
+
+        var Coaches = await _serviceManager.CoachService.GetCoachesForClassbyGym(id);
+        return Ok(Coaches);
     }
 
     [HttpGet("diet/{dietId}")]

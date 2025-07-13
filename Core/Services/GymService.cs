@@ -191,7 +191,7 @@ namespace Services
                 opt.Items["exFeatureImages"] = extraFeaturesResult;
                 opt.Items["FeatureImages"] = featuresResult;
             });
-
+            gym.GymOwnerId = _userServices.Id.Value;
             foreach (var image in mainImagesResult)
             {
                 gym.Images.Add(new Media
