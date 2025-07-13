@@ -382,18 +382,32 @@ internal sealed class TraineeService : ITraineeService
         return classesMapped;
     }
 
-    public async Task<TraineeCoachToReturnDto> GetTraineeCoach()
+    public async Task<TraineeCoachToReturnDto?> GetTraineeCoach()
     {
         int? TraineeId = _userServices.Id;
         var TraineeCoachSpec = new GetTraineeCoach(TraineeId!.Value);
-        var TraineeCoach = await _unitOfWork.GetRepositories<Trainee, int>().GetByIdWithSpecAsync(TraineeCoachSpec);
+        var Trainee = await _unitOfWork.GetRepositories<Trainee, int>().GetByIdWithSpecAsync(TraineeCoachSpec);
 
-        if (TraineeCoach is null)
+        if (Trainee is null)
             throw new TraineeNotFoundException(TraineeId.Value);
-        var CoachMapped = _mapper.Map<TraineeCoachToReturnDto>(TraineeCoach.Coach);
-        CoachMapped.TraineeCount = TraineeCoach.Coach!.Trainees.Count;
+        if (Trainee.Coach is null)
+            return null;
+        var CoachMapped = _mapper.Map<TraineeCoachToReturnDto>(Trainee.Coach);
+        CoachMapped.TraineeCount = Trainee.Coach!.Trainees.Count;
         return CoachMapped;
 
+    }
+
+    // ================================= Trainee Profile ===================================
+    public async Task<TraineeDataToReturnDto> GetTraineeProfile()
+    {
+        int? TraineeId = _userServices.Id;
+        var TraineeSpec = new GetTraineeWithAppUserSpec(TraineeId!.Value);
+        var Trainee = await _unitOfWork.GetRepositories<Trainee, int>().GetByIdWithSpecAsync(TraineeSpec);
+        if (Trainee == null)
+            throw new TraineeNotFoundException(TraineeId.Value);
+
+        return _mapper.Map<TraineeDataToReturnDto>(Trainee);
     }
 
     // ========================= Edit Trainee Profile ================================
@@ -408,6 +422,8 @@ internal sealed class TraineeService : ITraineeService
         Trainee.AppUser.LastName = editTraineeProfileDto.LastName;
         Trainee.Address = _mapper.Map<Address>(editTraineeProfileDto.Address);
         Trainee.DateOfBirth = editTraineeProfileDto.DateOfBirth;
+        Trainee.ReasonForJoining = editTraineeProfileDto.ReasonForJoining;
+        Trainee.AppUser.PhoneNumber = editTraineeProfileDto.PhoneNumber;
         Trainee.Weight = editTraineeProfileDto.Weight;
 
         if (editTraineeProfileDto.Image != null)

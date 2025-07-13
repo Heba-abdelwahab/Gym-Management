@@ -23,7 +23,7 @@ public interface ITraineeService
     Task<IReadOnlyList<GymToReturnDto>> AllGyms();
     Task<GymToReturnDto> GetGymById(int gymId);
     Task<IReadOnlyList<ClassGymWithCoachToReturnDto>> GetAllClasses();
-    Task<TraineeCoachToReturnDto> GetTraineeCoach();
+    Task<TraineeCoachToReturnDto?> GetTraineeCoach();
     Task<TraineeDataToReturnDto> EditTraineeProfile(EditTraineeProfileDto editTraineeProfileDto);
 
 
@@ -32,4 +32,6 @@ public interface ITraineeService
 
     Task<IReadOnlyList<ExerciseScheduleResultDto>> GetExerciseScheduleAsync();
     Task<IReadOnlyList<MealScheduleResultDto>> GetDietAsync();
+
+    Task<TraineeDataToReturnDto> GetTraineeProfile();
 }
