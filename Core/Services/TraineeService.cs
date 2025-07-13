@@ -247,7 +247,7 @@ internal sealed class TraineeService : ITraineeService
     // Get Gym Features
     public async Task<IReadOnlyList<GymFeatureToReturnDto>> GetGymFeatures(int gymId)
     {
-        var FeatureSpec = new GymFeatureSpec(gymId);
+        var FeatureSpec = new GymFeatureMembershipByGymIdSpec(gymId);
         var Features = (IReadOnlyList<GymFeature>)await _unitOfWork.GetRepositories<GymFeature, int>().GetAllWithSpecAsync(FeatureSpec);
 
         if (Features is null)

@@ -298,7 +298,7 @@ namespace Services
             if (gym == null)
                 throw new GymNotFoundException(gymId);
             
-            var gymFeatures = await unitOfWork.GetRepositories<GymFeature, int>().GetAllWithSpecAsync(new GymFeatureSpec(gymId));
+            var gymFeatures = await unitOfWork.GetRepositories<GymFeature, int>().GetAllWithSpecAsync(new GymFeatureMembershipByGymIdSpec(gymId));
             var gymFeaturesDto= mapper.Map<IEnumerable<GymFeatureDto>>(gymFeatures, opt => opt.Items["CloudinaryBaseUrl"]= config.CurrentValue.CloudinaryBaseUrl);
 
             return gymFeaturesDto;

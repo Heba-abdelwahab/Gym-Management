@@ -5,18 +5,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Domain.Contracts;
-using Domain.Entities;
 
 namespace Services.Specifications
 {
-    public class GymFeatureSpec : SpecificationBase<GymFeature, int>
+    public class GymFeatureMembershipByGymIdSpec:SpecificationBase<GymFeature,int>
     {
-        public GymFeatureSpec(int gymFeatureId)
-            : base(gymFeature => gymFeature.Id == gymFeatureId)
+        public GymFeatureMembershipByGymIdSpec(int gymId)
+            : base(gymFeature => gymFeature.GymId == gymId)
         {
             AddIncludes(gymFeature => gymFeature.Feature);
         }
-
     }
 }
