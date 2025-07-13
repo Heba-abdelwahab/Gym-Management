@@ -39,11 +39,12 @@ namespace Presentation.Controllers
 
             TryValidateModel(gymDto);
 
+
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            await serviceManager.GymService.RequestAddGym(gymWithFilesDto, gymDto);
-            return Ok();
+            int gymId= await serviceManager.GymService.RequestAddGym(gymWithFilesDto, gymDto);
+            return Ok(gymId);
         }
 
         [HttpPut("{gymId:int}")]

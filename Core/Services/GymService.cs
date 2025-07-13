@@ -171,7 +171,7 @@ namespace Services
             return true;
         }
 
-        public async Task RequestAddGym(GymWithFilesDto gymWithFilesDto, GymDto gymDto)
+        public async Task<int> RequestAddGym(GymWithFilesDto gymWithFilesDto, GymDto gymDto)
         {
             if (!await validateGymFeatures(gymDto))
                 throw new Exception("Gym features validation failed.");
@@ -214,8 +214,13 @@ namespace Services
 
             unitOfWork.GetRepositories<Gym, int>().Insert(gym);
 
+
+
             if (!await unitOfWork.CompleteSaveAsync())
                 throw new Exception("Failed to request add Gym.");
+
+            return gym.Id;
+
         }
 
         public async Task UpdateGym(int gymId, GymWithFilesUpdate gymWithFilesUpdate, GymUpdateDto gymUpdateDto)
