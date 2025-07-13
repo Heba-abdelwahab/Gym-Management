@@ -407,7 +407,8 @@ internal sealed class TraineeService : ITraineeService
         if (Trainee == null)
             throw new TraineeNotFoundException(TraineeId.Value);
 
-        return _mapper.Map<TraineeDataToReturnDto>(Trainee);
+        var mapped = _mapper.Map<TraineeDataToReturnDto>(Trainee);
+        return mapped;
     }
 
     // ========================= Edit Trainee Profile ================================
