@@ -9,6 +9,7 @@ using Presentation.Controllers;
 using Presentation.Extensions;
 using Presentation.Helper;
 using Services.Abstractions;
+using Shared.Trainee;
 namespace Gymawy.Controllers;
 
 
@@ -72,7 +73,8 @@ public class UsersController : ApiControllerBase
         => Ok(await _userRepository.GetMemberByUserNameAsync(username));
 
     [HttpPut]
-    public async Task<ActionResult> UpdateUser(MemberUpdateDto memberUpdateDto)
+    //public async Task<ActionResult> UpdateUser(MemberUpdateDto memberUpdateDto)
+    public async Task<ActionResult> UpdateUser(TraineeInfoResultDto memberUpdateDto)
     {
 
         var user = await _userRepository.GetUserByUserNameAsync(User.GetUserName());

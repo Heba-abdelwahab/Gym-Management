@@ -10,7 +10,7 @@ internal class GetTraineeByAppUserIdSpec : SpecificationBase<Trainee, int>
            : base(t => t.AppUserId == id)
     {
         AddIncludes(t => t.AppUser);
-        AddIncludes(t => t.Coach);
+        AddIncludes("Coach.AppUser");
         AddIncludes(t => t.Gym);
 
     }

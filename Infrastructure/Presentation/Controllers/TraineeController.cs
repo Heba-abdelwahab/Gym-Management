@@ -178,6 +178,18 @@ public class TraineeController : ApiControllerBase
             return StatusCode(500, "An error occurred when trying to get trainee's coach, Please try again.");
     }
 
+    // ================================== Get Trainee Profile =====================================
+
+    [HttpGet("profile")]
+    public async Task<IActionResult> GetTraineeProfile()
+    {
+        var traineeProfile = await _serviceManager.TraineeService.GetTraineeProfile();
+        if (traineeProfile is not null)
+            return Ok(traineeProfile);
+        else
+            return StatusCode(500, "An error occurred when trying to get trainee profile, Please try again.");
+    }
+
     // ================================= Update Trainee Profile ===================================
     [HttpPut("update-profile")]
     public async Task<IActionResult> UpdateTraineeProfile([FromForm] EditTraineeProfileDto editTraineeProfileDto)
