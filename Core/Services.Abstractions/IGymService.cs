@@ -21,7 +21,7 @@ namespace Services.Abstractions
 
         public Task<List<MemberShipDto>> GetGymMemberShips(int GymID);
 
-        Task RequestAddGym(GymWithFilesDto gymWithFilesDto, GymDto gymDto);
+        Task<int> RequestAddGym(GymWithFilesDto gymWithFilesDto, GymDto gymDto);
         IEnumerable<ItemDto> GetGymTypes();
         Task<IEnumerable<ItemDto>> GetGymFeatures();
         Task UpdateGym(int gymId, GymWithFilesUpdate gymWithFilesUpdate, GymUpdateDto gymUpdateDto);
