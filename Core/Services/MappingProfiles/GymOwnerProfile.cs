@@ -27,31 +27,34 @@ namespace Services.MappingProfiles
          ClassesCount = g.Classes.Count
      }).ToList());
 
-         //   CreateMap<GymOwner, List<OwnerMembershipdto>>()
-         //.ConvertUsing(src => src.Gyms
-         //    .Select(g => new OwnerMembershipdto
-         //    {
-         //        GymName = g.Name,
-         //        MembershipName = g.Memberships
-         //            .OrderByDescending(m => m.Trainees.Count)
-         //            .FirstOrDefault().Name ?? "No Membership",
-         //        TraineesCount = g.Memberships
-         //            .Max(m => m.Trainees.Count)
-         //    })
-         //    .ToList());
+            //   CreateMap<GymOwner, List<OwnerMembershipdto>>()
+            //.ConvertUsing(src => src.Gyms
+            //    .Select(g => new OwnerMembershipdto
+            //    {
+            //        GymName = g.Name,
+            //        MembershipName = g.Memberships
+            //            .OrderByDescending(m => m.Trainees.Count)
+            //            .FirstOrDefault().Name ?? "No Membership",
+            //        TraineesCount = g.Memberships
+            //            .Max(m => m.Trainees.Count)
+            //    })
+            //    .ToList());
 
             CreateMap<GymOwner, List<OwnerMembershipdto>>()
-                .ConvertUsing(src => src.Gyms
-                    .Select(g => new OwnerMembershipdto
-                    {
-                        GymName = g.Name,
-                        MembershipName = g.Memberships
-                            .OrderByDescending(m => m.Trainees.Count)
-                            .FirstOrDefault().Name ?? "No Membership",
-                        TraineesCount = g.Memberships
-                            .Max(m => m.Trainees.Count)
-                    })
-                    .ToList());
+             .ConvertUsing(src => src.Gyms
+                 .Select(g => new OwnerMembershipdto
+                 {
+                     GymName = g.Name,
+                     MembershipName = g.Memberships
+                         .OrderByDescending(m => m.Trainees.Count)
+                         .Select(m => m.Name)
+                         .DefaultIfEmpty("No Membership Available")
+                         .First(),
+                     TraineesCount = g.Memberships.Any()
+                         ? g.Memberships.Max(m => m.Trainees.Count)
+                         : 0
+                 })
+                 .ToList());
             CreateMap<GymOwner, GymOwnerToReturnDto>()
            .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.AppUser.FirstName))
            .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.AppUser.LastName))
