@@ -57,13 +57,13 @@ namespace Presentation.Controllers
             await serviceManager.GymService.UpdateGym(gymId, gymWithFilesUpdate, gymDto);
             return Ok();
         }
-        [HttpGet("{GymID:int}")]
+        [HttpGet("GetGymFeature2/{GymID:int}")]
 
         public async Task<ActionResult> GetGymFeature(int GymID)
         {
-            var result= await serviceManager.GymService.GetGymFeatures(GymID);
-            if(result !=null)
-            return Ok(result);
+            var result = await serviceManager.GymService.GetGymFeatures(GymID);
+            if (result != null)
+                return Ok(result);
 
             return BadRequest("Failed when Trying Get Features.");
 

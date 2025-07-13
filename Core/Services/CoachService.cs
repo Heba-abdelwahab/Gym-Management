@@ -77,6 +77,25 @@ namespace Services
             return result;
         }
 
+        public async Task<List<CoachsForClassDto>> GetCoachesForClassbyGym(int gymId)
+        {
+            var gym = await _unitOfWork.GetRepositories<Gym, int>().GetByIdAsync(gymId);
+            if (gym is null)
+            {
+                throw new GymNotFoundException(gymId);
+            }
+
+            var Coaches = (await _unitOfWork.GetRepositories<GymCoach, int>()
+                                           .GetAllWithSpecAsync(new GetCoachesForClassByGymIdSpec(gymId))).Select(gc=>gc.Coach);
+
+            
+      
+            var result = _mapper.Map<List<CoachsForClassDto>>(Coaches);
+
+            return result;
+        }
+
+
         #region Diet for Trainee
         public async Task<bool> CreateDietAsync(int traineeId, MealScheduleDto dietDto)
         {

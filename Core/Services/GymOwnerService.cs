@@ -39,9 +39,22 @@ namespace Services
             _authenticationService = authenticationService;
         }
 
+        public async Task<List<GymOwnerDataDto>> GetAllDataForGymOwner(int ownerId)
+        {
+           var gymowner=await _ownerRepo.GetByIdWithSpecAsync(new GymOwnerDataSpec(ownerId));
+            if (gymowner == null)
+            {
+                throw new GymOwnerNotFoundException(ownerId);
+            }
+           var mappedOwner = _mapper.Map<List<GymOwnerDataDto>>(gymowner);
+            return mappedOwner;
+        }
+
+      
+
         public async Task<GymOwnerToReturnDto> GetGymOwnerInfo()
         {
-            int ownerId = _userService.Id.Value;
+           int  ownerId = _userService.Id.Value;
             var gymOwner = await _ownerRepo.GetByIdWithSpecAsync(new GetGymOwnerInfoSpecification(ownerId));
             if (gymOwner == null)
             {
@@ -60,9 +73,21 @@ namespace Services
             return mappedOwner;
         }
 
+        public async Task<List<OwnerMembershipdto>> GetGymownerMemberships(int ownerId)
+        {
+            var gymOwner = await _ownerRepo.GetByIdWithSpecAsync(new GymOwnerDataSpec(ownerId));
+            if (gymOwner == null)
+            {
+                throw new GymOwnerNotFoundException(ownerId);
+            }
+
+            var mappedOwner = _mapper.Map<List<OwnerMembershipdto>>(gymOwner);
+            return mappedOwner;
+        }
+
         public async Task<IReadOnlyList<GymToReturnDto>> GetGymsForOwnerAsync()
         {
-            int ownerId = _userService.Id.Value;
+           int  ownerId = _userService.Id.Value;
             var gymOwner = await _ownerRepo.GetByIdAsync(ownerId);
             if (gymOwner == null)
             {

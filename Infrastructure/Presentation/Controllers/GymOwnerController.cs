@@ -33,6 +33,19 @@ namespace Presentation.Controllers
 
             return Ok(gymOwner);
         }
+        [HttpGet("GymOwnerData/{GymOwnerid:int}")]
+        public async Task<IActionResult> GetAllDataForGymOwner(int GymOwnerid)
+        {
+            var gymOwnerData = await _serviceManager.GymOwnerService.GetAllDataForGymOwner(GymOwnerid);
+            return Ok(gymOwnerData);
+        }
+
+        [HttpGet("GymMemberships/{id:int}")]
+        public async Task<IActionResult> GetGymOwnerMemberships(int id)
+        {
+            var memberships = await _serviceManager.GymOwnerService.GetGymownerMemberships(id);
+            return Ok(memberships);
+        }
 
 
 
@@ -41,4 +54,5 @@ namespace Presentation.Controllers
           => Ok(await _serviceManager.GymOwnerService.GetGymOwnerByUserNameAsync(username));
 
     }
+
 }

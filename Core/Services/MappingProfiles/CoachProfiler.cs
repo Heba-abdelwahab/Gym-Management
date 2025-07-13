@@ -25,6 +25,11 @@ namespace Services.MappingProfiles
                 .ForMember(des => des.About, opt => opt.MapFrom(src => src.Coach.About))
                 .ForMember(des => des.ApplicationCVUrl, opt => opt.MapFrom(src => src.Coach.CV.Url))
                 .ForMember(des => des.ImageUrl, opt => opt.MapFrom(src => src.Coach.Image.Url));
+
+            CreateMap<Coach, CoachsForClassDto>()
+                .ForMember(des => des.FirstName, src => src.MapFrom(src => src.AppUser.FirstName))
+                .ForMember(des => des.LastName, src => src.MapFrom(src => src.AppUser.LastName))
+                .ForMember(des => des.Id, src => src.MapFrom(src => src.Id));
         }
     }
 }
