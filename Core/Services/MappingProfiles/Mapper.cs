@@ -198,6 +198,10 @@ namespace Services.MappingProfiles
                .ForMember(dest => dest.MuscleId, opt => opt.MapFrom(src => src.TargetMuscleId));
             CreateMap<Muscle, MuscleDto>();
             #endregion
+
+            #region CoachRequestToGym
+            CreateMap<CoachWorkDayDto, WorkDay>();
+            #endregion
         }
     }
 }

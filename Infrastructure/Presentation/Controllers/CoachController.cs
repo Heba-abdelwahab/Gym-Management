@@ -30,7 +30,7 @@ public class CoachController : ApiControllerBase
             return StatusCode(500, "An error occurred while processing your request, Please try again.");
 
     }
-
+    
     [HttpGet("GymPendingCoach/{gymId:int}")]
     public async Task<ActionResult<CoachPendingDto>> GetGymPendingCoachs(int gymId)
     {
@@ -179,5 +179,19 @@ public class CoachController : ApiControllerBase
     {
         var muscles = await _serviceManager.CoachService.GetAllMusclesWithExercisesAsync();
         return Ok(muscles);
+    }
+
+    [HttpPost("request-coach-gym")]
+    public async Task<IActionResult> RequestToJoinGym(CoachRequestToGymDto request)
+    {
+
+        var result = await _serviceManager.CoachService.RequestToJoinGymAsync(request);
+
+        if (result)
+            return NoContent();
+
+        else
+            return StatusCode(500, "An error occurred while processing your request, Please try again.");
+
     }
 }

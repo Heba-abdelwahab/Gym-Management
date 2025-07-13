@@ -441,10 +441,32 @@ namespace Services
 
         public async Task<IEnumerable<MuscleDto>> GetAllMusclesWithExercisesAsync()
         {
-            var muscles = _unitOfWork.GetRepositories<Muscle, int>().GetAllWithSpecAsync(new GetAllMusclesSpec());
+            var muscles = await _unitOfWork.GetRepositories<Muscle, int>().GetAllWithSpecAsync(new GetAllMusclesSpec());
             return _mapper.Map<IEnumerable<MuscleDto>>(muscles);
         }
 
-       
+        public async Task<bool> RequestToJoinGymAsync(CoachRequestToGymDto request)
+        {
+            var gym = await _unitOfWork.GetRepositories<Gym, int>().GetByIdAsync(request.GymId);
+            if (gym == null)
+            {
+                throw new GymNotFoundException(request.GymId);
+            }
+            var coachId = _userServices.Id!.Value;
+            var gymCoach = new GymCoach
+            {
+                GymId = request.GymId,
+                CoachId = coachId,
+                Status = RequestStatus.Pending,
+                Capcity = 0,
+                CurrentCapcity = 0,
+                ApplicationDate = DateTime.UtcNow,
+                WorkDays = _mapper.Map<List<WorkDay>>(request.WorkDays)
+            };
+
+            _unitOfWork.GetRepositories<GymCoach, int>().Insert(gymCoach);
+
+            return await _unitOfWork.CompleteSaveAsync();
+        }
     }
 }

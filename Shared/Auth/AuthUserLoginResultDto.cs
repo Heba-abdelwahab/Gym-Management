@@ -5,5 +5,6 @@ public record AuthUserLoginResultDto(
     string Token,
     string PhotoUrl,
     string KnownAs,
-    string Role
+    string Role,
+    int Id
     );

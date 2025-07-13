@@ -145,7 +145,8 @@ internal sealed class AuthenticationService : IAuthenticationService
           Token: _tokenService.GenerateAccessToken(authClaims),
           PhotoUrl: user.Photos.FirstOrDefault(p => p.IsMain)?.Url!,
           KnownAs: $"{user.FirstName} {user.LastName}",
-          Role: roleValue
+          Role: roleValue,
+          Id: id
           );
     }
 
