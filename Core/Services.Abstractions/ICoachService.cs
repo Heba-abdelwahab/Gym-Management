@@ -48,4 +48,6 @@ public interface ICoachService
     Task<TraineeCoachDashboardDetailDto> GetTraineeDetailsForDashboardAsync(int traineeId);
 
     Task<IEnumerable<MuscleDto>> GetAllMusclesWithExercisesAsync();
+
+    Task<bool> RequestToJoinGymAsync(CoachRequestToGymDto request);
 }
