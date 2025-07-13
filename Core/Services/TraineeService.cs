@@ -371,7 +371,7 @@ internal sealed class TraineeService : ITraineeService
         var gymsMapped = _mapper.Map<GymToReturnDto>(gyms);
         return gymsMapped;
     }
-
+    ///   mapping exception**********************
     public async Task<IReadOnlyList<ClassGymWithCoachToReturnDto>> GetAllClasses()
     {
         var classesSpec = new ClassWithCoachAndGymSpec();
