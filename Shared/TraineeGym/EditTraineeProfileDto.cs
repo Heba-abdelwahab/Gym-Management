@@ -14,6 +14,8 @@ namespace Shared.TraineeGym
         public AddressToReturnDto? Address { get; set; }
         public IFormFile? Image { get; set; }
         public DateOnly? DateOfBirth { get; set; }
+        public string? PhoneNumber { get; set; }
+        public string ReasonForJoining { get; set; }
         public double? Weight { get; set; }
     }
 }
