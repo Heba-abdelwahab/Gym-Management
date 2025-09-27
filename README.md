@@ -1,3 +1,6 @@
+# Client Repo 
+https://github.com/EhabAhmed2001/Gymawy.Client
+
 # 🏋️‍♂️ Gmawy - Gym Management System
 
 Gmawy is a web-based gym management platform designed to simplify the operations between gym owners, coaches, and trainees. Admins manage gym approvals, while coaches and trainees interact in real-time for training and nutrition planning.
